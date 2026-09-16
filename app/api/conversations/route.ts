@@ -23,16 +23,21 @@ export async function POST(request: NextRequest) {
   if (!name || !phone || (!message && !template)) return NextResponse.json({ error: 'Name, WhatsApp number, and a first message or approved template are required.' }, { status: 400 })
   if (!/^\+?\d{8,15}$/.test(phone)) return NextResponse.json({ error: 'Enter a valid WhatsApp number in international format.' }, { status: 400 })
 
+  const token = process.env.WHATSAPP_ACCESS_TOKEN
+  const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID
+  if (!token || !phoneNumberId) {
+    return NextResponse.json({
+      error: 'WhatsApp sending is not connected yet. Add WHATSAPP_ACCESS_TOKEN and WHATSAPP_PHONE_NUMBER_ID to the Vercel project environment, then redeploy.',
+      code: 'WHATSAPP_NOT_CONFIGURED',
+    }, { status: 503 })
+  }
+
   try {
     const supabase = createServerSupabaseClient()
     const { data: contact, error: contactError } = await supabase.from('whatsapp_contacts').upsert({ external_id: phone, display_name: name, phone }, { onConflict: 'external_id' }).select('id, display_name, phone, contact_type').single()
     if (contactError) throw contactError
     const { data: conversation, error: conversationError } = await supabase.from('whatsapp_conversations').upsert({ contact_id: contact.id, status: 'open', last_message_at: new Date().toISOString() }, { onConflict: 'contact_id' }).select('id, status, assigned_agent_id').single()
     if (conversationError) throw conversationError
-
-    const token = process.env.WHATSAPP_ACCESS_TOKEN
-    const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID
-    if (!token || !phoneNumberId) return NextResponse.json({ error: 'WhatsApp Cloud API is not configured. The conversation was saved, but the message was not sent.', conversationId: conversation.id }, { status: 503 })
 
     const outgoing = template
       ? { messaging_product: 'whatsapp', to: phone, type: 'template', template: templatePayload(template) }
