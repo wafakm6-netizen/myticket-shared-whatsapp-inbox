@@ -1,5 +1,6 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
+import { TagNavBridge } from '@/components/tag-nav-bridge'
 import './globals.css'
 import './new-conversation.css'
 
@@ -39,6 +40,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="bg-white">
       <body className="antialiased">
+        <TagNavBridge />
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
