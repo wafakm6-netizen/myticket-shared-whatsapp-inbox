@@ -24,9 +24,24 @@ export async function PATCH(request: NextRequest) {
     const patch: Record<string, string | null> = {}
     if (body.patch?.status && ['open', 'pending', 'closed'].includes(body.patch.status)) patch.status = body.patch.status
     if (body.patch && Object.prototype.hasOwnProperty.call(body.patch, 'assigned_agent_id')) patch.assigned_agent_id = body.patch.assigned_agent_id || null
-    if (!body.id || !Object.keys(patch).length) return NextResponse.json({ error: 'No valid update supplied.' }, { status: 400 })
-    const { data, error } = await supabase.from('whatsapp_conversations').update(patch).eq('id', body.id).select('id, status, assigned_agent_id').single()
-    if (error) throw error
+    if (!body.id || (!Object.keys(patch).length && !body.contactPatch)) return NextResponse.json({ error: 'No valid update supplied.' }, { status: 400 })
+    let data: { id: string; status?: string; assigned_agent_id?: string | null } | null = null
+    if (Object.keys(patch).length) {
+      const result = await supabase.from('whatsapp_conversations').update(patch).eq('id', body.id).select('id, status, assigned_agent_id').single()
+      if (result.error) throw result.error
+      data = result.data
+    }
+    if (body.contactPatch) {
+      const { data: conversation, error: conversationError } = await supabase.from('whatsapp_conversations').select('contact_id').eq('id', body.id).single()
+      if (conversationError) throw conversationError
+      const contactPatch: Record<string, string> = {}
+      if (typeof body.contactPatch.display_name === 'string' && body.contactPatch.display_name.trim()) contactPatch.display_name = body.contactPatch.display_name.trim()
+      if (typeof body.contactPatch.contact_type === 'string' && ['customer', 'supplier'].includes(body.contactPatch.contact_type)) contactPatch.contact_type = body.contactPatch.contact_type
+      if (Object.keys(contactPatch).length) {
+        const { error: contactError } = await supabase.from('whatsapp_contacts').update(contactPatch).eq('id', conversation.contact_id)
+        if (contactError) throw contactError
+      }
+    }
     if (body.note?.body?.trim()) {
       const { error: noteError } = await supabase.from('whatsapp_internal_notes').insert({ conversation_id: body.id, agent_id: body.note.agentId || null, body: body.note.body.trim() })
       if (noteError) throw noteError

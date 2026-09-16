@@ -27,9 +27,10 @@ export async function POST(request: NextRequest) {
       externalId = result?.messages?.[0]?.id ?? null
       if (!response.ok) status = 'failed'
     }
-    const { data: message, error } = await supabase.from('whatsapp_messages').insert({ conversation_id: conversation, external_id: externalId, direction: 'outbound', body: text.trim(), attachment_url: attachmentUrl ?? null, attachment_name: attachmentName ?? null, status }).select('id, conversation_id, body, attachment_url, attachment_name, status, created_at').single()
+    const { data: message, error } = await supabase.from('whatsapp_messages').insert({ conversation_id: conversation, external_id: externalId, direction: 'outbound', body: text.trim(), attachment_url: attachmentUrl ?? null, attachment_name: attachmentName ?? null, status, sent_at: new Date().toISOString() }).select('id, conversation_id, body, attachment_url, attachment_name, status, created_at').single()
     if (error) throw error
-    await supabase.from('whatsapp_conversations').update({ last_message_at: new Date().toISOString() }).eq('id', conversation)
+    const { error: conversationUpdateError } = await supabase.from('whatsapp_conversations').update({ last_message_at: new Date().toISOString() }).eq('id', conversation)
+    if (conversationUpdateError) throw conversationUpdateError
     return NextResponse.json({ success: status !== 'failed', message, result }, { status: status === 'failed' ? 502 : 200 })
   } catch (error) {
     console.error('[send] failed', error)
