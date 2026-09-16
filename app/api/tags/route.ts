@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 
-const colors = ['gray','red','orange','yellow','green','blue','purple']
+const colors = ['gray','red','orange','yellow','green','blue','purple','pink']
 const validColor = (value: unknown) => typeof value === 'string' && colors.includes(value) ? value : 'orange'
 
 export async function GET(request: NextRequest) {
