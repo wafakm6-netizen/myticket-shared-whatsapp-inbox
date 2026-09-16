@@ -7,10 +7,7 @@
 .conversation-modal .conversation-form::-webkit-scrollbar{width:7px}.conversation-modal .conversation-form::-webkit-scrollbar-track{background:transparent}.conversation-modal .conversation-form::-webkit-scrollbar-thumb{background:#d8d8d8;border-radius:999px;border:2px solid #fff}.conversation-modal .conversation-form::-webkit-scrollbar-thumb:hover{background:#bdbdbd}
 .conversation-modal .conversation-form input,.conversation-modal .conversation-form textarea{box-sizing:border-box;width:100%;border-radius:10px;border-color:#e2e2e2;transition:border-color .16s ease,box-shadow .16s ease,background .16s ease}
 .conversation-modal .conversation-form input:focus,.conversation-modal .conversation-form textarea:focus{border-color:#ff5a1f;box-shadow:0 0 0 3px rgba(255,90,31,.10)}
-
-/* Force the first-message field to remain a real multiline writing area. */
 html body .conversation-modal form.conversation-form textarea#new-first-message{display:block!important;box-sizing:border-box!important;width:100%!important;min-width:100%!important;max-width:100%!important;height:140px!important;min-height:140px!important;max-height:240px!important;padding:13px 14px!important;line-height:1.5!important;resize:vertical!important;overflow-y:auto!important;white-space:pre-wrap!important}
-
 .conversation-modal .form-help{background:#fafafa;border:1px solid #f0f0f0;border-radius:9px;padding:9px 10px;margin-top:2px}
 .conversation-modal .login-error{background:#fff5f3;border:1px solid #ffd8d0;border-radius:9px;padding:10px 12px;margin:8px 0 0;text-align:left;line-height:1.45}
 .conversation-modal .modal-actions{position:sticky;bottom:0;z-index:10;flex:0 0 auto;width:calc(100% + 48px);margin:18px -24px 0;padding:14px 24px 18px;background:#fff;border-top:1px solid #ededed;box-shadow:0 -8px 22px rgba(36,36,36,.04);display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:10px!important;overflow:visible!important}
@@ -19,10 +16,17 @@ html body .conversation-modal form.conversation-form textarea#new-first-message{
 .conversation-modal .modal-actions button.send-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 7px 18px rgba(255,90,31,.22)}
 .conversation-modal .modal-actions button.send-btn:disabled{opacity:.58;cursor:not-allowed}
 
-/* Keep the inbox and active-chat headers visible while their content scrolls. */
-.app-shell .pane-header,.app-shell .chat-header{position:sticky!important;top:0!important;z-index:15!important;flex:0 0 91px!important;background:#fff!important}
-.app-shell .inbox-pane{height:100vh!important;overflow:hidden!important}
-.app-shell .chat-pane{height:100vh!important;overflow:hidden!important}
-.app-shell .thread{min-height:0!important;overflow-y:auto!important}
+/* Preserve the original 91px header dimensions exactly. The page itself never scrolls;
+   each content column owns its own scroll area, so these headers stay in the same place. */
+html,body{height:100%;overflow:hidden}
+.app-shell{height:100vh!important;overflow:hidden!important}
+.app-shell .inbox-pane{height:100vh!important;overflow:hidden!important;display:flex!important;flex-direction:column!important}
+.app-shell .pane-header{position:relative!important;top:auto!important;z-index:5!important;height:91px!important;min-height:91px!important;max-height:91px!important;flex:0 0 91px!important;padding:0 23px!important;background:#fff!important}
+.app-shell .inbox-toolbar,.app-shell .filter-tabs{flex:0 0 auto!important}
+.app-shell .conversation-list{flex:1 1 auto!important;height:auto!important;min-height:0!important;overflow-y:auto!important}
+.app-shell .chat-pane{height:100vh!important;min-height:0!important;overflow:hidden!important;display:flex!important;flex-direction:column!important}
+.app-shell .chat-header{position:relative!important;top:auto!important;z-index:5!important;height:91px!important;min-height:91px!important;max-height:91px!important;flex:0 0 91px!important;padding:0 23px!important;background:#fff!important}
+.app-shell .thread{flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important}
+.app-shell .composer-wrap{flex:0 0 auto!important}
 
 @media(max-width:600px){.modal-backdrop:has(.conversation-modal .conversation-form){padding:12px}.conversation-modal{width:100%;max-height:92vh;border-radius:14px}.conversation-modal .modal-header{padding:18px 18px 15px}.conversation-modal .conversation-form{padding:17px 18px 0}.conversation-modal .modal-actions{width:calc(100% + 36px);margin-left:-18px;margin-right:-18px;padding:12px 18px 16px}.conversation-modal .modal-actions button.send-btn{width:154px!important;min-width:154px!important;padding:0 14px!important}html body .conversation-modal form.conversation-form textarea#new-first-message{height:128px!important;min-height:128px!important}}
