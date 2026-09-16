@@ -41,6 +41,7 @@ export function UnreadBridge() {
           badge.className = 'conversation-unread-badge'
           badge.textContent = unread > 99 ? '99+' : String(unread)
           badge.setAttribute('aria-label', `${unread} unread message${unread === 1 ? '' : 's'}`)
+          badge.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;min-width:19px;height:19px;padding:0 5px;margin-left:auto;border-radius:999px;background:#ff5a1f;color:#fff;font-size:10px;font-weight:800;line-height:1;box-sizing:border-box;flex:0 0 auto;'
           top.appendChild(badge)
         }
       } catch (error) {
