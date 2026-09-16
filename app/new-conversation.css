@@ -20,7 +20,6 @@ html,body{height:100%;overflow:hidden}
 .app-shell{height:100vh!important;overflow:hidden!important}
 .app-shell .inbox-pane{height:100vh!important;min-height:0!important;overflow:hidden!important;display:flex!important;flex-direction:column!important}
 .app-shell .pane-header{flex:0 0 91px!important}
-/* Header branding: remove the redundant Shared Inbox title and vertically align the Myticket wordmark with the app icon. */
 .app-shell .pane-header h1{display:none!important}
 .app-shell .pane-header>div:first-child{display:flex!important;align-items:center!important;height:100%!important}
 .app-shell .pane-header .pane-wordmark{margin:0!important;display:block!important}
@@ -32,4 +31,21 @@ html,body{height:100%;overflow:hidden}
 .app-shell .composer-wrap{flex:0 0 auto!important}
 .app-shell .details-pane{height:100vh!important;min-height:0!important;overflow-y:auto!important;overscroll-behavior:contain}
 
-@media(max-width:600px){.modal-backdrop:has(.conversation-modal .conversation-form){padding:12px}.conversation-modal{width:100%;max-height:92vh;border-radius:14px}.conversation-modal .modal-header{padding:18px 18px 15px}.conversation-modal .conversation-form{padding:17px 18px 0}.conversation-modal .modal-actions{width:calc(100% + 36px);margin-left:-18px;margin-right:-18px;padding:12px 18px 16px}.conversation-modal .modal-actions button.send-btn{width:154px!important;min-width:154px!important;padding:0 14px!important}html body .conversation-modal form.conversation-form textarea#new-first-message{height:128px!important;min-height:128px!important}}
+/* Saved Replies: more breathing room around the content without changing the overall visual language. */
+.modal-backdrop .team-modal[aria-labelledby="saved-replies-title"]{width:min(94vw,640px)!important;max-height:min(88vh,760px)!important}
+.team-modal[aria-labelledby="saved-replies-title"] .modal-header{padding:28px 32px 22px!important}
+.team-modal[aria-labelledby="saved-replies-title"] .team-add-form{padding:20px 32px!important;gap:10px!important}
+.team-modal[aria-labelledby="saved-replies-title"] .login-error{margin:0 32px 14px!important}
+.team-modal[aria-labelledby="saved-replies-title"] .saved-reply-list{padding:0 32px 28px!important;overflow-y:auto!important}
+.team-modal[aria-labelledby="saved-replies-title"] .saved-reply-row{padding:18px 0!important;gap:20px!important}
+.team-modal[aria-labelledby="saved-replies-title"] .saved-reply-row p{line-height:1.55!important;margin-top:7px!important}
+
+/* Tags opens inside the inbox, like Team and Saved Replies. */
+.tag-manager-backdrop{position:fixed;inset:0;z-index:60;background:rgba(36,36,36,.42);display:grid;place-items:center;padding:24px}
+.tag-manager-modal{width:min(94vw,700px);max-height:min(88vh,760px);overflow:hidden;background:#fff;border:1px solid #e9e9e9;border-radius:18px;box-shadow:0 24px 70px rgba(36,36,36,.22);display:flex;flex-direction:column}
+.tag-manager-modal-header{display:flex;align-items:center;justify-content:space-between;padding:26px 30px 14px}
+.tag-manager-heading{display:flex;align-items:center;gap:12px}.tag-manager-heading p{margin:0 0 5px;color:#8998aa;font-size:10px;font-weight:700;letter-spacing:.11em}.tag-manager-heading h2{margin:0;font-size:21px}.tag-manager-icon{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:#fff0ea;color:#ff5a1f}
+.tag-manager-description{margin:0;padding:0 30px 20px;color:#8795a6;font-size:12px;border-bottom:1px solid #ececec}
+.tag-manager-content{padding:24px 30px 30px;overflow-y:auto;min-height:0}
+
+@media(max-width:600px){.modal-backdrop:has(.conversation-modal .conversation-form){padding:12px}.conversation-modal{width:100%;max-height:92vh;border-radius:14px}.conversation-modal .modal-header{padding:18px 18px 15px}.conversation-modal .conversation-form{padding:17px 18px 0}.conversation-modal .modal-actions{width:calc(100% + 36px);margin-left:-18px;margin-right:-18px;padding:12px 18px 16px}.conversation-modal .modal-actions button.send-btn{width:154px!important;min-width:154px!important;padding:0 14px!important}html body .conversation-modal form.conversation-form textarea#new-first-message{height:128px!important;min-height:128px!important}.team-modal[aria-labelledby="saved-replies-title"] .modal-header{padding:22px 20px 18px!important}.team-modal[aria-labelledby="saved-replies-title"] .team-add-form{padding:18px 20px!important}.team-modal[aria-labelledby="saved-replies-title"] .saved-reply-list{padding:0 20px 22px!important}.tag-manager-backdrop{padding:12px}.tag-manager-modal-header{padding:22px 20px 14px}.tag-manager-description{padding:0 20px 18px}.tag-manager-content{padding:20px}}
