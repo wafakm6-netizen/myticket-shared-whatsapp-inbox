@@ -5,7 +5,7 @@ export async function GET() {
   try {
     const supabase = createServerSupabaseClient()
     const [{ data: conversations, error }, { data: agents, error: agentsError }] = await Promise.all([
-      supabase.from('whatsapp_conversations').select('id, status, assigned_agent_id, last_message_at, unread_count, whatsapp_contacts(id, display_name, phone, contact_type, avatar_url), whatsapp_agents(id, display_name, email, avatar_url), whatsapp_messages(id, direction, sender_name, body, attachment_url, attachment_name, status, sent_at, created_at), whatsapp_internal_notes(id, body, created_at, agent_id, whatsapp_agents(display_name)), whatsapp_conversation_tags(tag_id, whatsapp_tags(id, name))').order('last_message_at', { ascending: false }),
+      supabase.from('whatsapp_conversations').select('id, status, assigned_agent_id, last_message_at, unread_count, whatsapp_contacts(id, display_name, phone, contact_type, avatar_url), whatsapp_agents(id, display_name, email, avatar_url), whatsapp_messages(id, direction, sender_name, body, attachment_url, attachment_name, status, sent_at, created_at), whatsapp_internal_notes(id, body, created_at, agent_id, whatsapp_agents(display_name)), whatsapp_conversation_tags(tag_id, whatsapp_tags(id, name, color))').order('last_message_at', { ascending: false }),
       supabase.from('whatsapp_agents').select('id, display_name, email, avatar_url, is_active, auth_user_id, role, availability').eq('is_active', true).order('display_name')
     ])
     if (error) throw error
