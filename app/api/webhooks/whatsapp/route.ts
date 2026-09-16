@@ -1,5 +1,17 @@
+import { createHmac, timingSafeEqual } from 'crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+
+function verifyMetaSignature(rawBody: string, signature: string | null) {
+  const appSecret = process.env.META_APP_SECRET
+  if (!appSecret || !signature?.startsWith('sha256=')) return false
+
+  const expected = `sha256=${createHmac('sha256', appSecret).update(rawBody, 'utf8').digest('hex')}`
+  const receivedBuffer = Buffer.from(signature, 'utf8')
+  const expectedBuffer = Buffer.from(expected, 'utf8')
+
+  return receivedBuffer.length === expectedBuffer.length && timingSafeEqual(receivedBuffer, expectedBuffer)
+}
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
@@ -9,7 +21,26 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const payload = await request.json()
+    const rawBody = await request.text()
+    const signature = request.headers.get('x-hub-signature-256')
+
+    if (!process.env.META_APP_SECRET) {
+      console.error('[whatsapp webhook] META_APP_SECRET is not configured')
+      return NextResponse.json({ received: false, error: 'Webhook verification is not configured' }, { status: 503 })
+    }
+
+    if (!verifyMetaSignature(rawBody, signature)) {
+      console.warn('[whatsapp webhook] rejected request with invalid Meta signature')
+      return NextResponse.json({ received: false, error: 'Invalid webhook signature' }, { status: 401 })
+    }
+
+    let payload: any
+    try {
+      payload = JSON.parse(rawBody)
+    } catch {
+      return NextResponse.json({ received: false, error: 'Invalid webhook payload' }, { status: 400 })
+    }
+
     const supabase = createServerSupabaseClient()
     let stored = 0
     for (const entry of payload?.entry ?? []) for (const change of entry.changes ?? []) {
