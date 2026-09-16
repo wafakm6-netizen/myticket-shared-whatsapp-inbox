@@ -23,7 +23,7 @@ export default function Page() {
   const [activeNav, setActiveNav] = useState<'inbox' | 'team' | 'replies' | 'tags'>('inbox')
   const [attachment, setAttachment] = useState<File | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [sessionUser, setSessionUser] = useState<{ email?: string; role?: string } | null>(null)
+  const [sessionUser, setSessionUser] = useState<{ email?: string; role?: string; agentId?: string } | null>(null)
   const [authEmail, setAuthEmail] = useState('')
   const [authPassword, setAuthPassword] = useState('')
   const [authError, setAuthError] = useState('')
@@ -54,8 +54,10 @@ export default function Page() {
     if (!supabase) { setIsLoading(false); return }
     void supabase.auth.getUser().then(async ({ data }) => {
       if (!active || !data.user) return
-      const agent = agents.find((item) => item.email === data.user.email)
-      setSessionUser({ email: data.user.email, role: data.user.app_metadata?.role || (agent ? 'agent' : 'admin') })
+      const agentResponse = await fetch('/api/inbox', { cache: 'no-store' })
+      const agentPayload = agentResponse.ok ? await agentResponse.json() : { agents: [] }
+      const agent = (agentPayload.agents ?? []).find((item: Agent) => item.email?.toLowerCase() === data.user.email?.toLowerCase())
+      setSessionUser({ email: data.user.email, agentId: agent?.id, role: data.user.app_metadata?.role || (agent ? 'agent' : 'admin') })
     })
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => { if (active && session?.user) setSessionUser({ email: session.user.email, role: session.user.app_metadata?.role || 'agent' }) })
     void load().catch((error) => console.error('[v0] inbox load failed', error)).finally(() => { if (active) setIsLoading(false) })
@@ -68,14 +70,17 @@ export default function Page() {
   const updateConversation = async (patch: Record<string, string | null>) => { if (!selected) return; await fetch('/api/inbox', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: selected.id, patch }) }); await load() }
   const uploadAttachment = async (file: File) => { const form = new FormData(); form.append('file', file); const response = await fetch('/api/media', { method: 'POST', body: form }); if (!response.ok) throw new Error('Media upload failed'); return response.json() }
   const sendMessage = async () => { if (!selected || (!draft.trim() && !attachment)) return; try { let media: any = null; if (attachment) media = await uploadAttachment(attachment); const response = await fetch('/api/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ conversationId: selected.id, to: selected.phone, text: draft.trim() || attachment?.name || 'Attachment', attachmentUrl: media?.url, attachmentName: media?.name, attachmentType: media?.type }) }); if (!response.ok) throw new Error('Send failed'); setDraft(''); setAttachment(null); await load() } catch (error) { console.error('[v0] send failed', error) } }
-  const addNote = async () => { if (!selected || !noteDraft.trim()) return; await fetch('/api/inbox', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ conversationId: selected.id, body: noteDraft }) }); setNoteDraft(''); await load() }
+  const addNote = async () => { if (!selected || !noteDraft.trim()) return; const response = await fetch('/api/inbox', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ conversationId: selected.id, body: noteDraft, agentId: sessionUser?.agentId }) }); if (!response.ok) throw new Error('Note could not be saved'); setNoteDraft(''); await load() }
 
   const signIn = async () => {
     setAuthBusy(true)
     setAuthError('')
     const { data, error } = await createBrowserSupabaseClient().auth.signInWithPassword({ email: authEmail, password: authPassword })
     if (error || !data.user) setAuthError('Invalid email or password.')
-    else setSessionUser({ email: data.user.email, role: data.user.app_metadata?.role || 'agent' })
+    else {
+      const agent = agents.find((item) => item.email?.toLowerCase() === data.user.email?.toLowerCase())
+      setSessionUser({ email: data.user.email, agentId: agent?.id, role: data.user.app_metadata?.role || (agent ? 'agent' : 'admin') })
+    }
     setAuthBusy(false)
   }
 
