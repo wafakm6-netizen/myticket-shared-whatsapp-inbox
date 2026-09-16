@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 
 export async function POST(request: NextRequest) {
-  const { to, text, conversationId, attachmentUrl, attachmentName } = await request.json().catch(() => ({}))
-  if (typeof to !== 'string' || !to.trim() || typeof text !== 'string' || !text.trim()) return NextResponse.json({ error: 'Both to and text are required.' }, { status: 400 })
+  const { to, text, conversationId, attachmentUrl, attachmentName, attachmentType } = await request.json().catch(() => ({}))
+  if (typeof to !== 'string' || !to.trim() || typeof text !== 'string' || !text.trim()) return NextResponse.json({ error: 'Both recipient and message are required.' }, { status: 400 })
   try {
     const supabase = createServerSupabaseClient()
     let conversation = conversationId
@@ -16,14 +16,18 @@ export async function POST(request: NextRequest) {
     }
     const token = process.env.WHATSAPP_ACCESS_TOKEN
     const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID
-    let result: unknown = null
     let status = token && phoneNumberId ? 'sent' : 'queued'
+    let result: any = null
+    let externalId: string | null = null
     if (token && phoneNumberId) {
-      const response = await fetch(`https://graph.facebook.com/${process.env.META_GRAPH_VERSION ?? 'v23.0'}/${phoneNumberId}/messages`, { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ messaging_product: 'whatsapp', to: to.trim(), type: 'text', text: { body: text.trim() } }) })
+      const type = attachmentUrl ? (attachmentType?.startsWith('image/') ? 'image' : 'document') : 'text'
+      const messageBody = type === 'text' ? { messaging_product: 'whatsapp', to: to.trim(), type, text: { body: text.trim() } } : { messaging_product: 'whatsapp', to: to.trim(), type, [type]: { link: attachmentUrl, caption: text.trim() } }
+      const response = await fetch(`https://graph.facebook.com/${process.env.META_GRAPH_VERSION ?? 'v23.0'}/${phoneNumberId}/messages`, { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(messageBody) })
       result = await response.json().catch(() => null)
+      externalId = result?.messages?.[0]?.id ?? null
       if (!response.ok) status = 'failed'
     }
-    const { data: message, error } = await supabase.from('whatsapp_messages').insert({ conversation_id: conversation, direction: 'outbound', body: text.trim(), attachment_url: attachmentUrl ?? null, attachment_name: attachmentName ?? null, status }).select('id, conversation_id, body, status, created_at').single()
+    const { data: message, error } = await supabase.from('whatsapp_messages').insert({ conversation_id: conversation, external_id: externalId, direction: 'outbound', body: text.trim(), attachment_url: attachmentUrl ?? null, attachment_name: attachmentName ?? null, status }).select('id, conversation_id, body, attachment_url, attachment_name, status, created_at').single()
     if (error) throw error
     await supabase.from('whatsapp_conversations').update({ last_message_at: new Date().toISOString() }).eq('id', conversation)
     return NextResponse.json({ success: status !== 'failed', message, result }, { status: status === 'failed' ? 502 : 200 })
