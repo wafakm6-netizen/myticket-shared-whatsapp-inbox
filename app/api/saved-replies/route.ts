@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { cookies } from 'next/headers'
+import { createServerClient } from '@supabase/ssr'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+
+async function createRequestSupabaseClient() {
+  const cookieStore = await cookies()
+  return createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, { cookies: { getAll() { return cookieStore.getAll() }, setAll() {} } })
+}
 
 const fields = 'id, title, body, created_by, is_active, created_at, updated_at'
 
 async function requireUser() {
-  const supabase = createServerSupabaseClient()
+  const supabase = await createRequestSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   return { supabase, user }
 }
