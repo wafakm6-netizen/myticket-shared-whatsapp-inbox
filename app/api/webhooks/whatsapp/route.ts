@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
         const { data: conversation, error: conversationError } = await supabase.from('whatsapp_conversations').upsert({ contact_id: contact.id, status: 'open', last_message_at: new Date().toISOString() }, { onConflict: 'contact_id' }).select('id').single()
         if (conversationError) throw conversationError
         const media = item.image || item.document || item.video || item.audio
-        await supabase.from('whatsapp_messages').upsert({ conversation_id: conversation.id, external_id: item.id, direction: 'inbound', sender_name: profileName, body: item.text?.body ?? item.caption ?? media?.filename ?? null, attachment_url: media?.id ? `whatsapp-media:${media.id}` : null, attachment_name: media?.filename ?? null, status: 'sent', sent_at: new Date(Number(item.timestamp ?? 0) * 1000).toISOString() }, { onConflict: 'external_id' })
+        await supabase.from('whatsapp_messages').upsert({ conversation_id: conversation.id, external_id: item.id, direction: 'inbound', sender_name: profileName, body: item.text?.body ?? item.caption ?? media?.filename ?? null, attachment_url: media?.id ? `/api/media?mediaId=${encodeURIComponent(media.id)}` : null, attachment_name: media?.filename ?? (media?.id ? `${item.type} attachment` : null), status: 'sent', sent_at: new Date(Number(item.timestamp ?? 0) * 1000).toISOString() }, { onConflict: 'external_id' })
         stored++
       }
       for (const status of value.statuses ?? []) {

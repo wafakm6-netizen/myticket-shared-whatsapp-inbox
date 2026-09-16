@@ -1,6 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 
+export async function GET(request: NextRequest) {
+  const mediaId = new URL(request.url).searchParams.get('mediaId')
+  const token = process.env.WHATSAPP_ACCESS_TOKEN
+  if (!mediaId || !token) return NextResponse.json({ error: 'Media is unavailable.' }, { status: 404 })
+  try {
+    const graph = process.env.META_GRAPH_VERSION ?? 'v23.0'
+    const metadataResponse = await fetch(`https://graph.facebook.com/${graph}/${encodeURIComponent(mediaId)}`, { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' })
+    const metadata = await metadataResponse.json().catch(() => null)
+    if (!metadataResponse.ok || typeof metadata?.url !== 'string') return NextResponse.json({ error: 'Media is unavailable.' }, { status: 404 })
+    const mediaResponse = await fetch(metadata.url, { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' })
+    if (!mediaResponse.ok || !mediaResponse.body) return NextResponse.json({ error: 'Media is unavailable.' }, { status: 404 })
+    return new NextResponse(mediaResponse.body, { headers: { 'Content-Type': metadata.mime_type || 'application/octet-stream', 'Cache-Control': 'private, max-age=300' } })
+  } catch (error) {
+    console.error('[media] download failed', error)
+    return NextResponse.json({ error: 'Media is unavailable.' }, { status: 502 })
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
