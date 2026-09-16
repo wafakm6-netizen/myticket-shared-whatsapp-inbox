@@ -1,22 +1,23 @@
 'use client'
 
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { createBrowserSupabaseClient } from '@/lib/supabase/client'
 import { Archive, Bell, Check, ChevronDown, CircleHelp, FileText, Inbox, Menu, MoreHorizontal, Paperclip, Search, Send, Settings, Smile, Tag, Users, X } from 'lucide-react'
 
 type ContactType = 'Customer' | 'Supplier'
 type Status = 'open' | 'pending' | 'closed'
-type Conversation = { id: number; name: string; initials: string; color: string; type: ContactType; phone: string; preview: string; time: string; unread: number; status: Status; assignedTo: string | null; online?: boolean; messages: { from: 'customer' | 'agent'; text: string; time: string }[] }
+type Conversation = { id: string; name: string; initials: string; color: string; type: ContactType; phone: string; preview: string; time: string; unread: number; status: Status; assignedTo: string | null; online?: boolean; messages: { from: 'customer' | 'agent'; text: string; time: string }[] }
 
 const initialConversations: Conversation[] = [
-  { id: 1, name: 'Ahmed Al Balushi', initials: 'AB', color: '#2759a5', type: 'Customer', phone: '+968 9212 4555', preview: 'I need help with my airport transfer.', time: '10:42 AM', unread: 2, status: 'open', assignedTo: 'Sarah Kim', online: true, messages: [{ from: 'customer', text: 'Hi, I need help with my airport transfer tomorrow.', time: '10:39 AM' }, { from: 'agent', text: 'Hello Ahmed, I’m checking this with our operations team now.', time: '10:41 AM' }, { from: 'customer', text: 'Thank you, I appreciate it.', time: '10:42 AM' }] },
-  { id: 2, name: 'Salalah Tours', initials: 'ST', color: '#b77638', type: 'Supplier', phone: '+968 9944 1200', preview: 'The updated pickup list is ready.', time: '9:18 AM', unread: 0, status: 'open', assignedTo: 'Sarah Kim', messages: [{ from: 'customer', text: 'The updated pickup list is ready.', time: '9:18 AM' }] },
-  { id: 3, name: 'Maha', initials: 'MA', color: '#7f65ae', type: 'Customer', phone: '+968 9777 3011', preview: 'Can I change the pickup time?', time: 'Yesterday', unread: 1, status: 'pending', assignedTo: null, messages: [{ from: 'customer', text: 'Can I change the pickup time?', time: 'Yesterday' }] },
-  { id: 4, name: 'Desert Gate Oman', initials: 'DG', color: '#3f8b78', type: 'Supplier', phone: '+968 2456 7890', preview: 'The issue is fixed now, thanks.', time: 'Yesterday', unread: 0, status: 'closed', assignedTo: 'Sarah Kim', messages: [{ from: 'customer', text: 'The issue is fixed now, thanks.', time: 'Yesterday' }] },
+  { id: '1', name: 'Ahmed Al Balushi', initials: 'AB', color: '#2759a5', type: 'Customer', phone: '+968 9212 4555', preview: 'I need help with my airport transfer.', time: '10:42 AM', unread: 2, status: 'open', assignedTo: 'Sarah Kim', online: true, messages: [{ from: 'customer', text: 'Hi, I need help with my airport transfer tomorrow.', time: '10:39 AM' }, { from: 'agent', text: 'Hello Ahmed, I’m checking this with our operations team now.', time: '10:41 AM' }, { from: 'customer', text: 'Thank you, I appreciate it.', time: '10:42 AM' }] },
+  { id: '2', name: 'Salalah Tours', initials: 'ST', color: '#b77638', type: 'Supplier', phone: '+968 9944 1200', preview: 'The updated pickup list is ready.', time: '9:18 AM', unread: 0, status: 'open', assignedTo: 'Sarah Kim', messages: [{ from: 'customer', text: 'The updated pickup list is ready.', time: '9:18 AM' }] },
+  { id: '3', name: 'Maha', initials: 'MA', color: '#7f65ae', type: 'Customer', phone: '+968 9777 3011', preview: 'Can I change the pickup time?', time: 'Yesterday', unread: 1, status: 'pending', assignedTo: null, messages: [{ from: 'customer', text: 'Can I change the pickup time?', time: 'Yesterday' }] },
+  { id: '4', name: 'Desert Gate Oman', initials: 'DG', color: '#3f8b78', type: 'Supplier', phone: '+968 2456 7890', preview: 'The issue is fixed now, thanks.', time: 'Yesterday', unread: 0, status: 'closed', assignedTo: 'Sarah Kim', messages: [{ from: 'customer', text: 'The issue is fixed now, thanks.', time: 'Yesterday' }] },
 ]
 
 export default function Page() {
   const [conversations, setConversations] = useState(initialConversations)
-  const [selectedId, setSelectedId] = useState(1)
+  const [selectedId, setSelectedId] = useState('1')
   const [filter, setFilter] = useState<'all' | 'unassigned' | 'open'>('all')
   const [query, setQuery] = useState('')
   const [draft, setDraft] = useState('')
@@ -25,20 +26,48 @@ export default function Page() {
   const [attachment, setAttachment] = useState<File | null>(null)
   const attachmentInput = useRef<HTMLInputElement>(null)
   const selected = conversations.find((item) => item.id === selectedId) ?? conversations[0]
+
+  useEffect(() => {
+    let active = true
+    const load = async () => {
+      const response = await fetch('/api/inbox')
+      if (!response.ok) return
+      const payload = await response.json()
+      const rows = (payload.conversations ?? []).map((row: any, index: number) => {
+        const contact = Array.isArray(row.whatsapp_contacts) ? row.whatsapp_contacts[0] : row.whatsapp_contacts
+        const messages = (row.whatsapp_messages ?? []).sort((a: any, b: any) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+        const last = messages[messages.length - 1]
+        const name = contact?.display_name ?? 'WhatsApp contact'
+        return { id: row.id, name, initials: name.split(' ').map((part: string) => part[0]).join('').slice(0, 2).toUpperCase(), color: ['#2759a5', '#b77638', '#7f65ae', '#3f8b78'][index % 4], type: contact?.contact_type === 'supplier' ? 'Supplier' : 'Customer', phone: contact?.phone ?? '', preview: last?.body ?? '', time: last?.created_at ? new Date(last.created_at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : '', unread: 0, status: row.status, assignedTo: row.assigned_agent_id, messages: messages.map((message: any) => ({ from: message.direction === 'outbound' ? 'agent' : 'customer', text: message.body ?? '', time: new Date(message.created_at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) })) }
+      })
+      if (active && rows.length) { setConversations(rows); setSelectedId((current) => rows.some((row: Conversation) => row.id === current) ? current : rows[0].id) }
+    }
+    void load()
+    let channel: ReturnType<ReturnType<typeof createBrowserSupabaseClient>['channel']> | undefined
+    try { channel = createBrowserSupabaseClient().channel('whatsapp-inbox').on('postgres_changes', { event: '*', schema: 'public', table: 'whatsapp_messages' }, () => void load()).subscribe() } catch { channel = undefined }
+    return () => { active = false; if (channel) void channel.unsubscribe() }
+  }, [])
+
   const visible = useMemo(() => conversations.filter((item) => {
     const matches = filter === 'all' || (filter === 'unassigned' ? !item.assignedTo : item.status === 'open')
     return matches && `${item.name} ${item.preview}`.toLowerCase().includes(query.toLowerCase())
   }), [conversations, filter, query])
 
-  function sendMessage() {
-    if (!draft.trim()) return
-    const message = { from: 'agent' as const, text: draft.trim(), time: 'Just now' }
+  async function sendMessage() {
+    if (!draft.trim() || !selected) return
+    const text = draft.trim()
+    const file = attachment
+    const response = await fetch('/api/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ conversationId: selected.id, to: selected.phone, text, attachmentName: file?.name }) })
+    if (!response.ok) return
+    const message = { from: 'agent' as const, text, time: 'Just now' }
     setConversations((items) => items.map((item) => item.id === selected.id ? { ...item, preview: message.text, time: 'Just now', unread: 0, messages: [...item.messages, message] } : item))
     setDraft('')
+    setAttachment(null)
   }
 
   function updateSelected(patch: Partial<Conversation>) {
     setConversations((items) => items.map((item) => item.id === selected.id ? { ...item, ...patch } : item))
+    void fetch('/api/inbox', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: selected.id, patch: { status: patch.status, assigned_agent_id: patch.assignedTo } }) })
   }
 
   return <main className="app-shell">

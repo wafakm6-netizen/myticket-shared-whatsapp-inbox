@@ -1,24 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createServerSupabaseClient } from '@/lib/supabase/server'
 
 export async function POST(request: NextRequest) {
-  const { to, text } = await request.json().catch(() => ({}))
-  if (typeof to !== 'string' || !to.trim() || typeof text !== 'string' || !text.trim()) {
-    return NextResponse.json({ error: 'Both to and text are required.' }, { status: 400 })
+  const { to, text, conversationId, attachmentUrl, attachmentName } = await request.json().catch(() => ({}))
+  if (typeof to !== 'string' || !to.trim() || typeof text !== 'string' || !text.trim()) return NextResponse.json({ error: 'Both to and text are required.' }, { status: 400 })
+  try {
+    const supabase = createServerSupabaseClient()
+    let conversation = conversationId
+    if (!conversation) {
+      const { data: contact, error: contactError } = await supabase.from('whatsapp_contacts').upsert({ external_id: to.trim(), display_name: to.trim(), phone: to.trim() }, { onConflict: 'external_id' }).select('id').single()
+      if (contactError) throw contactError
+      const { data: created, error: conversationError } = await supabase.from('whatsapp_conversations').upsert({ contact_id: contact.id }, { onConflict: 'contact_id' }).select('id').single()
+      if (conversationError) throw conversationError
+      conversation = created.id
+    }
+    const token = process.env.WHATSAPP_ACCESS_TOKEN
+    const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID
+    let result: unknown = null
+    let status = token && phoneNumberId ? 'sent' : 'queued'
+    if (token && phoneNumberId) {
+      const response = await fetch(`https://graph.facebook.com/${process.env.META_GRAPH_VERSION ?? 'v23.0'}/${phoneNumberId}/messages`, { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ messaging_product: 'whatsapp', to: to.trim(), type: 'text', text: { body: text.trim() } }) })
+      result = await response.json().catch(() => null)
+      if (!response.ok) status = 'failed'
+    }
+    const { data: message, error } = await supabase.from('whatsapp_messages').insert({ conversation_id: conversation, direction: 'outbound', body: text.trim(), attachment_url: attachmentUrl ?? null, attachment_name: attachmentName ?? null, status }).select('id, conversation_id, body, status, created_at').single()
+    if (error) throw error
+    await supabase.from('whatsapp_conversations').update({ last_message_at: new Date().toISOString() }).eq('id', conversation)
+    return NextResponse.json({ success: status !== 'failed', message, result }, { status: status === 'failed' ? 502 : 200 })
+  } catch (error) {
+    console.error('[send] failed', error)
+    return NextResponse.json({ error: 'Message could not be saved.' }, { status: 500 })
   }
-
-  const token = process.env.WHATSAPP_ACCESS_TOKEN
-  const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID
-  const graphVersion = process.env.META_GRAPH_VERSION ?? 'v23.0'
-  if (!token || !phoneNumberId) {
-    return NextResponse.json({ error: 'WhatsApp credentials are not configured.' }, { status: 503 })
-  }
-
-  const response = await fetch(`https://graph.facebook.com/${graphVersion}/${phoneNumberId}/messages`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messaging_product: 'whatsapp', to: to.trim(), type: 'text', text: { body: text.trim() } }),
-  })
-  const data = await response.json().catch(() => null)
-  if (!response.ok) return NextResponse.json({ error: 'Meta API request failed.', details: data }, { status: response.status })
-  return NextResponse.json({ success: true, result: data }, { status: 200 })
 }
