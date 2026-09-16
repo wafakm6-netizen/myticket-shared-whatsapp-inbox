@@ -1,6 +1,7 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
+import './new-conversation.css'
 
 export const metadata: Metadata = {
   title: 'Myticket Shared Inbox',
