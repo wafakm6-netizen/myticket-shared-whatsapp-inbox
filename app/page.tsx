@@ -75,8 +75,14 @@ export default function Page() {
   const signIn = async () => {
     setAuthBusy(true)
     setAuthError('')
-    const { data, error } = await createBrowserSupabaseClient().auth.signInWithPassword({ email: authEmail, password: authPassword })
-    if (error || !data.user) setAuthError('Invalid email or password.')
+    const supabase = createBrowserSupabaseClient()
+    if (!supabase) {
+      setAuthError('Supabase authentication is not configured in this preview.')
+      setAuthBusy(false)
+      return
+    }
+    const { data, error } = await supabase.auth.signInWithPassword({ email: authEmail.trim(), password: authPassword })
+    if (error || !data.user) setAuthError(error?.message || 'Invalid email or password.')
     else {
       const agent = agents.find((item) => item.email?.toLowerCase() === data.user.email?.toLowerCase())
       setSessionUser({ email: data.user.email, agentId: agent?.id, role: data.user.app_metadata?.role || (agent ? 'agent' : 'admin') })
