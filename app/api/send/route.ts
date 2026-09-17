@@ -6,6 +6,10 @@ function normalizeWhatsAppNumber(value: string) {
   return value.trim().replace(/[^0-9]/g, '')
 }
 
+function maskPhone(value: string) {
+  return value.length <= 4 ? '****' : `${'*'.repeat(Math.max(4, value.length - 4))}${value.slice(-4)}`
+}
+
 export async function POST(request: NextRequest) {
   const auth = await requireAgent()
   if (auth.error) return auth.error
@@ -41,6 +45,7 @@ export async function POST(request: NextRequest) {
     const token = process.env.WHATSAPP_ACCESS_TOKEN
     const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID
     if (!token || !phoneNumberId) {
+      console.error('[send] WhatsApp configuration missing', { hasAccessToken: Boolean(token), hasPhoneNumberId: Boolean(phoneNumberId) })
       return NextResponse.json({ error: 'WhatsApp Cloud API is not configured.' }, { status: 503 })
     }
 
@@ -49,8 +54,11 @@ export async function POST(request: NextRequest) {
       ? { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type, text: { body: text.trim() } }
       : { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type, [type]: { link: attachmentUrl, caption: text.trim() } }
 
+    const graphVersion = process.env.META_GRAPH_VERSION ?? 'v23.0'
+    console.info('[send] sending WhatsApp message', { recipient: maskPhone(recipient), phoneNumberId, graphVersion, type })
+
     const response = await fetch(
-      `https://graph.facebook.com/${process.env.META_GRAPH_VERSION ?? 'v23.0'}/${phoneNumberId}/messages`,
+      `https://graph.facebook.com/${graphVersion}/${phoneNumberId}/messages`,
       {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
@@ -61,6 +69,15 @@ export async function POST(request: NextRequest) {
     const externalId = result?.messages?.[0]?.id ?? null
     const accepted = response.ok && Boolean(externalId)
     const status = accepted ? 'queued' : 'failed'
+
+    console.info('[send] Meta WhatsApp response', {
+      httpStatus: response.status,
+      accepted,
+      messageId: externalId,
+      recipient: maskPhone(recipient),
+      contacts: Array.isArray(result?.contacts) ? result.contacts.map((contact: any) => ({ input: contact?.input ? maskPhone(String(contact.input)) : undefined, waId: contact?.wa_id ? maskPhone(String(contact.wa_id)) : undefined })) : undefined,
+      error: result?.error ? { message: result.error.message, type: result.error.type, code: result.error.code, errorSubcode: result.error.error_subcode, errorData: result.error.error_data } : undefined,
+    })
 
     const { data: message, error } = await supabase
       .from('whatsapp_messages')
@@ -87,15 +104,13 @@ export async function POST(request: NextRequest) {
     if (!accepted) {
       const metaMessage = result?.error?.message || 'Meta did not accept the WhatsApp message.'
       const metaCode = result?.error?.code
-      console.error('[send] Meta rejected message', { code: metaCode, message: metaMessage })
+      console.error('[send] Meta rejected message', { code: metaCode, message: metaMessage, recipient: maskPhone(recipient) })
       return NextResponse.json(
         { success: false, error: metaMessage, metaCode, message },
         { status: response.ok ? 502 : response.status >= 400 && response.status < 600 ? response.status : 502 },
       )
     }
 
-    // "queued" only means Meta accepted the request. The webhook is authoritative
-    // for sent, delivered, read and failed delivery states.
     return NextResponse.json({ success: true, message, metaMessageId: externalId }, { status: 200 })
   } catch (error) {
     console.error('[send] failed', error)
