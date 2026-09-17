@@ -68,49 +68,66 @@ export default function WhatsAppOnboardingPage() {
     return () => window.removeEventListener('message', receiveMessage)
   }, [appId, graphVersion])
 
+  const finishSignup = async (response: any) => {
+    const code = response?.authResponse?.code
+    if (!code) {
+      setBusy(false)
+      const message = response?.status === 'not_authorized'
+        ? 'Meta login was not authorized. Sign in to Facebook and allow the requested business access, then retry.'
+        : 'Meta did not return an authorization code. Complete or retry the signup flow.'
+      setStatus(message)
+      return
+    }
+
+    try {
+      const finish = await fetch('/api/whatsapp/onboarding', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, ...sessionInfo.current }),
+      })
+      const payload = await finish.json()
+      if (!finish.ok) throw new Error(payload.error || 'Could not finish WhatsApp onboarding.')
+      setStatus(`Connected successfully${payload.phoneNumberId ? ` (Phone Number ID ${payload.phoneNumberId})` : ''}.`)
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : 'Could not finish WhatsApp onboarding.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
   const startSignup = () => {
     if (!window.FB || !appId || !configId) {
       setStatus('Embedded Signup is not configured yet. Add the Meta App ID and Configuration ID in Vercel.')
       return
     }
-    setBusy(true)
-    setStatus('Meta signup opened. Complete the WhatsApp Business App connection in the popup.')
 
-    // Must be called synchronously from the click handler so browsers allow the popup.
-    window.FB.login(
-      async (response: any) => {
-        const code = response?.authResponse?.code
-        if (!code) {
-          setBusy(false)
-          setStatus('Meta did not return an authorization code. Complete or retry the signup flow.')
-          return
-        }
-        try {
-          const finish = await fetch('/api/whatsapp/onboarding', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ code, ...sessionInfo.current }),
-          })
-          const payload = await finish.json()
-          if (!finish.ok) throw new Error(payload.error || 'Could not finish WhatsApp onboarding.')
-          setStatus(`Connected successfully${payload.phoneNumberId ? ` (Phone Number ID ${payload.phoneNumberId})` : ''}.`)
-        } catch (error) {
-          setStatus(error instanceof Error ? error.message : 'Could not finish WhatsApp onboarding.')
-        } finally {
-          setBusy(false)
-        }
-      },
-      {
-        config_id: configId,
-        response_type: 'code',
-        override_default_response_type: true,
-        extras: {
-          setup: {},
-          featureType: 'whatsapp_business_app_onboarding',
-          sessionInfoVersion: '3',
+    setBusy(true)
+    setStatus('Opening Meta Embedded Signup…')
+    sessionInfo.current = {}
+
+    try {
+      // Meta's SDK expects a normal callback function. Do not pass an async function
+      // directly to FB.login; some SDK builds reject it as `asyncfunction`.
+      window.FB.login(
+        (response: any) => {
+          void finishSignup(response)
         },
-      },
-    )
+        {
+          config_id: configId,
+          response_type: 'code',
+          override_default_response_type: true,
+          extras: {
+            setup: {},
+            featureType: 'whatsapp_business_app_onboarding',
+            sessionInfoVersion: '3',
+          },
+        },
+      )
+    } catch (error) {
+      console.error('[whatsapp-onboarding] Meta Embedded Signup failed to open', error)
+      setBusy(false)
+      setStatus(`Could not open Meta signup: ${error instanceof Error ? error.message : 'Unknown Meta SDK error'}`)
+    }
   }
 
   const configured = Boolean(appId && configId)
