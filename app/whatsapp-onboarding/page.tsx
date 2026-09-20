@@ -26,7 +26,12 @@ export default function WhatsAppOnboardingPage() {
   const graphVersion = process.env.NEXT_PUBLIC_META_GRAPH_VERSION || 'v26.0'
 
   useEffect(() => {
-    if (!appId) return
+    // If Meta ever returns the popup to this route with query/hash parameters,
+    // keep the user on the onboarding route and never let the root inbox render.
+    if (window.location.pathname !== '/whatsapp-onboarding') {
+      window.history.replaceState({}, '', META_REDIRECT_URI)
+    }
+
     const receiveMessage = (event: MessageEvent) => {
       if (event.origin !== 'https://www.facebook.com' && event.origin !== 'https://web.facebook.com') return
       try {
@@ -50,6 +55,8 @@ export default function WhatsAppOnboardingPage() {
       }
     }
     window.addEventListener('message', receiveMessage)
+
+    if (!appId) return () => window.removeEventListener('message', receiveMessage)
 
     window.fbAsyncInit = () => {
       window.FB?.init({ appId, cookie: true, xfbml: false, version: graphVersion })
@@ -85,11 +92,13 @@ export default function WhatsAppOnboardingPage() {
       const finish = await fetch('/api/whatsapp/onboarding', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code, redirect_uri: META_REDIRECT_URI, ...sessionInfo.current }),
+        body: JSON.stringify({ code, ...sessionInfo.current }),
       })
       const payload = await finish.json()
       if (!finish.ok) throw new Error(payload.error || 'Could not finish WhatsApp onboarding.')
       setStatus(`Connected successfully${payload.phoneNumberId ? ` (Phone Number ID ${payload.phoneNumberId})` : ''}.`)
+      // Clean any callback parameters while deliberately staying on this page.
+      window.history.replaceState({}, '', '/whatsapp-onboarding')
     } catch (error) {
       setStatus(error instanceof Error ? error.message : 'Could not finish WhatsApp onboarding.')
     } finally {
@@ -116,7 +125,6 @@ export default function WhatsAppOnboardingPage() {
           config_id: configId,
           response_type: 'code',
           override_default_response_type: true,
-          redirect_uri: META_REDIRECT_URI,
           extras: {
             setup: {},
             featureType: 'whatsapp_business_app_onboarding',
