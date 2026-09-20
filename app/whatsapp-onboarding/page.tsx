@@ -14,6 +14,8 @@ declare global {
 
 type SessionInfo = { waba_id?: string; phone_number_id?: string }
 
+const META_REDIRECT_URI = 'https://whatsapp.myticketom.com/whatsapp-onboarding'
+
 export default function WhatsAppOnboardingPage() {
   const [sdkReady, setSdkReady] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -83,7 +85,7 @@ export default function WhatsAppOnboardingPage() {
       const finish = await fetch('/api/whatsapp/onboarding', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code, ...sessionInfo.current }),
+        body: JSON.stringify({ code, redirect_uri: META_REDIRECT_URI, ...sessionInfo.current }),
       })
       const payload = await finish.json()
       if (!finish.ok) throw new Error(payload.error || 'Could not finish WhatsApp onboarding.')
@@ -106,8 +108,6 @@ export default function WhatsAppOnboardingPage() {
     sessionInfo.current = {}
 
     try {
-      // Meta's SDK expects a normal callback function. Do not pass an async function
-      // directly to FB.login; some SDK builds reject it as `asyncfunction`.
       window.FB.login(
         (response: any) => {
           void finishSignup(response)
@@ -116,6 +116,7 @@ export default function WhatsAppOnboardingPage() {
           config_id: configId,
           response_type: 'code',
           override_default_response_type: true,
+          redirect_uri: META_REDIRECT_URI,
           extras: {
             setup: {},
             featureType: 'whatsapp_business_app_onboarding',
