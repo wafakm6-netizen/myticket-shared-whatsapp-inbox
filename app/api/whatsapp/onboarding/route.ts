@@ -23,16 +23,14 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    // Embedded Signup's JS SDK returns a code that must be exchanged without
+    // inventing or overriding a redirect_uri. The redirect context is bound to
+    // the code by Meta's SDK. Supplying '', '/', or our onboarding URL here can
+    // cause OAuthException: redirect_uri is not identical.
     const tokenUrl = new URL(`https://graph.facebook.com/${graphVersion}/oauth/access_token`)
     tokenUrl.searchParams.set('client_id', appId)
     tokenUrl.searchParams.set('client_secret', appSecret)
     tokenUrl.searchParams.set('code', code)
-
-    // FB.login() Embedded Signup does not expose its internal popup redirect URI.
-    // Meta's code exchange distinguishes an omitted redirect_uri from an explicitly
-    // empty one. For this JS SDK flow, use the empty redirect URI expected by the
-    // authorization code instead of guessing our site/root/onboarding URL.
-    tokenUrl.searchParams.set('redirect_uri', '')
 
     const tokenResponse = await fetch(tokenUrl, { method: 'GET', cache: 'no-store' })
     const tokenPayload = await tokenResponse.json().catch(() => null)
