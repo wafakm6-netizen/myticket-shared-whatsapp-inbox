@@ -22,18 +22,22 @@ export default function WhatsAppOnboardingPage() {
       return
     }
     if (!code) return
+
     setBusy(true)
-    setStatus('Meta authorization received. Finishing the connection…')
+    setStatus('Meta authorization received. Verifying the WhatsApp number and saving the connection…')
     void fetch('/api/whatsapp/onboarding', {
       method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code }),
     }).then(async (response) => {
       const payload = await response.json().catch(() => ({}))
       if (!response.ok) throw new Error(payload.error || 'Could not finish WhatsApp onboarding.')
-      setStatus(`Connected successfully${payload.phoneNumberId ? ` (Phone Number ID ${payload.phoneNumberId})` : ''}.`)
-    }).catch((err) => setStatus(err instanceof Error ? err.message : 'Could not finish WhatsApp onboarding.')).finally(() => {
-      setBusy(false)
+      if (!payload.wabaId || !payload.phoneNumberId) throw new Error('Meta authorization completed, but the WhatsApp account was not verified.')
+      setStatus(`Connected successfully. Phone Number ID ${payload.phoneNumberId}. Opening the shared inbox…`)
       window.history.replaceState({}, '', '/whatsapp-onboarding')
-    })
+      window.setTimeout(() => window.location.assign('/'), 900)
+    }).catch((err) => {
+      setStatus(err instanceof Error ? err.message : 'Could not finish WhatsApp onboarding.')
+      window.history.replaceState({}, '', '/whatsapp-onboarding')
+    }).finally(() => setBusy(false))
   }, [])
 
   const startSignup = () => {
@@ -60,11 +64,11 @@ export default function WhatsAppOnboardingPage() {
         <img src="/brand/myticket-wordmark.png" alt="Myticket" style={{ width: 150, height: 'auto', marginBottom: 28 }} />
         <div style={{ color: '#ff5a1f', fontWeight: 700, fontSize: 13, letterSpacing: '.08em', marginBottom: 8 }}>WHATSAPP BUSINESS</div>
         <h1 style={{ fontSize: 30, margin: '0 0 12px', color: '#241a16' }}>Connect the Myticket WhatsApp number</h1>
-        <p style={{ color: '#665750', lineHeight: 1.6, margin: '0 0 24px' }}>Connect the existing WhatsApp Business app number through Meta. Authorization returns to this same page to finish the connection.</p>
+        <p style={{ color: '#665750', lineHeight: 1.6, margin: '0 0 24px' }}>Connect the existing WhatsApp Business app number through Meta. The connection is verified and saved before the shared inbox opens.</p>
         <div style={{ background: '#fff8f4', border: '1px solid #ffd9c8', borderRadius: 12, padding: 16, marginBottom: 20, color: '#5e4438', lineHeight: 1.5 }}>{status}</div>
         {!configured && <p style={{ color: '#a13b18', fontSize: 14 }}>Vercel still needs NEXT_PUBLIC_META_APP_ID and NEXT_PUBLIC_WHATSAPP_EMBEDDED_SIGNUP_CONFIG_ID.</p>}
         <button onClick={startSignup} disabled={busy || !configured} style={{ width: '100%', border: 0, borderRadius: 12, padding: '14px 18px', background: busy || !configured ? '#f3b39b' : '#ff5a1f', color: '#fff', fontWeight: 700, fontSize: 16, cursor: busy || !configured ? 'not-allowed' : 'pointer' }}>{busy ? 'Connecting…' : 'Connect with Meta'}</button>
-        <p style={{ color: '#8b7a72', fontSize: 12, marginTop: 16, lineHeight: 1.5 }}>Meta handles the account authorization and returns you to this page. Never paste access tokens, OTPs, or verification codes here.</p>
+        <p style={{ color: '#8b7a72', fontSize: 12, marginTop: 16, lineHeight: 1.5 }}>Meta handles account authorization. The inbox opens only after the WhatsApp Business Account and phone number are verified and saved.</p>
       </section>
     </main>
   )
