@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAgent } from '@/lib/auth'
 
-const META_REDIRECT_URI = 'https://whatsapp.myticketom.com/whatsapp-onboarding'
+// Meta's JavaScript SDK uses the site's root URL as the redirect_uri for the
+// Embedded Signup OAuth authorization request. The authorization-code exchange
+// MUST use that exact same URI or Meta rejects the code.
+const META_OAUTH_REDIRECT_URI = 'https://whatsapp.myticketom.com/'
 
 export async function POST(request: NextRequest) {
   const auth = await requireAgent()
@@ -18,9 +21,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Meta authorization code is required.' }, { status: 400 })
   }
 
-  // Never allow the browser to make the token exchange use a different redirect URI.
-  // Embedded Signup and this exchange must use the exact same canonical URL.
-  if (suppliedRedirectUri && suppliedRedirectUri !== META_REDIRECT_URI) {
+  // If a caller supplies a redirect URI, only accept the exact URI Meta used
+  // when issuing the authorization code.
+  if (suppliedRedirectUri && suppliedRedirectUri !== META_OAUTH_REDIRECT_URI) {
     return NextResponse.json({ error: 'Invalid Meta redirect URI.' }, { status: 400 })
   }
 
@@ -36,7 +39,7 @@ export async function POST(request: NextRequest) {
     tokenUrl.searchParams.set('client_id', appId)
     tokenUrl.searchParams.set('client_secret', appSecret)
     tokenUrl.searchParams.set('code', code)
-    tokenUrl.searchParams.set('redirect_uri', META_REDIRECT_URI)
+    tokenUrl.searchParams.set('redirect_uri', META_OAUTH_REDIRECT_URI)
 
     const tokenResponse = await fetch(tokenUrl, { method: 'GET', cache: 'no-store' })
     const tokenPayload = await tokenResponse.json().catch(() => null)
