@@ -1,13 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAgent } from '@/lib/auth'
 
+const META_REDIRECT_URI = 'https://whatsapp.myticketom.com/whatsapp-onboarding'
+
 export async function POST(request: NextRequest) {
   const auth = await requireAgent()
   if (auth.error) return auth.error
 
-  const { code, waba_id: suppliedWabaId, phone_number_id: suppliedPhoneNumberId } = await request.json().catch(() => ({}))
+  const {
+    code,
+    redirect_uri: suppliedRedirectUri,
+    waba_id: suppliedWabaId,
+    phone_number_id: suppliedPhoneNumberId,
+  } = await request.json().catch(() => ({}))
+
   if (typeof code !== 'string' || !code) {
     return NextResponse.json({ error: 'Meta authorization code is required.' }, { status: 400 })
+  }
+
+  // Never allow the browser to make the token exchange use a different redirect URI.
+  // Embedded Signup and this exchange must use the exact same canonical URL.
+  if (suppliedRedirectUri && suppliedRedirectUri !== META_REDIRECT_URI) {
+    return NextResponse.json({ error: 'Invalid Meta redirect URI.' }, { status: 400 })
   }
 
   const appId = process.env.META_APP_ID || process.env.NEXT_PUBLIC_META_APP_ID
@@ -22,6 +36,7 @@ export async function POST(request: NextRequest) {
     tokenUrl.searchParams.set('client_id', appId)
     tokenUrl.searchParams.set('client_secret', appSecret)
     tokenUrl.searchParams.set('code', code)
+    tokenUrl.searchParams.set('redirect_uri', META_REDIRECT_URI)
 
     const tokenResponse = await fetch(tokenUrl, { method: 'GET', cache: 'no-store' })
     const tokenPayload = await tokenResponse.json().catch(() => null)
@@ -35,12 +50,9 @@ export async function POST(request: NextRequest) {
     }
 
     const accessToken = tokenPayload.access_token as string
-    let wabaId = typeof suppliedWabaId === 'string' ? suppliedWabaId : undefined
-    let phoneNumberId = typeof suppliedPhoneNumberId === 'string' ? suppliedPhoneNumberId : undefined
+    const wabaId = typeof suppliedWabaId === 'string' ? suppliedWabaId : undefined
+    const phoneNumberId = typeof suppliedPhoneNumberId === 'string' ? suppliedPhoneNumberId : undefined
 
-    // Coexistence session information is normally supplied by the Embedded Signup
-    // FINISH event. If Meta omitted it, keep the token exchange successful and
-    // report that the account IDs still need to be confirmed in Meta.
     if (wabaId) {
       const subscribeResponse = await fetch(`https://graph.facebook.com/${graphVersion}/${wabaId}/subscribed_apps`, {
         method: 'POST',
@@ -69,7 +81,6 @@ export async function POST(request: NextRequest) {
       wabaId: wabaId || null,
       phoneNumberId: phoneNumberId || null,
       subscribed: Boolean(wabaId),
-      // Deliberately never return the exchanged access token to the browser.
     })
   } catch (error) {
     console.error('[whatsapp-onboarding] failed', error)
