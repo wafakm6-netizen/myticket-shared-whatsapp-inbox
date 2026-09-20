@@ -23,14 +23,16 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    // The authorization code comes from FB.login() / Facebook Login for Business.
-    // Do not inject our own redirect_uri into this exchange: the JS SDK controls
-    // its OAuth callback internally, and supplying a different redirect_uri makes
-    // Meta reject an otherwise valid Embedded Signup code.
     const tokenUrl = new URL(`https://graph.facebook.com/${graphVersion}/oauth/access_token`)
     tokenUrl.searchParams.set('client_id', appId)
     tokenUrl.searchParams.set('client_secret', appSecret)
     tokenUrl.searchParams.set('code', code)
+
+    // FB.login() Embedded Signup does not expose its internal popup redirect URI.
+    // Meta's code exchange distinguishes an omitted redirect_uri from an explicitly
+    // empty one. For this JS SDK flow, use the empty redirect URI expected by the
+    // authorization code instead of guessing our site/root/onboarding URL.
+    tokenUrl.searchParams.set('redirect_uri', '')
 
     const tokenResponse = await fetch(tokenUrl, { method: 'GET', cache: 'no-store' })
     const tokenPayload = await tokenResponse.json().catch(() => null)
@@ -38,9 +40,15 @@ export async function POST(request: NextRequest) {
       console.error('[whatsapp-onboarding] token exchange failed', {
         httpStatus: tokenResponse.status,
         code: tokenPayload?.error?.code,
+        subcode: tokenPayload?.error?.error_subcode,
+        type: tokenPayload?.error?.type,
         message: tokenPayload?.error?.message,
       })
-      return NextResponse.json({ error: tokenPayload?.error?.message || 'Meta token exchange failed.' }, { status: 502 })
+      return NextResponse.json({
+        error: tokenPayload?.error?.message || 'Meta token exchange failed.',
+        metaCode: tokenPayload?.error?.code || null,
+        metaSubcode: tokenPayload?.error?.error_subcode || null,
+      }, { status: 502 })
     }
 
     const accessToken = tokenPayload.access_token as string
