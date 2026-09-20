@@ -26,8 +26,6 @@ export default function WhatsAppOnboardingPage() {
   const graphVersion = process.env.NEXT_PUBLIC_META_GRAPH_VERSION || 'v26.0'
 
   useEffect(() => {
-    // If Meta ever returns the popup to this route with query/hash parameters,
-    // keep the user on the onboarding route and never let the root inbox render.
     if (window.location.pathname !== '/whatsapp-onboarding') {
       window.history.replaceState({}, '', META_REDIRECT_URI)
     }
@@ -37,7 +35,13 @@ export default function WhatsAppOnboardingPage() {
       try {
         const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data
         if (data?.type !== 'WA_EMBEDDED_SIGNUP') return
-        if (data.event === 'FINISH' || data.event === 'FINISH_ONLY_WABA') {
+
+        const finished =
+          data.event === 'FINISH' ||
+          data.event === 'FINISH_ONLY_WABA' ||
+          data.event === 'FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING'
+
+        if (finished) {
           sessionInfo.current = {
             waba_id: data.data?.waba_id,
             phone_number_id: data.data?.phone_number_id,
@@ -59,6 +63,9 @@ export default function WhatsAppOnboardingPage() {
     if (!appId) return () => window.removeEventListener('message', receiveMessage)
 
     window.fbAsyncInit = () => {
+      // Do not enable Meta's optional FedCM login mode here. Embedded Signup is
+      // config_id-based and must continue through the Facebook Login for Business
+      // configuration rather than an OpenID-only FedCM prompt.
       window.FB?.init({ appId, cookie: true, xfbml: false, version: graphVersion })
       setSdkReady(true)
     }
@@ -91,13 +98,13 @@ export default function WhatsAppOnboardingPage() {
     try {
       const finish = await fetch('/api/whatsapp/onboarding', {
         method: 'POST',
+        credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code, ...sessionInfo.current }),
       })
       const payload = await finish.json()
       if (!finish.ok) throw new Error(payload.error || 'Could not finish WhatsApp onboarding.')
       setStatus(`Connected successfully${payload.phoneNumberId ? ` (Phone Number ID ${payload.phoneNumberId})` : ''}.`)
-      // Clean any callback parameters while deliberately staying on this page.
       window.history.replaceState({}, '', '/whatsapp-onboarding')
     } catch (error) {
       setStatus(error instanceof Error ? error.message : 'Could not finish WhatsApp onboarding.')
