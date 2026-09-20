@@ -1,30 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAgent } from '@/lib/auth'
 
-// Meta's JavaScript SDK uses the site's root URL as the redirect_uri for the
-// Embedded Signup OAuth authorization request. The authorization-code exchange
-// MUST use that exact same URI or Meta rejects the code.
-const META_OAUTH_REDIRECT_URI = 'https://whatsapp.myticketom.com/'
-
 export async function POST(request: NextRequest) {
   const auth = await requireAgent()
   if (auth.error) return auth.error
 
   const {
     code,
-    redirect_uri: suppliedRedirectUri,
     waba_id: suppliedWabaId,
     phone_number_id: suppliedPhoneNumberId,
   } = await request.json().catch(() => ({}))
 
   if (typeof code !== 'string' || !code) {
     return NextResponse.json({ error: 'Meta authorization code is required.' }, { status: 400 })
-  }
-
-  // If a caller supplies a redirect URI, only accept the exact URI Meta used
-  // when issuing the authorization code.
-  if (suppliedRedirectUri && suppliedRedirectUri !== META_OAUTH_REDIRECT_URI) {
-    return NextResponse.json({ error: 'Invalid Meta redirect URI.' }, { status: 400 })
   }
 
   const appId = process.env.META_APP_ID || process.env.NEXT_PUBLIC_META_APP_ID
@@ -35,11 +23,14 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    // The authorization code comes from FB.login() / Facebook Login for Business.
+    // Do not inject our own redirect_uri into this exchange: the JS SDK controls
+    // its OAuth callback internally, and supplying a different redirect_uri makes
+    // Meta reject an otherwise valid Embedded Signup code.
     const tokenUrl = new URL(`https://graph.facebook.com/${graphVersion}/oauth/access_token`)
     tokenUrl.searchParams.set('client_id', appId)
     tokenUrl.searchParams.set('client_secret', appSecret)
     tokenUrl.searchParams.set('code', code)
-    tokenUrl.searchParams.set('redirect_uri', META_OAUTH_REDIRECT_URI)
 
     const tokenResponse = await fetch(tokenUrl, { method: 'GET', cache: 'no-store' })
     const tokenPayload = await tokenResponse.json().catch(() => null)
