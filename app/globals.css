@@ -16,3 +16,38 @@
 /* Login proportion refinement */
 @media(min-width:761px){.login-shell{padding:26px}.login-experience{width:min(92vw,920px);min-height:0;height:min(76vh,570px);grid-template-columns:1fr 1fr;border-radius:22px}.login-preview-top{height:68px;padding:0 22px}.login-preview-thread{padding:27px 26px}.login-preview-composer{height:48px;margin:0 20px 18px}.login-preview-caption{padding:15px 22px}.login-card{padding:42px 48px}.login-wordmark{width:154px;margin-bottom:35px}.login-copy h1{font-size:29px}.login-form{margin-top:25px}.login-form input{height:44px}.login-form .send-btn{height:44px}.login-footnote{margin-top:20px}}
 @media(min-width:1400px){.login-experience{width:900px;height:560px}}
+
+/* Ensure complete login is visible at normal browser zoom */
+.login-shell{min-height:100svh;height:auto;overflow-x:hidden;overflow-y:auto;align-content:center;padding-top:22px;padding-bottom:62px}
+.login-card{padding-top:28px;padding-bottom:24px}
+.login-channel-mark{width:46px;height:46px;margin-bottom:10px}
+.login-wordmark{width:138px}
+.login-divider{margin:12px 0 16px}
+.login-copy h1{font-size:26px}
+.login-form{margin-top:19px}
+.login-form .login-input-wrap{height:46px}
+.login-form .login-input-wrap input{height:44px}
+.login-submit{height:46px!important;margin-top:12px!important}
+.login-security{margin-top:17px;padding-top:15px}
+.login-help{margin-top:12px}
+.login-page-footer{bottom:14px}
+.login-lock svg{display:block}
+.login-field-icon{flex:0 0 38px}
+@media(max-height:720px) and (min-width:601px){
+  .login-shell{place-items:start center;align-content:start;padding-top:12px;padding-bottom:48px}
+  .login-card{padding-top:20px;padding-bottom:18px}
+  .login-channel-mark{width:40px;height:40px;margin-bottom:6px}
+  .login-wordmark{width:122px}
+  .login-product-name{font-size:8px}
+  .login-divider{margin:8px 0 10px}
+  .login-copy h1{font-size:23px;margin-bottom:3px}
+  .login-copy p{font-size:10px}
+  .login-form{margin-top:13px;gap:5px}
+  .login-form label{margin-top:2px}
+  .login-form .login-input-wrap{height:40px}
+  .login-form .login-input-wrap input{height:38px}
+  .login-submit{height:41px!important;margin-top:8px!important}
+  .login-security{margin-top:11px;padding-top:10px}
+  .login-help{margin-top:7px}
+  .login-page-footer{bottom:8px}
+}
