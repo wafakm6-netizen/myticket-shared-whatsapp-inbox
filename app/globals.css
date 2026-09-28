@@ -236,3 +236,10 @@
 .profile{background:#fff;border:1px solid #e5eaf0;border-radius:14px;padding:20px 14px;margin-bottom:14px;box-shadow:0 1px 3px #22344a0c}.profile-avatar{width:64px;height:64px;font-size:16px}.profile h2{font-size:14px;color:#1d2940}.profile .large-badge{margin-top:4px}
 .detail-section{background:#fff;border:1px solid #e5eaf0;border-radius:14px;padding:16px;margin:0 0 14px;box-shadow:0 1px 3px #22344a0c}.section-heading{margin-bottom:13px}.section-heading h3{font-size:9px;letter-spacing:.04em}.detail-section dl{font-size:10px}.detail-row{background:#fff;border:1px solid #e5eaf0;border-radius:12px;padding:12px;margin:0;color:#71849c}
 @media(max-width:1120px){.details-pane{width:260px;flex-basis:260px}.inbox-pane{width:320px;flex-basis:320px}}
+
+/* Contact details refinement */
+.details-pane{padding-bottom:22px}
+.profile{padding:19px 14px 17px}.profile-avatar{background:#ffe0d6!important;color:#263249!important}.profile h2{margin-bottom:7px;font-size:15px}.profile .type-badge{background:#dcf8ea;border-color:#c6efdd;color:#18805d}
+.contact-card dl{grid-template-columns:58px 1fr;gap:12px 8px}.contact-card dt{color:#8b9aab}.contact-card dd{font-weight:600;color:#40536d;display:flex;align-items:center;gap:6px}.whatsapp-channel-dot{width:7px;height:7px;border-radius:50%;background:#08b77b;display:inline-block}
+.assignment-card .section-heading{margin-bottom:12px}.assignment-card select{height:37px;border-radius:9px;background:#f7f9fc;border-color:#e0e6ee;font-weight:600;color:#435670}.assignment-card .field-label{margin-top:7px;color:#8494a8}
+.notes textarea{width:100%;border:1px solid #e0e6ee;border-radius:9px;background:#f7f9fc;padding:9px;font-size:10px;color:#44566e;resize:vertical}.note-item{margin-top:9px!important;padding:9px;background:#f7f9fc;border-radius:8px}
