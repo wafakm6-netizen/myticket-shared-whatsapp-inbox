@@ -175,3 +175,8 @@
 
 /* Match EMAIL and PASSWORD labels to Welcome back color */
 .login-form label{color:#7f8b9c!important}
+
+/* Improve readability of login help and footer copy */
+.login-help{font-size:11px!important}
+.login-page-footer{font-size:10px!important}
+@media(max-width:600px){.login-help{font-size:10.5px!important}.login-page-footer{font-size:9.5px!important}}
