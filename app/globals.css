@@ -180,3 +180,10 @@
 .login-help{font-size:11px!important}
 .login-page-footer{font-size:10px!important}
 @media(max-width:600px){.login-help{font-size:10.5px!important}.login-page-footer{font-size:9.5px!important}}
+
+/* Functional emoji picker */
+.emoji-picker-wrap{position:relative;display:inline-flex}
+.emoji-picker{position:absolute;left:0;bottom:36px;z-index:80;width:248px;display:grid;grid-template-columns:repeat(6,1fr);gap:3px;padding:10px;background:#fff;border:1px solid #e4e8e6;border-radius:12px;box-shadow:0 14px 36px #1d2b241f}
+.emoji-picker button{width:34px;height:34px;display:grid;place-items:center;border:0;border-radius:8px;background:transparent;font-size:20px;line-height:1;cursor:pointer;font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif}
+.emoji-picker button:hover{background:#f2f7f4}
+.message-bubble,.composer textarea{font-family:inherit,"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif}
