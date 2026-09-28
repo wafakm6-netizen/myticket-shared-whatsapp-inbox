@@ -243,3 +243,8 @@
 .contact-card dl{grid-template-columns:58px 1fr;gap:12px 8px}.contact-card dt{color:#8b9aab}.contact-card dd{font-weight:600;color:#40536d;display:flex;align-items:center;gap:6px}.whatsapp-channel-dot{width:7px;height:7px;border-radius:50%;background:#08b77b;display:inline-block}
 .assignment-card .section-heading{margin-bottom:12px}.assignment-card select{height:37px;border-radius:9px;background:#f7f9fc;border-color:#e0e6ee;font-weight:600;color:#435670}.assignment-card .field-label{margin-top:7px;color:#8494a8}
 .notes textarea{width:100%;border:1px solid #e0e6ee;border-radius:9px;background:#f7f9fc;padding:9px;font-size:10px;color:#44566e;resize:vertical}.note-item{margin-top:9px!important;padding:9px;background:#f7f9fc;border-radius:8px}
+
+/* New supplied vertical login artwork */
+.login-brand-lockup{height:150px!important;margin:0 auto 12px!important;overflow:visible!important}
+.login-brand-lockup-image{width:180px!important;max-width:78%!important;height:145px!important;object-fit:contain!important}
+@media(min-width:601px) and (max-height:700px){.login-brand-lockup{height:120px!important;margin-bottom:8px!important}.login-brand-lockup-image{width:150px!important;height:116px!important}}
