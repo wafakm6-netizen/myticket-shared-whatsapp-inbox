@@ -26,8 +26,6 @@ export default function Page() {
   const [emojiOpen, setEmojiOpen] = useState(false)
   const [emojiSearch, setEmojiSearch] = useState('')
   const [emojiCategory, setEmojiCategory] = useState('recent')
-  const [emojiSearch, setEmojiSearch] = useState('')
-  const [emojiCategory, setEmojiCategory] = useState('recent')
   const [noteDraft, setNoteDraft] = useState('')
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [detailsOpen, setDetailsOpen] = useState(true)
