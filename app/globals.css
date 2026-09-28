@@ -172,3 +172,6 @@
 /* Restore original compact security check icon */
 .login-check{width:20px!important;height:20px!important;flex:0 0 20px!important;font-size:11px!important;font-weight:900!important}
 @media(min-width:601px) and (max-height:700px){.login-check{width:20px!important;height:20px!important;flex-basis:20px!important;font-size:11px!important}}
+
+/* Match EMAIL and PASSWORD labels to Welcome back color */
+.login-form label{color:#7f8b9c!important}
