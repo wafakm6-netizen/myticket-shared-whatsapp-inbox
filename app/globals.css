@@ -264,3 +264,8 @@
 .login-brand-lockup{width:260px!important;height:120px!important;margin:0 auto 10px!important;overflow:visible!important}
 .login-brand-lockup-image{position:static!important;width:260px!important;height:120px!important;max-width:100%!important;object-fit:contain!important;object-position:center!important;transform:none!important}
 @media(min-width:601px) and (max-height:700px){.login-brand-lockup{width:225px!important;height:104px!important;margin-bottom:7px!important}.login-brand-lockup-image{width:225px!important;height:104px!important;transform:none!important}}
+
+/* Login brand subtitle matching supplied reference */
+.login-brand-lockup{height:auto!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;overflow:visible!important}
+.login-brand-subtitle{margin-top:-12px;font-size:9px;line-height:1;letter-spacing:3.2px;font-weight:500;color:#17223b;white-space:nowrap;text-align:center}
+@media(min-width:601px) and (max-height:700px){.login-brand-lockup{height:auto!important}.login-brand-subtitle{margin-top:-10px;font-size:8px;letter-spacing:2.8px}}
