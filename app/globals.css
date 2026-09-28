@@ -248,3 +248,9 @@
 .login-brand-lockup{height:150px!important;margin:0 auto 12px!important;overflow:visible!important}
 .login-brand-lockup-image{width:180px!important;max-width:78%!important;height:145px!important;object-fit:contain!important}
 @media(min-width:601px) and (max-height:700px){.login-brand-lockup{height:120px!important;margin-bottom:8px!important}.login-brand-lockup-image{width:150px!important;height:116px!important}}
+
+/* Correct new logo presentation: remove oversized empty image area */
+.login-brand-lockup{height:82px!important;margin:0 auto 14px!important;overflow:hidden!important;display:flex!important;align-items:center!important;justify-content:center!important}
+.login-brand-lockup-image{width:142px!important;max-width:none!important;height:142px!important;object-fit:cover!important;object-position:center!important;transform:scale(1.72)!important}
+.login-relocated-title{margin-top:0!important}
+@media(min-width:601px) and (max-height:700px){.login-brand-lockup{height:70px!important;margin-bottom:10px!important}.login-brand-lockup-image{width:122px!important;height:122px!important;transform:scale(1.72)!important}}
