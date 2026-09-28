@@ -337,3 +337,6 @@
     letter-spacing:2px!important;
   }
 }
+
+/* Bold login brand subtitle */
+.login-brand-subtitle{font-weight:700!important}
