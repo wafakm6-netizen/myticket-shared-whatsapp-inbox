@@ -359,3 +359,18 @@
 .login-privacy-link{margin:7px 0 0;text-align:center;font-size:11px;line-height:1.5}
 .login-privacy-link a{color:#f4512d;text-decoration:underline;text-underline-offset:3px}
 .login-privacy-link a:hover{color:#d94120}
+
+/* Approved shared inbox branding and spacing */
+@media (min-width:851px){
+  .app-shell .rail{width:132px;flex:0 0 132px;padding:32px 9px 18px}
+  .app-shell .rail .brand-mark{width:114px;height:112px;flex:0 0 112px;margin:0 auto 78px;border:0;border-radius:0;background:transparent;overflow:hidden;display:flex;align-items:center;justify-content:center}
+  .app-shell .rail .brand-mark img{width:126px;height:126px;max-width:none;object-fit:contain;display:block}
+  .app-shell .rail-nav{padding-top:0;gap:11px}
+  .app-shell .rail-item{width:106px;min-height:56px}
+  .app-shell .rail-item span{font-size:11px}
+  .app-shell .rail-item b{right:10px}
+}
+.app-shell .pane-brand-heading{min-width:0;display:flex;align-items:center}
+.app-shell .pane-brand-heading h1{margin:0;font-size:clamp(12px,1.1vw,18px);font-weight:800;letter-spacing:.24em;line-height:1.5;color:#344866;white-space:nowrap}
+@media (max-width:1120px){.app-shell .pane-brand-heading h1{font-size:12px;letter-spacing:.15em}}
+@media (max-width:850px){.app-shell .rail .brand-mark{background:transparent;overflow:hidden}.app-shell .rail .brand-mark img{object-fit:contain}}
