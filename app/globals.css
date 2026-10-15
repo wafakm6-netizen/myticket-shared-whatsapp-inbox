@@ -388,3 +388,11 @@
 @media(max-width:1120px){
   .app-shell .inbox-pane .pane-header .pane-brand-heading h1{font-size:11px;letter-spacing:.12em}
 }
+
+/* Tighten the two marked empty spaces in the left sidebar. */
+@media(min-width:851px){
+  .app-shell .rail{padding-top:4px}
+  .app-shell .rail .brand-mark{margin-bottom:20px}
+}
+/* Keep the heading letter spacing but remove its bold weight. */
+.app-shell .inbox-pane .pane-header .pane-brand-heading h1{font-weight:400!important}
