@@ -408,3 +408,6 @@
 .app-shell .details-pane .details-title{position:relative;justify-content:center}
 .app-shell .details-pane .details-title .eyebrow{margin:0;text-align:center}
 .app-shell .details-pane .details-title>.icon-btn{position:absolute;right:14px;top:50%;transform:translateY(-50%)}
+
+/* Match top border baseline of chat and contact details panels. */
+.app-shell .chat-header, .app-shell .details-title { height:64px; min-height:64px; box-sizing:border-box; flex-shrink:0; }
