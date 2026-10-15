@@ -423,3 +423,18 @@
   margin-top:0!important;
   border-bottom:1px solid #dce4ee;
 }
+
+/* Sidebar balance: smaller centered brand, compact nav, grouped utilities. */
+@media (min-width:851px){
+  .app-shell .rail{padding-top:12px;padding-bottom:14px}
+  .app-shell .rail .brand-mark{
+    width:108px;height:100px;flex:0 0 100px;
+    margin:0 auto 16px;display:flex;align-items:center;justify-content:center;
+  }
+  .app-shell .rail .brand-mark img{width:104px;height:104px;max-width:104px;object-fit:contain}
+  .app-shell .rail .rail-nav{gap:8px;padding-top:0}
+  .app-shell .rail .rail-nav .rail-item{min-height:54px}
+  .app-shell .rail .rail-bottom{gap:7px;margin-top:auto}
+  .app-shell .rail .rail-bottom .rail-item{min-height:40px}
+  .app-shell .rail .rail-bottom .mini-avatar{margin-top:3px}
+}
