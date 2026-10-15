@@ -396,3 +396,7 @@
 }
 /* Keep the heading letter spacing but remove its bold weight. */
 .app-shell .inbox-pane .pane-header .pane-brand-heading h1{font-weight:400!important}
+
+/* Balanced breathing room above and below inbox filter tabs */
+.app-shell .inbox-pane .filter-tabs{height:46px;min-height:46px;align-items:center;padding-top:5px;padding-bottom:5px;box-sizing:border-box}
+.app-shell .inbox-pane .filter-tabs button{flex-shrink:0}
