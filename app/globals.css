@@ -411,3 +411,15 @@
 
 /* Match top border baseline of chat and contact details panels. */
 .app-shell .chat-header, .app-shell .details-title { height:64px; min-height:64px; box-sizing:border-box; flex-shrink:0; }
+
+/* Exact shared header track: same fixed outer height in both columns. */
+.app-shell .chat-pane > .chat-header,
+.app-shell .details-pane > .details-title {
+  height:80px!important;
+  min-height:80px!important;
+  max-height:80px!important;
+  flex:0 0 80px!important;
+  box-sizing:border-box!important;
+  margin-top:0!important;
+  border-bottom:1px solid #dce4ee;
+}
