@@ -374,3 +374,17 @@
 .app-shell .pane-brand-heading h1{margin:0;font-size:clamp(12px,1.1vw,18px);font-weight:800;letter-spacing:.24em;line-height:1.5;color:#344866;white-space:nowrap}
 @media (max-width:1120px){.app-shell .pane-brand-heading h1{font-size:12px;letter-spacing:.15em}}
 @media (max-width:850px){.app-shell .rail .brand-mark{background:transparent;overflow:hidden}.app-shell .rail .brand-mark img{object-fit:contain}}
+
+/* Restore visible inbox heading; prior compact header rule hid all h1 elements. */
+.app-shell .inbox-pane .pane-header .pane-brand-heading{display:flex;flex:1 1 auto;min-width:0;align-items:center}
+.app-shell .inbox-pane .pane-header .pane-brand-heading h1{display:block!important;visibility:visible!important;margin:0!important;color:#344866;font-weight:800;letter-spacing:.16em;font-size:clamp(10px,1vw,14px);line-height:1.45;white-space:normal;overflow-wrap:normal}
+.app-shell .inbox-pane .pane-header{gap:8px}
+.app-shell .inbox-pane .pane-header .icon-btn{flex-shrink:0}
+@media(min-width:851px){
+  .app-shell .rail .brand-mark{margin-bottom:92px}
+  .app-shell .rail .brand-mark img{width:122px;height:122px}
+  .app-shell .rail .rail-nav{gap:13px}
+}
+@media(max-width:1120px){
+  .app-shell .inbox-pane .pane-header .pane-brand-heading h1{font-size:11px;letter-spacing:.12em}
+}
