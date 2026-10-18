@@ -112,6 +112,15 @@ export default function Page() {
     return () => { active = false; if (channel) void channel.unsubscribe() }
   }, [])
 
+  // Keep incoming WhatsApp messages visible even when Supabase Realtime is unavailable.
+  useEffect(() => {
+    if (!sessionUser) return
+    const interval = window.setInterval(() => {
+      if (document.visibilityState === 'visible') void load().catch((error) => console.error('[inbox] refresh failed', error))
+    }, 5000)
+    return () => window.clearInterval(interval)
+  }, [sessionUser?.email])
+
   const counts = useMemo(() => ({ all: conversations.length, unassigned: conversations.filter((item) => !item.assignedTo).length, open: conversations.filter((item) => item.status === 'open').length, pending: conversations.filter((item) => item.status === 'pending').length, closed: conversations.filter((item) => item.status === 'closed').length }), [conversations])
   const visible = useMemo(() => conversations.filter((item) => { const matchesFilter = filter === 'all' || (filter === 'unassigned' ? !item.assignedTo : item.status === filter); return matchesFilter && `${item.name} ${item.phone} ${item.preview}`.toLowerCase().includes(query.toLowerCase()) }), [conversations, filter, query])
   const filteredSavedReplies = useMemo(() => savedReplies.filter((reply) => `${reply.title} ${reply.body}`.toLowerCase().includes(savedReplySearch.toLowerCase())), [savedReplies, savedReplySearch])
