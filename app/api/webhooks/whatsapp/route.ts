@@ -62,6 +62,19 @@ export async function POST(request: NextRequest) {
         stored++
       }
       for (const status of value.statuses ?? []) {
+        if (status.status === 'failed') {
+          const errors = Array.isArray(status.errors) ? status.errors : []
+          console.error('[whatsapp webhook] delivery failed', {
+            messageId: status.id ?? null,
+            status: status.status,
+            errors: errors.map((error: any) => ({
+              code: error.code ?? null,
+              title: error.title ?? null,
+              message: error.message ?? null,
+              details: error.error_data?.details ?? null,
+            })),
+          })
+        }
         const mapped = ['sent', 'delivered', 'read', 'failed'].includes(status.status) ? status.status : null
         if (mapped) {
           const { error: statusError } = await supabase.from('whatsapp_messages').update({ status: mapped }).eq('external_id', status.id)
