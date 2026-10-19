@@ -153,12 +153,13 @@ export default function Page() {
       const recorder = new MediaRecorder(stream, { mimeType: supported })
       const chunks: BlobPart[] = []
       recorder.ondataavailable = event => { if (event.data.size) chunks.push(event.data) }
+      recorder.onerror = () => { setRecording(false); setRecordingPaused(false); setMessageSendError('Audio recording failed. Please try again.') }
       recorder.onstop = () => {
         stream.getTracks().forEach(track => track.stop())
         streamRef.current = null
         setRecording(false)
         if (discardRecordingRef.current) { discardRecordingRef.current = false; return }
-        if (!chunks.length) return
+        if (!chunks.length) { setMessageSendError('No audio was captured. Please record again.'); return }
         const mime = recorder.mimeType.split(';')[0] || 'audio/webm'
         const extension = mime.includes('ogg') ? 'ogg' : mime.includes('mp4') ? 'm4a' : 'webm'
         const file = new File(chunks, `voice-${Date.now()}.${extension}`, { type: mime })
@@ -208,7 +209,23 @@ export default function Page() {
       }
     }
   }
-  const stopVoiceRecording = () => { if (recorderRef.current && recorderRef.current.state !== 'inactive') recorderRef.current.stop() }
+  const stopVoiceRecording = () => {
+    const recorder = recorderRef.current
+    if (!recorder) { setMessageSendError('No active recording was found. Please record again.'); setRecording(false); return }
+    try {
+      if (recorder.state === 'inactive') {
+        setRecording(false)
+        return
+      }
+      // Update the interface immediately; MediaRecorder.onstop asynchronously finalizes the preview.
+      setRecording(false)
+      setRecordingPaused(false)
+      recorder.stop()
+    } catch (error) {
+      console.error('[voice] failed to stop recording', error)
+      setMessageSendError('Unable to stop the recording. Please discard it and try again.')
+    }
+  }
   const discardVoiceRecording = () => {
     discardRecordingRef.current = true
     if (recorderRef.current && recorderRef.current.state !== 'inactive') recorderRef.current.stop()
