@@ -54,8 +54,10 @@ export async function POST(request: NextRequest) {
       ? { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type, text: { body: text.trim() } }
       : { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type, [type]: { link: attachmentUrl, caption: text.trim() } }
 
+    // Diagnostic: send uploaded Ogg/Opus as a regular audio attachment, not a voice note.
+    // Deliberately omit audio.voice; Meta webhook delivery status remains authoritative.
     const graphVersion = process.env.META_GRAPH_VERSION ?? 'v23.0'
-    console.info('[send] sending WhatsApp message', { recipient: maskPhone(recipient), phoneNumberId, graphVersion, type })
+    console.info('[send] sending WhatsApp message', { recipient: maskPhone(recipient), phoneNumberId, graphVersion, type, audioMode: type === 'audio' ? 'regular-attachment' : undefined, voiceFlagPresent: type === 'audio' ? Object.prototype.hasOwnProperty.call(messageBody.audio, 'voice') : undefined })
 
     const response = await fetch(
       `https://graph.facebook.com/${graphVersion}/${phoneNumberId}/messages`,
