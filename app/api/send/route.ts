@@ -14,8 +14,8 @@ export async function POST(request: NextRequest) {
   const auth = await requireAgent()
   if (auth.error) return auth.error
 
-  const { to, text, conversationId, attachmentUrl, attachmentName, attachmentType } = await request.json().catch(() => ({}))
-  if (typeof to !== 'string' || !to.trim() || typeof text !== 'string' || !text.trim()) {
+  const { to, text, conversationId, attachmentUrl, attachmentName, attachmentType, mediaId } = await request.json().catch(() => ({}))
+  if (typeof to !== 'string' || !to.trim() || (typeof text !== 'string' || (!text.trim() && !mediaId))) {
     return NextResponse.json({ error: 'Both recipient and message are required.' }, { status: 400 })
   }
 
@@ -49,8 +49,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'WhatsApp Cloud API is not configured.' }, { status: 503 })
     }
 
-    const type = attachmentUrl ? (attachmentType?.startsWith('image/') ? 'image' : 'document') : 'text'
-    const messageBody = type === 'text'
+    const type = mediaId ? 'audio' : attachmentUrl ? (attachmentType?.startsWith('image/') ? 'image' : 'document') : 'text'
+    const messageBody = type === 'audio' ? { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type: 'audio', audio: { id: mediaId, voice: true } } : type === 'text'
       ? { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type, text: { body: text.trim() } }
       : { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type, [type]: { link: attachmentUrl, caption: text.trim() } }
 
@@ -85,9 +85,9 @@ export async function POST(request: NextRequest) {
         conversation_id: conversation,
         external_id: externalId,
         direction: 'outbound',
-        body: text.trim(),
-        attachment_url: attachmentUrl ?? null,
-        attachment_name: attachmentName ?? null,
+        body: mediaId ? null : text.trim(),
+        attachment_url: mediaId ? `/api/media?mediaId=${encodeURIComponent(mediaId)}` : attachmentUrl ?? null,
+        attachment_name: mediaId ? 'Voice message' : attachmentName ?? null,
         status,
         sent_at: new Date().toISOString(),
       })
