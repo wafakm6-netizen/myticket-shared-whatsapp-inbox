@@ -497,3 +497,14 @@
 .app-shell .voice-recording-dot{width:9px;height:9px;border-radius:50%;background:#fa8096;flex-shrink:0}
 .app-shell .voice-recording-discard{height:32px;width:30px;background:transparent;color:#fff}
 @media(max-width:450px){.app-shell .voice-recording-bar{gap:5px}.app-shell .voice-recording-wave{gap:1px}.app-shell .voice-recording-wave span{min-width:1px;width:1px}}
+
+/* Light recording surface; keep the composer send action distinct from stop. */
+.app-shell .voice-recording-bar{background:#eef1f5;color:#34445b;border:1px solid #dce4ed}
+.app-shell .voice-recording-finish{background:#dce6ef;color:#425a70}
+.app-shell .voice-recording-pause{color:#e34e68}
+.app-shell .voice-recording-wave span{background:#8293a7}
+.app-shell .voice-recording-time{color:#33445b}
+.app-shell .voice-recording-dot{background:#ef6b82}
+.app-shell .voice-recording-discard{color:#66788e}
+.app-shell .voice-inline:not(:has(.voice-recording-bar)){min-width:0}
+.app-shell .voice-inline:not(:has(.voice-recording-bar)) .myticket-voice-player{flex:1;min-width:0;width:auto!important;background:transparent!important}
