@@ -38,3 +38,41 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({note:data})
   }catch(error){console.error('[inbox] note failed',error);return NextResponse.json({error:'Note could not be saved.'},{status:500})}
 }
+
+export async function DELETE(request: NextRequest) {
+  const auth = await requireAgent()
+  if (auth.error) return auth.error
+  try {
+    const { conversationId, messageId } = await request.json().catch(() => ({}))
+    if (typeof conversationId !== 'string' || !conversationId) return NextResponse.json({ error: 'Conversation ID is required.' }, { status: 400 })
+    const supabase = createServerSupabaseClient()
+    const { data: conversation, error: lookupError } = await supabase.from('whatsapp_conversations').select('id').eq('id', conversationId).maybeSingle()
+    if (lookupError) throw lookupError
+    if (!conversation) return NextResponse.json({ error: 'Conversation not found.' }, { status: 404 })
+
+    if (messageId !== undefined) {
+      if (typeof messageId !== 'string' || !messageId) return NextResponse.json({ error: 'Invalid message ID.' }, { status: 400 })
+      const { data: deleted, error } = await supabase.from('whatsapp_messages').delete().eq('id', messageId).eq('conversation_id', conversationId).select('id').maybeSingle()
+      if (error) throw error
+      if (!deleted) return NextResponse.json({ error: 'Message not found.' }, { status: 404 })
+      const { data: latest, error: latestError } = await supabase.from('whatsapp_messages').select('created_at').eq('conversation_id', conversationId).order('created_at', { ascending: false }).limit(1)
+      if (latestError) throw latestError
+      const { error: updateError } = await supabase.from('whatsapp_conversations').update({ last_message_at: latest?.[0]?.created_at ?? null }).eq('id', conversationId)
+      if (updateError) throw updateError
+      return NextResponse.json({ success: true, deleted: 'message' })
+    }
+
+    // Delete inbox history, not the WhatsApp recipient's messages or contact record.
+    for (const table of ['whatsapp_conversation_tags', 'whatsapp_internal_notes', 'whatsapp_messages']) {
+      const { error } = await supabase.from(table).delete().eq('conversation_id', conversationId)
+      if (error) throw error
+    }
+    const { data: deleted, error } = await supabase.from('whatsapp_conversations').delete().eq('id', conversationId).select('id').maybeSingle()
+    if (error) throw error
+    if (!deleted) return NextResponse.json({ error: 'Conversation not found.' }, { status: 404 })
+    return NextResponse.json({ success: true, deleted: 'conversation' })
+  } catch (error) {
+    console.error('[inbox] deletion failed', error)
+    return NextResponse.json({ error: 'Could not delete inbox content. Please try again.' }, { status: 500 })
+  }
+}
