@@ -456,3 +456,24 @@
 .conversation-copy .conversation-preview{display:flex;align-items:center;gap:5px;min-width:0}
 .conversation-preview-ticks{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;line-height:1}
 .conversation-preview-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+
+/* Responsive overflow fixes for tablet and browser zoom. */
+.app-shell{width:100%;max-width:100%;height:100dvh;min-height:0}
+.app-shell>.inbox-pane,.app-shell>.chat-pane,.app-shell>.details-pane{min-width:0;min-height:0;box-sizing:border-box}
+.app-shell>.chat-pane{flex:1 1 0;overflow:hidden}
+.app-shell .chat-header{min-width:0;gap:8px;padding-left:12px;padding-right:12px}
+.app-shell .chat-person{min-width:0;flex:1 1 auto}
+.app-shell .chat-person>div:last-child{min-width:0}
+.app-shell .chat-person h2{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.app-shell .chat-actions{flex:0 0 auto;gap:4px}
+.app-shell .thread{min-height:0;overflow-x:hidden;overflow-y:auto}
+.app-shell .message-bubble{min-width:0;overflow-wrap:anywhere}
+.app-shell .composer-wrap{flex-shrink:0;max-width:100%}
+.app-shell .composer,.app-shell .composer-tools{min-width:0;max-width:100%}
+.app-shell>.inbox-pane{display:flex;flex-direction:column;min-height:0}
+.app-shell .conversation-list{min-height:0;overflow-y:auto}
+.app-shell .rail{max-height:100dvh;min-height:0;overflow-y:auto;overflow-x:hidden}
+@media(max-height:720px){.app-shell .rail .brand-mark{margin-bottom:6px;height:65px;flex-basis:65px}.app-shell .rail .brand-mark img{width:74px;height:74px}.app-shell .rail .rail-nav{gap:3px}.app-shell .rail .rail-nav .rail-item{min-height:42px}}
+@media(min-width:851px) and (max-width:1280px){.app-shell>.details-pane{display:none}.app-shell>.inbox-pane{width:clamp(235px,27vw,320px);flex:0 0 clamp(235px,27vw,320px)}}
+@media(max-width:850px){.app-shell>.details-pane{display:none}.app-shell>.inbox-pane{width:clamp(220px,36vw,320px);flex:0 0 clamp(220px,36vw,320px)}.app-shell>.chat-pane{min-width:0;width:auto}}
+@media(max-width:620px){.app-shell>.inbox-pane{display:none}.app-shell>.chat-pane{width:100%}.app-shell .chat-actions{gap:2px}.app-shell .chat-actions .icon-btn{padding:5px}.app-shell .thread{padding-left:12px;padding-right:12px}.app-shell .message-bubble{max-width:92%}}
