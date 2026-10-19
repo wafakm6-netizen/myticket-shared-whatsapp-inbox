@@ -105,7 +105,25 @@ export default function Page() {
       recordingStartedRef.current = Date.now()
       recorder.start()
       setRecording(true)
-    } catch (error) { setMessageSendError(error instanceof Error ? error.message : 'Microphone access was denied.') }
+    } catch (error) {
+      streamRef.current?.getTracks().forEach(track => track.stop())
+      streamRef.current = null
+      const kind = error instanceof DOMException ? error.name : (error as { name?: string } | null)?.name
+      const details = error instanceof Error ? error.message : String(error)
+      console.error('[voice] microphone failed', { name: kind, message: details, secureContext: window.isSecureContext, embedded: window.self !== window.top })
+      if (kind === 'NotAllowedError' || kind === 'PermissionDeniedError' || kind === 'SecurityError') {
+        const embedded = window.self !== window.top
+        setMessageSendError(embedded
+          ? 'Microphone blocked by the embedded browser or iframe. Open whatsapp.myticketom.com in a normal Chrome tab and allow microphone access.'
+          : 'Chrome blocked microphone access (NotAllowedError). Open Chrome Site settings for this website, reset microphone permission, then reload. If already allowed, check chrome://settings/content/microphone and your Windows microphone privacy settings.')
+      } else if (kind === 'NotFoundError' || kind === 'DevicesNotFoundError') {
+        setMessageSendError('No microphone was detected. Connect or enable a microphone, then try again.')
+      } else if (kind === 'NotReadableError' || kind === 'TrackStartError') {
+        setMessageSendError('The microphone is busy or unavailable. Close other recording apps and try again.')
+      } else {
+        setMessageSendError(`Microphone error (${kind || 'unknown'}): ${details}`)
+      }
+    }
   }
   const stopVoiceRecording = () => { if (recorderRef.current?.state === 'recording') recorderRef.current.stop() }
   const sendVoiceMessage = async () => {
