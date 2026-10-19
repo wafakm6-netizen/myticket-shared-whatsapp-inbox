@@ -69,6 +69,7 @@ export default function Page() {
   const [activeNav, setActiveNav] = useState<'inbox' | 'team' | 'replies' | 'tags'>('inbox')
   const [attachment, setAttachment] = useState<File | null>(null)
   const [voiceFile, setVoiceFile] = useState<File | null>(null)
+  const [voiceProcessing, setVoiceProcessing] = useState(false)
   const [voicePreviewUrl, setVoicePreviewUrl] = useState<string | null>(null)
   const [recording, setRecording] = useState(false)
   const [recordingSeconds, setRecordingSeconds] = useState(0)
@@ -146,15 +147,34 @@ export default function Page() {
     setSendingMessage(true)
     setMessageSendError('')
     try {
-      const media = await uploadAttachment(voiceFile)
-      if (!media.mediaId) throw new Error('Voice upload did not return a media ID.')
-      const response = await fetch('/api/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ conversationId: selected.id, to: selected.phone, text: '', mediaId: media.mediaId }) })
-      const payload = await response.json().catch(() => ({}))
-      if (!response.ok) throw new Error(payload.error || 'Voice message could not be sent.')
-      clearVoice()
-      await load()
+      setVoiceProcessing(true)
+      const { FFmpeg } = await import('@ffmpeg/ffmpeg')
+      const { toBlobURL, fetchFile } = await import('@ffmpeg/util')
+      const ffmpeg = new FFmpeg()
+      const coreBase = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/umd'
+      try {
+        await ffmpeg.load({
+          coreURL: await toBlobURL(`${coreBase}/ffmpeg-core.js`, 'text/javascript'),
+          wasmURL: await toBlobURL(`${coreBase}/ffmpeg-core.wasm`, 'application/wasm'),
+        })
+        const inputName = voiceFile.name.endsWith('.ogg') ? 'input.ogg' : voiceFile.name.endsWith('.m4a') ? 'input.m4a' : 'input.webm'
+        await ffmpeg.writeFile(inputName, await fetchFile(voiceFile))
+        const exitCode = await ffmpeg.exec(['-i', inputName, '-vn', '-ac', '1', '-ar', '48000', '-c:a', 'libopus', '-b:a', '32k', '-application', 'voip', '-f', 'ogg', 'voice.ogg'])
+        if (exitCode !== 0) throw new Error('Audio conversion failed. Please try recording again.')
+        const converted = await ffmpeg.readFile('voice.ogg')
+        if (!(converted instanceof Uint8Array) || converted.byteLength < 128) throw new Error('Audio conversion produced an invalid file.')
+        const ogg = new File([new Uint8Array(converted)], 'voice.ogg', { type: 'audio/ogg' })
+        const media = await uploadAttachment(ogg)
+        if (!media.mediaId) throw new Error('Voice upload did not return a media ID.')
+        setVoiceProcessing(false)
+        const response = await fetch('/api/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ conversationId: selected.id, to: selected.phone, text: '', mediaId: media.mediaId }) })
+        const payload = await response.json().catch(() => ({}))
+        if (!response.ok) throw new Error(payload.error || 'Voice message could not be sent.')
+        clearVoice()
+        await load()
+      } finally { ffmpeg.terminate() }
     } catch (error) { setMessageSendError(error instanceof Error ? error.message : 'Voice message could not be sent.') }
-    finally { sendInProgress.current = false; setSendingMessage(false) }
+    finally { sendInProgress.current = false; setSendingMessage(false); setVoiceProcessing(false) }
   }
 
   const [isLoading, setIsLoading] = useState(true)
