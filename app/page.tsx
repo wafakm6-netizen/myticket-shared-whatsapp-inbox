@@ -45,7 +45,7 @@ function VoiceNotePlayer({ src }: { src: string }) {
     setPosition(audio.currentTime)
   }
   const progress = duration > 0 ? position / duration : 0
-  return <div className="myticket-voice-player" style={{ width: 278, maxWidth: '100%', padding: '9px 10px 6px', borderRadius: 13, background: 'rgba(255,255,255,.92)', color: '#59616b', boxSizing: 'border-box' }}>
+  return <div className="myticket-voice-player" style={{ width: 278, maxWidth: '100%', padding: '9px 10px 6px', borderRadius: 13, background: 'transparent', color: '#59616b', boxSizing: 'border-box' }}>
     <audio ref={audioRef} src={src} preload="metadata" onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)} onDurationChange={(event) => setDuration(event.currentTarget.duration)} onTimeUpdate={(event) => setPosition(event.currentTarget.currentTime)} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => { setPlaying(false); setPosition(0) }} aria-label="Voice recording" />
     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
       <button type="button" onClick={toggle} aria-label={playing ? 'Pause voice message' : 'Play voice message'} style={{ border: 0, background: 'transparent', color: '#6c747c', width: 29, height: 33, padding: 0, fontSize: 19, cursor: 'pointer', flexShrink: 0 }}>{playing ? '❚❚' : '▶'}</button>
