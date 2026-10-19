@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
     await supabase.from('whatsapp_conversations').update({ last_message_at: new Date().toISOString() }).eq('id', conversation.id)
 
     if (!accepted) {
-      const metaMessage = metaPayload?.error?.message || 'Meta did not accept the WhatsApp message.'
+      const metaMessage = metaPayload?.error?.code === 131047 ? 'WhatsApp requires an approved message template to start or resume this conversation outside the 24-hour customer-service window. Select an approved template and try again.' : metaPayload?.error?.message || 'Meta did not accept the WhatsApp message.'
       const metaCode = metaPayload?.error?.code
       console.error('[conversations] Meta rejected message', { code: metaCode, message: metaMessage })
       return NextResponse.json({ error: metaMessage, metaCode, conversationId: conversation.id, message: savedMessage }, { status: metaResponse.ok ? 502 : metaResponse.status >= 400 && metaResponse.status < 600 ? metaResponse.status : 502 })
