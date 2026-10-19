@@ -484,3 +484,16 @@
 .app-shell .hover-message-bubble:focus-within .hover-message-options,
 .app-shell .hover-message-options.message-options-open{opacity:1;visibility:visible}
 @media(hover:none){.app-shell .hover-message-options{opacity:1;visibility:visible}}
+
+/* WhatsApp-inspired inline recording controls */
+.app-shell .voice-inline:has(.voice-recording-bar){padding:0!important;min-width:0}
+.app-shell .voice-recording-bar{display:flex;align-items:center;gap:9px;width:100%;min-width:0;min-height:42px;padding:4px 6px;border-radius:24px;background:#252525;color:#f5f5f5;box-sizing:border-box}
+.app-shell .voice-recording-bar button{border:0;cursor:pointer;display:grid;place-items:center;flex:0 0 auto}
+.app-shell .voice-recording-finish{height:34px;width:34px;border-radius:50%;background:#14bb6d;color:#152b20}
+.app-shell .voice-recording-pause{height:32px;width:30px;background:transparent;color:#ff8ba1}
+.app-shell .voice-recording-wave{flex:1 1 0;min-width:12px;display:flex;align-items:center;justify-content:flex-end;gap:2px;height:30px;overflow:hidden}
+.app-shell .voice-recording-wave span{width:2px;min-width:2px;border-radius:2px;background:#a8a8a8}
+.app-shell .voice-recording-time{font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.app-shell .voice-recording-dot{width:9px;height:9px;border-radius:50%;background:#fa8096;flex-shrink:0}
+.app-shell .voice-recording-discard{height:32px;width:30px;background:transparent;color:#fff}
+@media(max-width:450px){.app-shell .voice-recording-bar{gap:5px}.app-shell .voice-recording-wave{gap:1px}.app-shell .voice-recording-wave span{min-width:1px;width:1px}}
