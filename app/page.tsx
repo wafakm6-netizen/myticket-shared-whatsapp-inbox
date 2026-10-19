@@ -140,8 +140,8 @@ export default function Page() {
   const recorderRef = useRef<MediaRecorder | null>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const recordingStartedRef = useRef(0)
-  useEffect(() => { if (!recording) return; const timer = window.setInterval(() => setRecordingSeconds(Math.floor(((recordingPaused ? recordingPauseStartedRef.current : Date.now()) - recordingStartedRef.current - recordingPausedMsRef.current) / 1000)), 500); return () => window.clearInterval(timer) }, [recording])
-  useEffect(() => () => { recorderRef.current?.stop(); streamRef.current?.getTracks().forEach(track => track.stop()) }, [])
+  useEffect(() => { if (!recording) return; const timer = window.setInterval(() => setRecordingSeconds(Math.floor(((recordingPaused ? recordingPauseStartedRef.current : Date.now()) - recordingStartedRef.current - recordingPausedMsRef.current) / 1000)), 500); return () => window.clearInterval(timer) }, [recording, recordingPaused])
+  useEffect(() => () => { if (recorderRef.current?.state !== 'inactive') recorderRef.current?.stop(); streamRef.current?.getTracks().forEach(track => track.stop()) }, [])
   const clearVoice = () => { setVoiceFile(null); setVoicePreviewUrl(url => { if (url) URL.revokeObjectURL(url); return null }) }
   const startVoiceRecording = async () => {
     try {
@@ -153,6 +153,8 @@ export default function Page() {
       const recorder = new MediaRecorder(stream, { mimeType: supported })
       const chunks: BlobPart[] = []
       recorder.ondataavailable = event => { if (event.data.size) chunks.push(event.data) }
+      recorder.onpause = () => setRecordingPaused(true)
+      recorder.onresume = () => setRecordingPaused(false)
       recorder.onerror = () => { setRecording(false); setRecordingPaused(false); setMessageSendError('Audio recording failed. Please try again.') }
       recorder.onstop = () => {
         stream.getTracks().forEach(track => track.stop())
@@ -236,14 +238,20 @@ export default function Page() {
   const toggleRecordingPause = () => {
     const recorder = recorderRef.current
     if (!recorder) return
-    if (recorder.state === 'recording') {
-      recorder.pause()
-      recordingPauseStartedRef.current = Date.now()
-      setRecordingPaused(true)
-    } else if (recorder.state === 'paused') {
-      recordingPausedMsRef.current += Date.now() - recordingPauseStartedRef.current
-      recorder.resume()
-      setRecordingPaused(false)
+    try {
+      if (recorder.state === 'recording') {
+        recorder.pause()
+        recordingPauseStartedRef.current = Date.now()
+        setRecordingPaused(true)
+        setRecordingSeconds(Math.max(0, Math.floor((recordingPauseStartedRef.current - recordingStartedRef.current - recordingPausedMsRef.current) / 1000)))
+      } else if (recorder.state === 'paused') {
+        recordingPausedMsRef.current += Date.now() - recordingPauseStartedRef.current
+        recorder.resume()
+        setRecordingPaused(false)
+      }
+    } catch (error) {
+      console.error('[voice] pause/resume failed', { state: recorder.state, error })
+      setMessageSendError('Could not pause or resume this recording. Please stop and retry.')
     }
   }
   const sendVoiceMessage = async () => {
