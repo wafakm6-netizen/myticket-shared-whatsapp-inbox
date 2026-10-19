@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
     }
 
     const type = mediaId ? 'audio' : attachmentUrl ? (attachmentType?.startsWith('image/') ? 'image' : 'document') : 'text'
-    const messageBody = type === 'audio' ? { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type: 'audio', audio: { id: mediaId, voice: true } } : type === 'text'
+    const messageBody = type === 'audio' ? { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type: 'audio', audio: { id: mediaId } } : type === 'text'
       ? { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type, text: { body: text.trim() } }
       : { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type, [type]: { link: attachmentUrl, caption: text.trim() } }
 
