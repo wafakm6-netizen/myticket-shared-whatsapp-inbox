@@ -163,6 +163,15 @@ export default function Page() {
         if (exitCode !== 0) throw new Error('Audio conversion failed. Please try recording again.')
         const converted = await ffmpeg.readFile('voice.ogg')
         if (!(converted instanceof Uint8Array) || converted.byteLength < 128) throw new Error('Audio conversion produced an invalid file.')
+        // Verify that FFmpeg can demux and fully decode the generated Ogg/Opus stream.
+        // -xerror makes decoding warnings fatal; -f null checks all audio packets.
+        const decodeExit = await ffmpeg.exec(['-v', 'error', '-xerror', '-i', 'voice.ogg', '-map', '0:a:0', '-f', 'null', '-'])
+        if (decodeExit !== 0) throw new Error('The converted voice recording cannot be decoded. Please record again.')
+        // Verify decoded audio actually contains samples (a valid header alone is insufficient).
+        const pcmExit = await ffmpeg.exec(['-v', 'error', '-xerror', '-i', 'voice.ogg', '-map', '0:a:0', '-t', '1', '-ac', '1', '-ar', '16000', '-f', 's16le', 'voice-check.pcm'])
+        if (pcmExit !== 0) throw new Error('The voice recording contains invalid audio packets. Please record again.')
+        const decodedSamples = await ffmpeg.readFile('voice-check.pcm')
+        if (!(decodedSamples instanceof Uint8Array) || decodedSamples.byteLength < 3200) throw new Error('The recording is too short or contains no decodable audio.')
         const ogg = new File([new Uint8Array(converted)], 'voice.ogg', { type: 'audio/ogg' })
         const media = await uploadAttachment(ogg)
         if (!media.mediaId) throw new Error('Voice upload did not return a media ID.')
