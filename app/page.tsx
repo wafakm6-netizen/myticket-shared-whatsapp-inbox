@@ -113,6 +113,19 @@ export default function Page() {
       console.error('[voice] microphone failed', { name: kind, message: details, secureContext: window.isSecureContext, embedded: window.self !== window.top })
       if (kind === 'NotAllowedError' || kind === 'PermissionDeniedError' || kind === 'SecurityError') {
         const embedded = window.self !== window.top
+        const policy = (document as Document & { permissionsPolicy?: { allowsFeature: (name: string) => boolean }; featurePolicy?: { allowsFeature: (name: string) => boolean } }).permissionsPolicy ?? (document as Document & { featurePolicy?: { allowsFeature: (name: string) => boolean } }).featurePolicy
+        const policyAllowsMic = policy?.allowsFeature('microphone')
+        let permissionState = 'unknown'
+        try { permissionState = (await navigator.permissions.query({ name: 'microphone' as PermissionName })).state } catch { /* unsupported */ }
+        console.info('[voice] microphone diagnostics', { permissionState, policyAllowsMic, embedded, origin: window.location.origin })
+        if (policyAllowsMic === false) {
+          setMessageSendError('Microphone is blocked by this page’s Permissions-Policy. The website deployment must allow microphone=(self).')
+          return
+        }
+        if (permissionState === 'denied') {
+          setMessageSendError('Chrome reports microphone permission DENIED for ' + window.location.origin + '. Click the site controls icon beside the address bar → Site settings → Microphone → Allow, then close and reopen this tab.')
+          return
+        }
         setMessageSendError(embedded
           ? 'Microphone blocked by the embedded browser or iframe. Open whatsapp.myticketom.com in a normal Chrome tab and allow microphone access.'
           : 'Chrome blocked microphone access (NotAllowedError). Open Chrome Site settings for this website, reset microphone permission, then reload. If already allowed, check chrome://settings/content/microphone and your Windows microphone privacy settings.')
