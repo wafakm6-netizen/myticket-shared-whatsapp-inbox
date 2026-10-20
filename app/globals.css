@@ -508,3 +508,19 @@
 .app-shell .voice-recording-discard{color:#66788e}
 .app-shell .voice-inline:not(:has(.voice-recording-bar)){min-width:0}
 .app-shell .voice-inline:not(:has(.voice-recording-bar)) .myticket-voice-player{flex:1;min-width:0;width:auto!important;background:transparent!important}
+
+/* Contact editor: consistent field typography, balanced actions and soft surfaces. */
+.contact-edit-modal{width:min(100%,520px);padding:26px 28px;border-radius:18px;border:1px solid #e5eaf0;box-shadow:0 24px 65px rgba(24,39,62,.18)}
+.contact-edit-modal .modal-header{align-items:center;padding-bottom:20px}
+.contact-edit-modal .modal-header h2{font-size:21px;font-weight:700;letter-spacing:-.025em;color:#1f2e42}
+.contact-edit-form{gap:10px;padding-top:24px}
+.contact-edit-form label{font-size:13px;font-weight:600;color:#34465b;margin:2px 0 0}
+.contact-edit-form input,.contact-edit-form select{width:100%;height:44px;min-height:44px;border:1px solid #dce4ee;border-radius:10px;background:#f9fbfd;color:#24364c;font-family:inherit;font-size:14px;font-weight:400;line-height:20px;padding:0 13px;outline:none;box-shadow:none;box-sizing:border-box;margin:0 0 6px}
+.contact-edit-form input:focus,.contact-edit-form select:focus{border-color:#ff7646;box-shadow:0 0 0 3px rgba(255,90,31,.11);background:#fff}
+.contact-edit-form p{font-size:12px!important;color:#718299!important;line-height:1.5;margin:0 0 12px!important}
+.contact-edit-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-top:18px;margin-top:12px;border-top:1px solid #edf0f4}
+.contact-edit-actions .secondary-btn,.contact-edit-actions .send-btn{width:100%;height:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0 14px;border-radius:10px;font-family:inherit;font-size:14px;font-weight:600;line-height:20px;box-sizing:border-box}
+.contact-edit-actions .secondary-btn{background:#f5f7fa;border:1px solid #dce4ee;color:#43546a}
+.contact-edit-actions .secondary-btn:hover{background:#edf1f6}
+.contact-edit-actions .send-btn{border:1px solid #ff5a1f;background:#ff5a1f;color:white}
+@media(max-width:540px){.contact-edit-modal{padding:20px 18px}.contact-edit-actions{gap:8px}}
