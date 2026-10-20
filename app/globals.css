@@ -551,3 +551,17 @@
   }
   .app-shell > .chat-pane { flex: 1 1 0; width: 0; min-width: 0; }
 }
+
+/* 100% zoom refinements: navigation, compact tags, wider composer. */
+@media (min-width: 1281px) {
+  .app-shell > .rail { width: 88px; flex: 0 0 88px; padding-left: 8px; padding-right: 8px; }
+  .app-shell .rail .brand-mark { max-width: 100%; }
+  .app-shell .rail .brand-mark img { max-width: 100%; object-fit: contain; }
+  .app-shell .rail .rail-item { max-width: 72px; width: 100%; }
+  .app-shell .rail .rail-item b { right: 4px; }
+}
+.app-shell .conversation-bottom { min-width: 0; flex-wrap: wrap; align-items: center; column-gap: 6px; row-gap: 5px; }
+.app-shell .conversation-bottom .assigned-label { display: inline-flex; align-items: center; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.app-shell .conversation-bottom .type-badge { white-space: nowrap; flex-shrink: 0; }
+.app-shell .composer-wrap { padding-left: clamp(12px, 3%, 24px); padding-right: clamp(12px, 3%, 24px); }
+.app-shell .composer { width: 100%; max-width: 100%; }
