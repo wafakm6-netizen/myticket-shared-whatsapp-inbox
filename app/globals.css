@@ -635,3 +635,32 @@
     padding-right: 12px;
   }
 }
+
+/* Unified inbox typography scale: 14px content, 12px secondary, 11px metadata. */
+.app-shell { --inbox-text: 14px; --inbox-secondary: 12px; --inbox-meta: 11px; }
+.app-shell .conversation-top strong,
+.app-shell .chat-header h2 { font-size: 14px; font-weight: 600; line-height: 1.4; }
+.app-shell .conversation-copy p,
+.app-shell .conversation-preview-text { font-size: 12px; line-height: 1.45; }
+.app-shell .conversation-top time { font-size: 11px; line-height: 1.4; font-variant-numeric: tabular-nums; }
+.app-shell .conversation-bottom .type-badge,
+.app-shell .conversation-bottom .assigned-label { font-size: 11px; line-height: 1.3; font-weight: 500; }
+.app-shell .conversation-bottom .type-badge { font-weight: 600; }
+.app-shell .filter-tabs button,
+.app-shell .status-select { font-size: 12px; line-height: 1.4; }
+.app-shell .chat-header p,
+.app-shell .details-pane .details-title { font-size: 12px; line-height: 1.4; }
+.app-shell .message-bubble { font-size: 14px; line-height: 1.5; }
+.app-shell .message-bubble small { font-size: 11px; line-height: 1.35; font-variant-numeric: tabular-nums; }
+.app-shell .composer textarea { font-size: 14px; line-height: 1.45; }
+.app-shell .composer textarea::placeholder { font-size: 13px; }
+.app-shell .assigned-label { font-size: 11px; }
+.app-shell .type-badge { font-size: 11px; line-height: 1.3; }
+.app-shell .details-pane input,
+.app-shell .details-pane select,
+.app-shell .details-pane button { font-family: inherit; }
+@media (max-width: 620px) {
+  .app-shell .conversation-top strong,
+  .app-shell .chat-header h2 { font-size: 13px; }
+  .app-shell .message-bubble { font-size: 13px; }
+}
