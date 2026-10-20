@@ -524,3 +524,30 @@
 .contact-edit-actions .secondary-btn:hover{background:#edf1f6}
 .contact-edit-actions .send-btn{border:1px solid #ff5a1f;background:#ff5a1f;color:white}
 @media(max-width:540px){.contact-edit-modal{padding:20px 18px}.contact-edit-actions{gap:8px}}
+
+/* Desktop panel balance: prioritize chat without sacrificing conversation scanning. */
+@media (min-width: 1281px) {
+  .app-shell > .rail { width: 76px; flex: 0 0 76px; }
+  .app-shell > .inbox-pane {
+    width: clamp(275px, 23vw, 330px);
+    flex: 0 0 clamp(275px, 23vw, 330px);
+    min-width: 0;
+  }
+  .app-shell > .chat-pane {
+    flex: 1 1 0;
+    width: 0;
+    min-width: 0;
+  }
+  .app-shell > .details-pane {
+    width: clamp(260px, 21vw, 300px);
+    flex: 0 0 clamp(260px, 21vw, 300px);
+    min-width: 0;
+  }
+}
+@media (min-width: 851px) and (max-width: 1280px) {
+  .app-shell > .inbox-pane {
+    width: clamp(245px, 28vw, 310px);
+    flex: 0 0 clamp(245px, 28vw, 310px);
+  }
+  .app-shell > .chat-pane { flex: 1 1 0; width: 0; min-width: 0; }
+}
