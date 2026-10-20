@@ -565,3 +565,25 @@
 .app-shell .conversation-bottom .type-badge { white-space: nowrap; flex-shrink: 0; }
 .app-shell .composer-wrap { padding-left: clamp(12px, 3%, 24px); padding-right: clamp(12px, 3%, 24px); }
 .app-shell .composer { width: 100%; max-width: 100%; }
+
+/* Compact, content-sized chat bubbles; preserve room for the hover action. */
+.app-shell .message-row { min-width: 0; margin-bottom: 10px; }
+.app-shell .message-bubble {
+  width: fit-content;
+  max-width: min(78%, 480px);
+  min-width: 0;
+  padding: 8px 11px 6px 32px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.app-shell .message-agent .message-bubble { border-radius: 12px; }
+.app-shell .message-bubble.text-message-bubble { min-width: 76px; }
+.app-shell .message-bubble.voice-message-bubble { width: min(100%, 345px); max-width: min(85%, 345px); padding: 7px 9px 6px 30px; }
+.app-shell .message-bubble.voice-message-bubble .myticket-voice-player { width: 100%; max-width: 100%; padding: 5px 3px 3px; }
+.app-shell .message-bubble small { font-size: 10px; line-height: 1.25; margin-top: 3px; white-space: nowrap; }
+@media (max-width: 620px) {
+  .app-shell .message-bubble { max-width: 90%; }
+  .app-shell .message-bubble.voice-message-bubble { max-width: 94%; }
+}
