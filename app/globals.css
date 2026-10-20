@@ -406,7 +406,7 @@
 .app-shell .chat-pane .composer-wrap .composer{width:100%;max-width:none;margin-left:0;margin-right:0;box-sizing:border-box}
 /* Center the contact details title across the whole header, independently of close button. */
 .app-shell .details-pane .details-title{position:relative;justify-content:center}
-.app-shell .details-pane .details-title .eyebrow{margin:0;text-align:center}
+.app-shell .details-pane .details-title .eyebrow{margin:0;text-align:center;font-size:14px;font-weight:600;line-height:1.4;letter-spacing:.055em}
 .app-shell .details-pane .details-title>.icon-btn{position:absolute;right:14px;top:50%;transform:translateY(-50%)}
 
 /* Match top border baseline of chat and contact details panels. */
