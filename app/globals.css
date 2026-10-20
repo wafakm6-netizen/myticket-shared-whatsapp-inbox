@@ -572,7 +572,7 @@
   width: fit-content;
   max-width: min(78%, 480px);
   min-width: 0;
-  padding: 8px 11px 6px 32px;
+  padding: 8px 32px 6px 11px;
   border-radius: 12px;
   font-size: 13px;
   line-height: 1.45;
@@ -580,7 +580,7 @@
 }
 .app-shell .message-agent .message-bubble { border-radius: 12px; }
 .app-shell .message-bubble.text-message-bubble { min-width: 76px; }
-.app-shell .message-bubble.voice-message-bubble { width: min(100%, 345px); max-width: min(85%, 345px); padding: 7px 9px 6px 30px; }
+.app-shell .message-bubble.voice-message-bubble { width: min(100%, 345px); max-width: min(85%, 345px); padding: 7px 30px 6px 9px; }
 .app-shell .message-bubble.voice-message-bubble .myticket-voice-player { width: 100%; max-width: 100%; padding: 5px 3px 3px; }
 .app-shell .message-bubble small { font-size: 10px; line-height: 1.25; margin-top: 3px; white-space: nowrap; }
 @media (max-width: 620px) {
