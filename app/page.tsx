@@ -425,6 +425,25 @@ export default function Page() {
   const counts = useMemo(() => ({ all: conversations.length, unassigned: conversations.filter((item) => !item.assignedTo).length, open: conversations.filter((item) => item.status === 'open').length, pending: conversations.filter((item) => item.status === 'pending').length, closed: conversations.filter((item) => item.status === 'closed').length }), [conversations])
   const visible = useMemo(() => conversations.filter((item) => { const matchesFilter = filter === 'all' || (filter === 'unassigned' ? !item.assignedTo : item.status === filter); return matchesFilter && `${item.name} ${item.phone} ${item.preview}`.toLowerCase().includes(query.toLowerCase()) }), [conversations, filter, query])
   const filteredSavedReplies = useMemo(() => savedReplies.filter((reply) => `${reply.title} ${reply.body}`.toLowerCase().includes(savedReplySearch.toLowerCase())), [savedReplies, savedReplySearch])
+  const markConversationRead = async (conversationId: string) => {
+    setConversations((current) => current.map((conversation) => conversation.id === conversationId ? { ...conversation, unread: 0 } : conversation))
+    try {
+      const response = await fetch('/api/inbox', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: conversationId, patch: { unread_count: 0 } })
+      })
+      if (!response.ok) throw new Error('Unable to mark conversation as read')
+    } catch (error) {
+      console.error('[inbox] mark read failed', error)
+      void load()
+    }
+  }
+  useEffect(() => {
+    if (!selectedId || !conversations.some((conversation) => conversation.id === selectedId && conversation.unread > 0)) return
+    void markConversationRead(selectedId)
+  }, [selectedId, conversations])
+
   const updateConversation = async (patch: Record<string, string | null>) => { if (!selected) return; const response = await fetch('/api/inbox', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: selected.id, patch }) }); if (!response.ok) throw new Error('Conversation update failed'); await load() }
   const deleteInboxContent = async (conversationId: string, messageId?: string) => {
     const chat = conversations.find((item) => item.id === conversationId)
