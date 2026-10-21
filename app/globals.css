@@ -674,3 +674,8 @@
 
 /* Dialog overlay must dim the navigation rail as well as the inbox. */
 .app-shell > .modal-backdrop { z-index: 100; }
+
+/* Local preview for an image attached to the message composer. */
+.composer-attachment-preview{display:flex;align-items:flex-start;flex-direction:column;gap:7px;margin:7px 0 8px;max-width:100%}
+.composer-image-preview{display:block;max-width:min(210px,100%);max-height:145px;width:auto;height:auto;object-fit:contain;border-radius:10px;border:1px solid #dce5ef;background:#fff}
+.composer-attachment-preview .attachment-chip{margin:0;max-width:min(290px,100%)}
