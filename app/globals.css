@@ -664,3 +664,10 @@
   .app-shell .chat-header h2 { font-size: 13px; }
   .app-shell .message-bubble { font-size: 13px; }
 }
+
+/* Keep the account dropdown above the adjacent conversation list. */
+.app-shell > .rail { position: relative; z-index: 30; overflow: visible; }
+.app-shell > .inbox-pane { position: relative; z-index: 1; }
+.app-shell .rail .profile-menu-wrap { position: relative; z-index: 31; }
+.app-shell .rail .profile-menu { z-index: 32; }
+@media (max-width: 850px) { .app-shell > .rail { position: fixed; z-index: 40; } }
