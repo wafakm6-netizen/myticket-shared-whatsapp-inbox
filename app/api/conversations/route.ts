@@ -6,14 +6,11 @@ function normalizePhone(value: unknown) {
   return typeof value === 'string' ? value.trim().replace(/[^\d]/g, '') : ''
 }
 
-function templatePayload(template: { name: string; languageCode?: string; parameters?: string[] }) {
-  return {
-    name: template.name,
-    language: { code: template.languageCode || 'en_US' },
-    components: template.parameters?.length
-      ? [{ type: 'body', parameters: template.parameters.map((text) => ({ type: 'text', text })) }]
-      : undefined,
-  }
+function templatePayload(template: { name: string; languageCode?: string; parameters?: string[]; header?: { type: 'image' | 'document'; link: string; filename?: string } }) {
+  const components: any[] = []
+  if (template.header) components.push({ type: 'header', parameters: [{ type: template.header.type, [template.header.type]: { link: template.header.link, ...(template.header.type === 'document' ? { filename: template.header.filename } : {}) } }] })
+  if (template.parameters?.length) components.push({ type: 'body', parameters: template.parameters.map((text) => ({ type: 'text', text })) })
+  return { name: template.name, language: { code: template.languageCode || 'en_US' }, ...(components.length ? { components } : {}) }
 }
 
 export async function POST(request: NextRequest) {
