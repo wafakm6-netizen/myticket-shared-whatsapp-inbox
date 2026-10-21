@@ -554,7 +554,7 @@ export default function Page() {
       if (file) media = await uploadAttachment(file)
       const response = await fetch('/api/send', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ conversationId, to: recipient, text: text || file?.name || 'Attachment', attachmentUrl: media?.url, attachmentName: media?.name, attachmentType: media?.type })
+        body: JSON.stringify({ conversationId, to: recipient, text, mediaId: media?.mediaId, attachmentUrl: media?.mediaId ? undefined : media?.url, attachmentName: media?.name, attachmentType: media?.type })
       })
       const payload = await response.json().catch(() => ({}))
       if (!response.ok) throw new Error(payload.error || payload.message || 'Message could not be sent. Please try again.')
