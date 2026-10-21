@@ -52,10 +52,10 @@ export async function POST(request: NextRequest) {
     if (template && (mediaId || attachmentUrl)) return NextResponse.json({ error: 'Template messages cannot include a separate attachment.' }, { status: 400 })
     if (template && (typeof template.name !== 'string' || !/^[a-z0-9_]{1,512}$/.test(template.name) || typeof template.languageCode !== 'string' || !/^[a-z]{2,3}(?:_[A-Z]{2})?$/.test(template.languageCode) || !Array.isArray(template.parameters) || template.parameters.some((p: unknown) => typeof p !== 'string' || !p.trim()))) return NextResponse.json({ error: 'Invalid template selection or missing variables.' }, { status: 400 })
     if (template?.header && (!['image', 'document'].includes(template.header.type) || typeof template.header.id !== 'string' || !/^\d{8,30}$/.test(template.header.id))) return NextResponse.json({ error: 'Invalid template media attachment.' }, { status: 400 })
-    const type = template ? 'template' : mediaId ? 'audio' : attachmentUrl ? (attachmentType?.startsWith('image/') ? 'image' : 'document') : 'text'
+    const type = template ? 'template' : mediaId ? (attachmentType?.startsWith('image/') ? 'image' : attachmentType?.startsWith('audio/') || !attachmentType ? 'audio' : 'document') : attachmentUrl ? (attachmentType?.startsWith('image/') ? 'image' : 'document') : 'text'
     const messageBody = type === 'template' ? { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type: 'template', template: { name: template.name, language: { code: template.languageCode }, ...((template.header || template.parameters.length) ? { components: [...(template.header ? [{ type: 'header', parameters: [{ type: template.header.type, [template.header.type]: { id: template.header.id, ...(template.header.type === 'document' ? { filename: template.header.filename } : {}) } }] }] : []), ...(template.parameters.length ? [{ type: 'body', parameters: template.parameters.map((value: string) => ({ type: 'text', text: value.trim() })) }] : [])] } : {}) } } : type === 'audio' ? { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type: 'audio', audio: { id: mediaId } } : type === 'text'
       ? { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type, text: { body: text.trim() } }
-      : { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type, [type]: { link: attachmentUrl, caption: text.trim() } }
+      : { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type, [type]: { ...(mediaId ? { id: mediaId } : { link: attachmentUrl }), ...(type === 'document' && attachmentName ? { filename: attachmentName } : {}), ...(text.trim() ? { caption: text.trim() } : {}) } }
 
     // Diagnostic: send uploaded Ogg/Opus as a regular audio attachment, not a voice note.
     // Deliberately omit audio.voice; Meta webhook delivery status remains authoritative.
@@ -90,9 +90,9 @@ export async function POST(request: NextRequest) {
         conversation_id: conversation,
         external_id: externalId,
         direction: 'outbound',
-        body: template ? `[Template] ${template.name}` : mediaId ? null : text.trim(),
+        body: template ? `[Template] ${template.name}` : text.trim() || null,
         attachment_url: mediaId ? `/api/media?mediaId=${encodeURIComponent(mediaId)}` : attachmentUrl ?? null,
-        attachment_name: mediaId ? 'Voice message' : attachmentName ?? null,
+        attachment_name: mediaId && type === 'audio' ? 'Voice message' : attachmentName ?? null,
         status,
         sent_at: new Date().toISOString(),
       })
