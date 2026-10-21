@@ -362,8 +362,8 @@ export default function Page() {
     resize()
     window.addEventListener('resize', resize)
     return () => window.removeEventListener('resize', resize)
-  }, [draft, selected?.id])
-
+  }, [draft, selectedId])
+  
   const selected = selectedId ? conversations.find((item) => item.id === selectedId) : undefined
 
   const load = async () => {
