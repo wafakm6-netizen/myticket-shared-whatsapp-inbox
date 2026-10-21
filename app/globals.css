@@ -671,3 +671,6 @@
 .app-shell .rail .profile-menu-wrap { position: relative; z-index: 31; }
 .app-shell .rail .profile-menu { z-index: 32; }
 @media (max-width: 850px) { .app-shell > .rail { position: fixed; z-index: 40; } }
+
+/* Dialog overlay must dim the navigation rail as well as the inbox. */
+.app-shell > .modal-backdrop { z-index: 100; }
