@@ -9,7 +9,7 @@ export type ApprovedTemplate = {
   components: Array<{ type: string; text?: string; format?: string; buttons?: unknown[] }>
 }
 
-export type TemplateSelection = { name: string; languageCode: string; parameters: string[]; header?: { type: 'image' | 'document'; link: string; filename?: string } }
+export type TemplateSelection = { name: string; languageCode: string; parameters: string[]; header?: { type: 'image' | 'document'; id: string; filename?: string } }
 
 export function WhatsAppTemplatePicker({ onChange, onActiveChange, disabled = false }: {
   onChange: (selection: TemplateSelection | null) => void
@@ -54,11 +54,11 @@ export function WhatsAppTemplatePicker({ onChange, onActiveChange, disabled = fa
     if (!valid) { setUploadError('Choose a supported file matching this template header.'); return }
     setUploading(true)
     try {
-      const form = new FormData(); form.append('file', file)
+      const form = new FormData(); form.append('file', file); form.append('purpose', 'template-header')
       const response = await fetch('/api/media', { method: 'POST', body: form })
       const result = await response.json().catch(() => ({}))
-      if (!response.ok || !result.url) throw new Error(result.error || 'Upload failed')
-      const media: NonNullable<TemplateSelection['header']> = { type: headerFormat === 'IMAGE' ? 'image' : 'document', link: result.url, ...(headerFormat === 'DOCUMENT' ? { filename: file.name } : {}) }
+      if (!response.ok || !result.mediaId) throw new Error(result.error || 'Upload failed')
+      const media: NonNullable<TemplateSelection['header']> = { type: headerFormat === 'IMAGE' ? 'image' : 'document', id: result.mediaId, ...(headerFormat === 'DOCUMENT' ? { filename: file.name } : {}) }
       setHeaderMedia(media)
       publish(selected, values, media)
     } catch (error) { setUploadError(error instanceof Error ? error.message : 'Upload failed') }
