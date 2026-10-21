@@ -14,8 +14,8 @@ export async function POST(request: NextRequest) {
   const auth = await requireAgent()
   if (auth.error) return auth.error
 
-  const { to, text, conversationId, attachmentUrl, attachmentName, attachmentType, mediaId } = await request.json().catch(() => ({}))
-  if (typeof to !== 'string' || !to.trim() || (typeof text !== 'string' || (!text.trim() && !mediaId))) {
+  const { to, text, conversationId, attachmentUrl, attachmentName, attachmentType, mediaId, template } = await request.json().catch(() => ({}))
+  if (typeof to !== 'string' || !to.trim() || (typeof text !== 'string' || (!text.trim() && !mediaId && !template))) {
     return NextResponse.json({ error: 'Both recipient and message are required.' }, { status: 400 })
   }
 
@@ -49,8 +49,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'WhatsApp Cloud API is not configured.' }, { status: 503 })
     }
 
-    const type = mediaId ? 'audio' : attachmentUrl ? (attachmentType?.startsWith('image/') ? 'image' : 'document') : 'text'
-    const messageBody = type === 'audio' ? { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type: 'audio', audio: { id: mediaId } } : type === 'text'
+    if (template && (mediaId || attachmentUrl)) return NextResponse.json({ error: 'Template messages cannot include a separate attachment.' }, { status: 400 })
+    if (template && (typeof template.name !== 'string' || !/^[a-z0-9_]{1,512}$/.test(template.name) || typeof template.languageCode !== 'string' || !/^[a-z]{2,3}(?:_[A-Z]{2})?$/.test(template.languageCode) || !Array.isArray(template.parameters) || template.parameters.some((p: unknown) => typeof p !== 'string' || !p.trim()))) return NextResponse.json({ error: 'Invalid template selection or missing variables.' }, { status: 400 })
+    const type = template ? 'template' : mediaId ? 'audio' : attachmentUrl ? (attachmentType?.startsWith('image/') ? 'image' : 'document') : 'text'
+    const messageBody = type === 'template' ? { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type: 'template', template: { name: template.name, language: { code: template.languageCode }, ...(template.parameters.length ? { components: [{ type: 'body', parameters: template.parameters.map((value: string) => ({ type: 'text', text: value.trim() })) }] } : {}) } } : type === 'audio' ? { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type: 'audio', audio: { id: mediaId } } : type === 'text'
       ? { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type, text: { body: text.trim() } }
       : { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type, [type]: { link: attachmentUrl, caption: text.trim() } }
 
@@ -87,7 +89,7 @@ export async function POST(request: NextRequest) {
         conversation_id: conversation,
         external_id: externalId,
         direction: 'outbound',
-        body: mediaId ? null : text.trim(),
+        body: template ? `[Template] ${template.name}` : mediaId ? null : text.trim(),
         attachment_url: mediaId ? `/api/media?mediaId=${encodeURIComponent(mediaId)}` : attachmentUrl ?? null,
         attachment_name: mediaId ? 'Voice message' : attachmentName ?? null,
         status,
