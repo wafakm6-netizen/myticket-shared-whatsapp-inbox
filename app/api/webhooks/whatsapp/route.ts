@@ -50,9 +50,25 @@ export async function POST(request: NextRequest) {
         const phone = item.from
         if (!phone) continue
         const profileName = profileByPhone.get(phone)
-        const contactPayload = profileName ? { external_id: phone, display_name: profileName, phone } : { external_id: phone, phone }
-        const { data: contact, error: contactError } = await supabase.from('whatsapp_contacts').upsert(contactPayload, { onConflict: 'external_id', ignoreDuplicates: false }).select('id, display_name').single()
-        if (contactError) throw contactError
+        // A WhatsApp profile name must never overwrite a name saved by an inbox agent.
+        // Create the contact only when it does not exist; preserve existing contact details.
+        const { data: existingContact, error: lookupError } = await supabase.from('whatsapp_contacts')
+          .select('id, display_name').eq('external_id', phone).maybeSingle()
+        if (lookupError) throw lookupError
+        let contact = existingContact
+        if (!contact) {
+          const { data: createdContact, error: contactError } = await supabase.from('whatsapp_contacts')
+            .upsert({ external_id: phone, display_name: profileName || phone, phone }, { onConflict: 'external_id', ignoreDuplicates: true })
+            .select('id, display_name').maybeSingle()
+          if (contactError) throw contactError
+          contact = createdContact
+          if (!contact) {
+            const { data: concurrentContact, error: concurrentError } = await supabase.from('whatsapp_contacts')
+              .select('id, display_name').eq('external_id', phone).single()
+            if (concurrentError) throw concurrentError
+            contact = concurrentContact
+          }
+        }
         const { data: conversation, error: conversationError } = await supabase.from('whatsapp_conversations').upsert({ contact_id: contact.id, status: 'open', last_message_at: new Date().toISOString() }, { onConflict: 'contact_id' }).select('id, unread_count').single()
         if (conversationError) throw conversationError
         const media = item.image || item.document || item.video || item.audio
