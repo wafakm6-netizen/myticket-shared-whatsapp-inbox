@@ -11,8 +11,9 @@ export type ApprovedTemplate = {
 
 export type TemplateSelection = { name: string; languageCode: string; parameters: string[] }
 
-export function WhatsAppTemplatePicker({ onChange, disabled = false }: {
+export function WhatsAppTemplatePicker({ onChange, onActiveChange, disabled = false }: {
   onChange: (selection: TemplateSelection | null) => void
+  onActiveChange?: (active: boolean) => void
   disabled?: boolean
 }) {
   const [templates, setTemplates] = useState<ApprovedTemplate[]>([])
@@ -39,6 +40,7 @@ export function WhatsAppTemplatePicker({ onChange, disabled = false }: {
   const preview = body.replace(/\{\{(\d+)\}\}/g, (_, index) => values[Number(index) - 1] || `{{${index}}}`)
   const choose = (key: string) => {
     setSelectedKey(key)
+    onActiveChange?.(Boolean(key))
     setValues([])
     if (!key) onChange(null)
     else {
