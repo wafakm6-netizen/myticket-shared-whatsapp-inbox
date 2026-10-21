@@ -527,7 +527,8 @@ export default function Page() {
     setMessageSendError('')
     const conversationId = selected.id
     const recipient = selected.phone
-    const text = draft.trim()
+    const originalDraft = draft
+    const text = originalDraft.trim()
     const file = attachment
     try {
       let media: any = null
@@ -538,7 +539,7 @@ export default function Page() {
       })
       const payload = await response.json().catch(() => ({}))
       if (!response.ok) throw new Error(payload.error || payload.message || 'Message could not be sent. Please try again.')
-      setDraft((current) => current === text ? '' : current)
+      setDraft((current) => current === originalDraft ? '' : current)
       setAttachment((current) => current === file ? null : current)
       setQuickRepliesOpen(false)
       await load()
