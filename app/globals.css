@@ -715,3 +715,8 @@
 .emoji-composer-editor{box-sizing:border-box;flex:1;min-width:0;min-height:31px;max-height:180px;overflow-y:auto;overflow-x:hidden;padding:6px 12px;outline:none;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;font-size:14px;line-height:19px;color:#172b4d;cursor:text}
 .emoji-composer-editor:empty::before{content:attr(data-placeholder);color:#9caec2;pointer-events:none}
 .emoji-composer-editor .composer-emoji{display:inline-block;vertical-align:-0.16em;width:1.3em;height:1.3em;object-fit:contain;margin:0 1px;user-select:all}
+
+/* Match the chat bubble emoji artwork to the picker and rich composer. */
+.message-emoji{display:inline-flex;vertical-align:-0.18em;align-items:center;justify-content:center;line-height:1;margin:0 1px}
+.message-emoji .emoji-artwork{width:1.3em;height:1.3em;max-width:none;display:inline-block;object-fit:contain}
+.message-emoji .emoji-native-fallback{font-size:1em}
