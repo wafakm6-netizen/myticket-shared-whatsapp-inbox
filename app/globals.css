@@ -709,3 +709,11 @@
 .emoji-artwork{width:29px;height:29px}
 .emoji-grid button:hover{background:#e4edf0;transform:none}
 @media(max-width:600px){.emoji-picker{width:auto;max-width:calc(100vw - 24px)}.emoji-grid{grid-template-columns:repeat(10,minmax(0,1fr))}.emoji-artwork{width:26px;height:26px}}
+
+/* Unicode remains editable in the textarea; a synchronized visual layer paints matching emoji artwork. */
+.styled-composer-wrap{position:relative;flex:1;min-width:0;display:block}
+.styled-composer-wrap .styled-composer-input{position:relative;z-index:2;width:100%;background:transparent!important;color:transparent!important;-webkit-text-fill-color:transparent;caret-color:#172b4d;display:block}
+.styled-composer-wrap .styled-composer-input::placeholder{-webkit-text-fill-color:#9caec2;color:#9caec2}
+.styled-emoji-draft{position:absolute;z-index:1;inset:0;pointer-events:none;white-space:pre-wrap;overflow-wrap:anywhere;overflow-y:hidden;overflow-x:hidden;color:#172b4d;font:inherit;line-height:inherit;padding:inherit;box-sizing:border-box}
+.styled-emoji-draft .emoji-artwork{width:1em;height:1em;display:inline-block;vertical-align:-0.14em;object-fit:contain}
+.styled-emoji-draft .emoji-native-fallback{font-size:1em;line-height:inherit}
