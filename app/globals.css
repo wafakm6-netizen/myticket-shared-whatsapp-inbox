@@ -737,3 +737,8 @@
 .team-modal .team-row .team-departments label{display:flex;align-items:center;gap:4px;font-size:11px}
 .team-modal .team-row .team-departments input[type=checkbox]{appearance:auto;width:14px;height:14px;accent-color:var(--orange)}
 @media(max-width:560px){.team-modal .team-add-form{grid-template-columns:1fr;padding:16px}.team-modal .team-list{padding:12px 16px}.team-modal .team-add-form>.send-btn{justify-self:stretch}}
+
+/* Allow the Team dialog to scroll independently of the fixed inbox */
+.modal-backdrop:has(.team-modal){overflow-y:auto;overscroll-behavior:contain;align-items:center}
+.modal-backdrop .team-modal{display:block;min-height:0;max-height:calc(100dvh - 40px);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:#cbd5e1 transparent}
+@media(max-height:700px){.modal-backdrop:has(.team-modal){align-items:start}.modal-backdrop .team-modal{max-height:calc(100dvh - 24px)}}
