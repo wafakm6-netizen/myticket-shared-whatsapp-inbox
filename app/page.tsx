@@ -1,6 +1,6 @@
 'use client'
 
-import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
+import { Fragment, useEffect, useMemo, useRef, useState, type RefObject } from 'react'
 import { createBrowserSupabaseClient } from '@/lib/supabase/client'
 import { WhatsAppTemplatePicker, type TemplateSelection } from '@/components/whatsapp-template-picker'
 import { Archive, Bell, Check, ChevronDown, CircleHelp, FileText, MessageSquareCheck, Inbox, Menu, Mic, Pause, Play, Square, MoreHorizontal, Paperclip, Search, Send, Settings, Smile, Tag, Trash2, Users, X } from 'lucide-react'
@@ -19,7 +19,7 @@ function EmojiArtwork({ emoji }: { emoji: string }) {
 }
 
 // Rich-text composer: emoji images are visual only; outgoing messages remain Unicode text.
-function EmojiComposer({ value, onChange, onSend, editorRef }: { value: string; onChange: (value: string) => void; onSend: () => void; editorRef: React.RefObject<HTMLDivElement | null> }) {
+function EmojiComposer({ value, onChange, onSend, editorRef }: { value: string; onChange: (value: string) => void; onSend: () => void; editorRef: RefObject<HTMLDivElement | null> }) {
   const read = (root: HTMLElement) => {
     let result = ''
     const walk = (node: Node) => {
@@ -600,7 +600,7 @@ export default function Page() {
       range.collapse(true)
       selection?.removeAllRanges()
       selection?.addRange(range)
-      input.dispatchEvent(new Event('input', { bubbles: true }))
+      setDraft(Array.from(input.childNodes).map(function collect(node: ChildNode): string { if (node.nodeType === Node.TEXT_NODE) return node.textContent || ''; if (!(node instanceof HTMLElement)) return ''; if (node.tagName === 'IMG') return node.dataset.emoji || node.getAttribute('alt') || ''; if (node.tagName === 'BR') return '\\n'; return Array.from(node.childNodes).map(collect).join('') }).join(''))
     } else setDraft(current => current + emoji)
     setEmojiOpen(false)
   }
