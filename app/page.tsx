@@ -740,11 +740,15 @@ export default function Page() {
   const testBrowserNotification = async () => {
     setPushTestBusy(true);setPushFeedback('')
     try{
+      if (!('serviceWorker' in navigator) || !('PushManager' in window)) throw new Error('Push notifications are not available in this browser. On iPhone, install and open Myticket from the Home Screen.')
+      const registration=await navigator.serviceWorker.getRegistration('/myticket-push-sw.js')
+      const subscription=await registration?.pushManager.getSubscription()
+      if (!subscription) throw new Error('This device is not subscribed. Tap Enable browser notifications here first.')
       playIncomingSound()
-      const response=await fetch('/api/notifications/test',{method:'POST'})
+      const response=await fetch('/api/notifications/test',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({endpoint:subscription.endpoint})})
       const result=await response.json()
-      if(!response.ok)throw new Error(result.results?.map((r:{reason?:string,status:string})=>r.reason||r.status).join(', ')||result.error||'Push provider rejected the test.')
-      setPushFeedback('Push accepted for '+result.accepted+' device(s). Check Chrome and Windows.')
+      if(!response.ok)throw new Error(result.error || result.results?.map((r:{reason?:string,status:string})=>r.reason||r.status).join(', ') || 'Push provider rejected the test.')
+      setPushFeedback('Push provider accepted the test for this device. Check this device for the notification banner; acceptance does not guarantee display.')
     }catch(error){setPushFeedback(error instanceof Error?error.message:'Test failed.')}
     finally{setPushTestBusy(false)}
   }
