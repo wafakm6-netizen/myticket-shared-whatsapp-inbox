@@ -97,11 +97,18 @@ function formatChatDate(value: string) {
   return date.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })
 }
 
+function EmojiMessageSegment({ text }: { text: string }) {
+  const segments = Array.from(new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(text), part => part.segment)
+  return <>{segments.map((segment, index) => /\\p{Extended_Pictographic}/u.test(segment) || /[\\u{1F1E6}-\\u{1F1FF}]/u.test(segment)
+    ? <span className="message-emoji" key={index}><EmojiArtwork emoji={segment} /></span>
+    : <Fragment key={index}>{segment}</Fragment>)}</>
+}
+
 function LinkedMessageText({ text }: { text: string }) {
   const urlPattern = /https?:\/\/[^\s<>]+|www\.[^\s<>]+/gi
   const parts = text.split(/(https?:\/\/[^\s<>]+|www\.[^\s<>]+)/gi)
   return <div style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{parts.map((part, index) => {
-    if (!part.match(/^(https?:\/\/|www\.)/i)) return part
+    if (!part.match(/^(https?:\/\/|www\.)/i)) return <EmojiMessageSegment key={index} text={part} />
     const trailing = part.match(/[.,!?;:)}\]]+$/)?.[0] || ''
     const urlText = trailing ? part.slice(0, -trailing.length) : part
     let href: string
@@ -582,7 +589,7 @@ export default function Page() {
 
   const insertEmoji = (emoji: string) => {
     const input = messageInput.current
-    if (!input) { setDraft(current => current + emoji); setEmojiOpen(false); return }
+    if (!input) { setDraft(current => current + emoji); return }
     input.focus()
     const selection = window.getSelection()
     const range = selection && selection.rangeCount ? selection.getRangeAt(0) : null
@@ -602,7 +609,6 @@ export default function Page() {
       selection?.addRange(range)
       setDraft(Array.from(input.childNodes).map(function collect(node: ChildNode): string { if (node.nodeType === Node.TEXT_NODE) return node.textContent || ''; if (!(node instanceof HTMLElement)) return ''; if (node.tagName === 'IMG') return node.dataset.emoji || node.getAttribute('alt') || ''; if (node.tagName === 'BR') return '\\n'; return Array.from(node.childNodes).map(collect).join('') }).join(''))
     } else setDraft(current => current + emoji)
-    setEmojiOpen(false)
   }
 
   const uploadAttachment = async (file: File) => { const form = new FormData(); form.append('file', file); const response = await fetch('/api/media', { method: 'POST', body: form }); const payload = await response.json().catch(() => ({})); if (!response.ok) throw new Error(payload.error || 'Media upload failed'); return payload }
