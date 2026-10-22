@@ -5,11 +5,11 @@ import { createBrowserSupabaseClient } from '@/lib/supabase/client'
 import { WhatsAppTemplatePicker, type TemplateSelection } from '@/components/whatsapp-template-picker'
 import { Archive, Bell, Check, ChevronDown, CircleHelp, FileText, MessageSquareCheck, Inbox, Menu, Mic, Pause, Play, Square, MoreHorizontal, Paperclip, Search, Send, Settings, Smile, Tag, Trash2, Users, X } from 'lucide-react'
 
-// Google Noto Color Emoji artwork keeps the picker consistent across Windows and macOS.
+// Apple-style emoji sprites for a WhatsApp-like picker; Unicode text remains unchanged.
 // Keep the original Unicode character for messages; only the picker appearance changes.
 function emojiArtworkUrl(emoji: string) {
   const codepoints = Array.from(emoji).map((char) => char.codePointAt(0)!).filter((point) => point !== 0xfe0f)
-  return `https://cdn.jsdelivr.net/gh/googlefonts/noto-emoji@main/png/128/emoji_u${codepoints.map((point) => point.toString(16)).join('_')}.png`
+  return `https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.1.2/img/apple/64/${codepoints.map((point) => point.toString(16)).join('-')}.png`
 }
 
 function EmojiArtwork({ emoji }: { emoji: string }) {
