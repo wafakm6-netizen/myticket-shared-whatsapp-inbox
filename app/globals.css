@@ -695,3 +695,17 @@
 .emoji-grid button{min-width:0;width:100%;height:35px;padding:4px;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .emoji-artwork{display:block;width:27px;height:27px;max-width:100%;object-fit:contain;pointer-events:none}
 .emoji-native-fallback{font-size:23px;line-height:1}
+
+/* Reference-inspired WhatsApp emoji panel */
+.emoji-picker{width:370px;height:365px;background:#f5f7f9;border:1px solid #e1e5ea;border-radius:12px}
+.emoji-category-tabs{background:#e9edf0;grid-template-columns:repeat(8,minmax(0,1fr));padding:6px 8px 3px;gap:2px;border-bottom:1px solid #dfe5e9}
+.emoji-category-tabs button{height:35px;color:#77848d;border-radius:6px 6px 0 0}
+.emoji-category-tabs button.active{color:#008f75;background:transparent;box-shadow:inset 0 -3px #00a884}
+.emoji-search{background:#fff;border-color:#dce3e9;border-radius:9px;margin:10px 11px 7px}
+.emoji-scroll{padding:5px 9px 12px;overflow-x:hidden}
+.emoji-section>strong{font-size:11px;color:#6a7b87}
+.emoji-grid{grid-template-columns:repeat(10,minmax(0,1fr));gap:1px}
+.emoji-grid button{height:34px;padding:2px;border-radius:6px}
+.emoji-artwork{width:29px;height:29px}
+.emoji-grid button:hover{background:#e4edf0;transform:none}
+@media(max-width:600px){.emoji-picker{width:auto;max-width:calc(100vw - 24px)}.emoji-grid{grid-template-columns:repeat(10,minmax(0,1fr))}.emoji-artwork{width:26px;height:26px}}
