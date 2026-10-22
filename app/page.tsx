@@ -207,6 +207,38 @@ function contactDisplayName(name: string, phone: string) {
 const dialingCountries = [["🇴🇲","Oman","+968"],["🇦🇪","United Arab Emirates","+971"],["🇸🇦","Saudi Arabia","+966"],["🇶🇦","Qatar","+974"],["🇧🇭","Bahrain","+973"],["🇰🇼","Kuwait","+965"],["🇺🇸","United States","+1"],["🇨🇦","Canada","+1"],["🇬🇧","United Kingdom","+44"],["🇮🇳","India","+91"],["🇵🇰","Pakistan","+92"],["🇪🇬","Egypt","+20"],["🇯🇴","Jordan","+962"],["🇱🇧","Lebanon","+961"],["🇲🇦","Morocco","+212"],["🇩🇪","Germany","+49"],["🇫🇷","France","+33"],["🇹🇷","Türkiye","+90"],["🇵🇭","Philippines","+63"],["🇧🇩","Bangladesh","+880"],["🇮🇩","Indonesia","+62"],["🇲🇾","Malaysia","+60"],["🇦🇺","Australia","+61"],["🇨🇳","China","+86"],["🇯🇵","Japan","+81"],["🇿🇦","South Africa","+27"],["🇳🇵","Nepal","+977"],["🇱🇰","Sri Lanka","+94"],["🇸🇬","Singapore","+65"],["🇮🇹","Italy","+39"],["🇪🇸","Spain","+34"],["🇳🇱","Netherlands","+31"],["🇧🇷","Brazil","+55"],["🇲🇽","Mexico","+52"]]
 
 export default function Page() {
+  // iPadOS Safari keeps the layout viewport tall when the software keyboard
+  // appears. Size the fixed inbox to the visible viewport while editing.
+  useEffect(() => {
+    const viewport = window.visualViewport
+    if (!viewport) return
+    const shell = document.documentElement
+    const update = () => {
+      const editing = document.activeElement instanceof HTMLElement &&
+        (document.activeElement.isContentEditable || ['INPUT','TEXTAREA'].includes(document.activeElement.tagName))
+      const keyboardVisible = editing && window.innerHeight - viewport.height > 120
+      if (keyboardVisible) {
+        shell.style.setProperty('--inbox-visual-height', Math.round(viewport.height) + 'px')
+        shell.style.setProperty('--inbox-visual-top', Math.round(viewport.offsetTop) + 'px')
+      } else {
+        shell.style.removeProperty('--inbox-visual-height')
+        shell.style.removeProperty('--inbox-visual-top')
+      }
+    }
+    viewport.addEventListener('resize', update)
+    viewport.addEventListener('scroll', update)
+    window.addEventListener('focusin', update)
+    window.addEventListener('focusout', update)
+    update()
+    return () => {
+      viewport.removeEventListener('resize', update)
+      viewport.removeEventListener('scroll', update)
+      window.removeEventListener('focusin', update)
+      window.removeEventListener('focusout', update)
+      shell.style.removeProperty('--inbox-visual-height')
+      shell.style.removeProperty('--inbox-visual-top')
+    }
+  }, [])
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [agents, setAgents] = useState<Agent[]>([])
   const [selectedId, setSelectedId] = useState<string | null>(null)
