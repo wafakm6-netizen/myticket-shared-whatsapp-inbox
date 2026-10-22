@@ -1,0 +1,18 @@
+{
+  "name": "Myticket Shared Inbox",
+  "short_name": "Myticket Inbox",
+  "description": "Myticket team WhatsApp shared inbox",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/myticket-favicon.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
