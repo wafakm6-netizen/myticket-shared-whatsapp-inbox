@@ -1,6 +1,7 @@
 import { createHmac, timingSafeEqual } from 'crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { notifyFirstInbound } from '@/lib/notifications/deliver'
 
 function verifyMetaSignature(rawBody: string, signature: string | null) {
   const appSecret = process.env.META_APP_SECRET
@@ -69,13 +70,17 @@ export async function POST(request: NextRequest) {
             contact = concurrentContact
           }
         }
-        const { data: conversation, error: conversationError } = await supabase.from('whatsapp_conversations').upsert({ contact_id: contact.id, status: 'open', last_message_at: new Date().toISOString() }, { onConflict: 'contact_id' }).select('id, unread_count').single()
+        const { data: conversation, error: conversationError } = await supabase.from('whatsapp_conversations').upsert({ contact_id: contact.id, status: 'open', last_message_at: new Date().toISOString() }, { onConflict: 'contact_id' }).select('id, unread_count, assigned_agent_id').single()
         if (conversationError) throw conversationError
+        const { data: existingMessage, error: existingMessageError } = await supabase.from('whatsapp_messages').select('id').eq('external_id',item.id).maybeSingle()
+        if (existingMessageError) throw existingMessageError
+        if (existingMessage) continue
         const media = item.image || item.document || item.video || item.audio
         const { error: messageError } = await supabase.from('whatsapp_messages').upsert({ conversation_id: conversation.id, external_id: item.id, direction: 'inbound', sender_name: profileName || contact.display_name, body: item.text?.body ?? item.caption ?? media?.filename ?? null, attachment_url: media?.id ? `/api/media?mediaId=${encodeURIComponent(media.id)}` : null, attachment_name: media?.filename ?? (media?.id ? `${item.type} attachment` : null), status: 'delivered', sent_at: new Date(Number(item.timestamp ?? 0) * 1000).toISOString() }, { onConflict: 'external_id' })
         if (messageError) throw messageError
         await supabase.from('whatsapp_conversations').update({ unread_count: (conversation.unread_count ?? 0) + 1, last_message_at: new Date().toISOString() }).eq('id', conversation.id)
         stored++
+        try { await notifyFirstInbound(supabase,conversation.id,item.id,contact.display_name,conversation.assigned_agent_id) } catch (notificationError) { console.error('[whatsapp webhook] notification failed',notificationError) }
       }
       for (const status of value.statuses ?? []) {
         if (status.status === 'failed') {
