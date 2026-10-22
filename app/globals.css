@@ -710,3 +710,8 @@
 .emoji-grid button:hover{background:#e4edf0;transform:none}
 @media(max-width:600px){.emoji-picker{width:auto;max-width:calc(100vw - 24px)}.emoji-grid{grid-template-columns:repeat(10,minmax(0,1fr))}.emoji-artwork{width:26px;height:26px}}
 
+
+/* Rich emoji composer: image glyphs inside editable text, not a visual overlay. */
+.emoji-composer-editor{box-sizing:border-box;flex:1;min-width:0;min-height:31px;max-height:180px;overflow-y:auto;overflow-x:hidden;padding:6px 12px;outline:none;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;font-size:14px;line-height:19px;color:#172b4d;cursor:text}
+.emoji-composer-editor:empty::before{content:attr(data-placeholder);color:#9caec2;pointer-events:none}
+.emoji-composer-editor .composer-emoji{display:inline-block;vertical-align:-0.16em;width:1.3em;height:1.3em;object-fit:contain;margin:0 1px;user-select:all}
