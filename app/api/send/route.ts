@@ -116,6 +116,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const { error: resetError } = await supabase.from('whatsapp_notification_cycles').upsert({ conversation_id: conversation, notified_since_reply: false, updated_at: new Date().toISOString() }, { onConflict: 'conversation_id' })
+    if (resetError) console.error('[send] notification reset failed',resetError)
     return NextResponse.json({ success: true, message, metaMessageId: externalId }, { status: 200 })
   } catch (error) {
     console.error('[send] failed', error)
