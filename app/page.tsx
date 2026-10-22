@@ -768,7 +768,9 @@ export default function Page() {
   },[sessionUser?.agentId])
   const configureBrowserPush = async () => {
     try {
-      if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) { setPushFeedback('This browser does not support push notifications.'); return }
+      if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) { const isIPad = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); setPushFeedback(isIPad ? 'On iPad, open Myticket in Safari, tap Share → Add to Home Screen, then launch Myticket from its Home Screen icon to enable push notifications (iPadOS 16.4+).' : 'This browser does not support push notifications.'); return }
+      const isAppleMobile = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+      if (isAppleMobile && !window.matchMedia('(display-mode: standalone)').matches && !(navigator as Navigator & {standalone?: boolean}).standalone) { setPushFeedback('On iPad, install Myticket from Safari using Share → Add to Home Screen, then open it from the Home Screen to enable notifications.'); return }
       const configResponse = await fetch('/api/notifications/push')
       if (!configResponse.ok) throw new Error('Please sign in again.')
       const config = await configResponse.json()
