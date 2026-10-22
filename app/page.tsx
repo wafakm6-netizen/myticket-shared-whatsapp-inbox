@@ -23,7 +23,7 @@ function StyledEmojiDraft({ value }: { value: string }) {
     const segments = Array.from(new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(value), (part) => part.segment)
     return segments.map((segment) => ({
       segment,
-      emoji: /\\p{Extended_Pictographic}/u.test(segment) || /[\\u{1F1E6}-\\u{1F1FF}]/u.test(segment),
+      emoji: /\p{Extended_Pictographic}/u.test(segment) || /[\u{1F1E6}-\u{1F1FF}]/u.test(segment),
     }))
   }, [value])
   return <div className="styled-emoji-draft" aria-hidden="true">{parts.map((part, index) => part.emoji ? <EmojiArtwork key={index} emoji={part.segment} /> : <span key={index}>{part.segment}</span>)}{'\\u200b'}</div>
