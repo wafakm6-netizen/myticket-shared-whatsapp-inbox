@@ -1,15 +1,17 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { requireAgent } from '@/lib/auth'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { sendBrowserPush } from '@/lib/notifications/push'
 
-export async function POST(){
+export async function POST(request: NextRequest){
   const auth=await requireAgent()
   if(auth.error)return auth.error
+  const {endpoint}=await request.json().catch(()=>({}))
+  if(typeof endpoint!=='string' || !endpoint.startsWith('https://'))return NextResponse.json({error:'Enable browser notifications on this device before testing. This test only targets the current device.'},{status:400})
   const supabase=createServerSupabaseClient()
-  const {data:subscriptions,error}=await supabase.from('whatsapp_push_subscriptions').select('endpoint,p256dh,auth').eq('agent_id',auth.agent!.id)
+  const {data:subscriptions,error}=await supabase.from('whatsapp_push_subscriptions').select('endpoint,p256dh,auth').eq('agent_id',auth.agent!.id).eq('endpoint',endpoint)
   if(error)return NextResponse.json({error:'Unable to load push subscriptions.'},{status:500})
-  if(!subscriptions?.length)return NextResponse.json({error:'No browser subscription found. Enable browser notifications on this device first.'},{status:400})
+  if(!subscriptions?.length)return NextResponse.json({error:'This device is not registered. Tap Enable browser notifications on this device first.'},{status:400})
   const results=await Promise.all(subscriptions.map(async subscription=>{
     try{
       const result=await sendBrowserPush(subscription,{title:'Myticket Test Notification',body:'This is a test notification.',tag:'myticket-test-'+Date.now(),url:'https://whatsapp.myticketom.com/'})
