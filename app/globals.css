@@ -841,3 +841,37 @@
   white-space:nowrap;
 }
 .workspace-settings-modal .workspace-settings-content .logout-button:hover{background:#ffebe7}
+
+/* iPadOS Safari: keep the composer above the software keyboard.
+   visualViewport height is set only while an editable field has focus
+   and the keyboard is actually reducing the visible area. */
+@media (pointer: coarse) {
+  .app-shell {
+    height:var(--inbox-visual-height,100dvh);
+    max-height:var(--inbox-visual-height,100dvh);
+    position:relative;
+    top:var(--inbox-visual-top,0px);
+    overflow:hidden;
+  }
+  .app-shell>.chat-pane {
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+    overflow:hidden;
+  }
+  .app-shell .thread {
+    flex:1 1 auto;
+    min-height:0;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:18px;
+  }
+  .app-shell .composer-wrap {
+    position:relative;
+    bottom:auto;
+    flex:0 0 auto;
+    z-index:2;
+    padding-bottom:max(8px,env(safe-area-inset-bottom));
+  }
+  .app-shell .rail { max-height:var(--inbox-visual-height,100dvh); }
+}
