@@ -98,16 +98,24 @@ function formatChatDate(value: string) {
 }
 
 function EmojiMessageSegment({ text }: { text: string }) {
-  const segments = Array.from(new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(text), part => part.segment)
-  return <>{segments.map((segment, index) => /\p{Extended_Pictographic}/u.test(segment) || /[\u{1F1E6}-\u{1F1FF}]/u.test(segment)
-    ? <span className="message-emoji" key={index}><EmojiArtwork emoji={segment} /></span>
-    : <Fragment key={index}>{segment}</Fragment>)}</>
+  // Keep ordinary text as continuous DOM text nodes. Splitting Arabic into
+  // individual grapheme React fragments breaks contextual letter shaping on Safari.
+  const graphemes = Array.from(new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(text), part => part.segment)
+  const runs: { text: string; emoji: boolean }[] = []
+  for (const segment of graphemes) {
+    const emoji = /\\p{Extended_Pictographic}/u.test(segment) || /[\\u{1F1E6}-\\u{1F1FF}]/u.test(segment)
+    if (!emoji && runs.length && !runs[runs.length - 1].emoji) runs[runs.length - 1].text += segment
+    else runs.push({ text: segment, emoji })
+  }
+  return <>{runs.map((run, index) => run.emoji
+    ? <span className="message-emoji" key={index}><EmojiArtwork emoji={run.text} /></span>
+    : <Fragment key={index}>{run.text}</Fragment>)}</>
 }
 
 function LinkedMessageText({ text }: { text: string }) {
   const urlPattern = /https?:\/\/[^\s<>]+|www\.[^\s<>]+/gi
   const parts = text.split(/(https?:\/\/[^\s<>]+|www\.[^\s<>]+)/gi)
-  return <div style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{parts.map((part, index) => {
+  return <div dir="auto" style={{ whiteSpace: 'pre-wrap', overflowWrap: 'break-word', wordBreak: 'normal', unicodeBidi: 'plaintext' }}>{parts.map((part, index) => {
     if (!part.match(/^(https?:\/\/|www\.)/i)) return <EmojiMessageSegment key={index} text={part} />
     const trailing = part.match(/[.,!?;:)}\]]+$/)?.[0] || ''
     const urlText = trailing ? part.slice(0, -trailing.length) : part
