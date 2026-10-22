@@ -683,3 +683,15 @@
 /* Inline media in WhatsApp chat bubbles */
 .message-image-link{display:block;max-width:100%;margin:2px 0 5px;text-decoration:none}
 .message-image{display:block;width:auto;height:auto;max-width:min(290px,100%);max-height:320px;object-fit:contain;border-radius:9px;cursor:zoom-in}
+
+/* Consistent, polished emoji picker across desktop operating systems */
+.emoji-picker{box-sizing:border-box;max-width:calc(100vw - 24px);overflow:hidden}
+.emoji-picker *{box-sizing:border-box}
+.emoji-category-tabs{grid-template-columns:repeat(8,minmax(0,1fr));min-width:0}
+.emoji-category-tabs button{min-width:0;max-width:100%;overflow:hidden}
+.emoji-scroll{min-width:0;overflow-x:hidden;overscroll-behavior:contain}
+.emoji-section,.emoji-grid{min-width:0;max-width:100%}
+.emoji-grid{grid-template-columns:repeat(8,minmax(0,1fr));gap:2px;padding-left:0;padding-right:0}
+.emoji-grid button{min-width:0;width:100%;height:35px;padding:4px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.emoji-artwork{display:block;width:27px;height:27px;max-width:100%;object-fit:contain;pointer-events:none}
+.emoji-native-fallback{font-size:23px;line-height:1}
