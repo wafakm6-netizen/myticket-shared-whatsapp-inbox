@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
   if (auth.error) return auth.error
 
   const { to, text, conversationId, attachmentUrl, attachmentName, attachmentType, mediaId, template, replyToMessageId } = await request.json().catch(() => ({}))
-  if (typeof to !== 'string' || !to.trim() || (typeof text !== 'string' || (!text.trim() && !mediaId && !template))) {
+  if (typeof to !== 'string' || !to.trim() || (!template && !mediaId && !attachmentUrl && (typeof text !== 'string' || !text.trim()))) {
     return NextResponse.json({ error: 'Both recipient and message are required.' }, { status: 400 })
   }
 
