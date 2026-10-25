@@ -948,3 +948,7 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
 
 /* Left-align the regenerate invitation action label. */
 .team-list .team-info .team-invite-renew{justify-content:flex-start!important;text-align:left!important}
+
+/* Subtle WhatsApp-inspired chat wallpaper; keep header and composer solid white. */
+.app-shell .chat-pane{background-color:#f0f2ef!important;background-image:url('/chat-doodles.svg')!important;background-repeat:repeat!important;background-size:360px 360px!important}
+.app-shell .chat-header,.app-shell .composer-wrap{background-color:#fff}
