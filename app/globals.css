@@ -971,3 +971,29 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
 /* Reference header: keep the orange, align compact actions on a shared baseline. */
 .app-shell .inbox-pane .pane-header .new-conversation-header-btn {flex:0 0 26px;width:26px;height:26px;padding:0;align-self:center;}
 .app-shell .inbox-pane .pane-header .new-conversation-header-btn svg {display:block;flex:none;}
+
+/* Shared Inbox: unobtrusive, consistent scrollbars across panels, lists and dialogs. */
+.app-shell,
+.app-shell * {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+.app-shell ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.app-shell ::-webkit-scrollbar-track {
+  background: transparent;
+}
+.app-shell ::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}
+.app-shell ::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8;
+}
+.app-shell ::-webkit-scrollbar-corner {
+  background: transparent;
+}
