@@ -923,3 +923,6 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
 
 /* Compact inline action for pending team invitations. */
 .team-list .team-info .team-invite-renew{display:inline-flex!important;align-self:flex-start!important;flex:0 0 auto!important;width:max-content!important;max-width:100%!important;min-height:24px!important;height:auto!important;padding:4px 8px!important;margin:2px 0!important;border:1px solid #ffd4bc!important;border-radius:6px!important;background:#fff7f1!important;color:#d95018!important;font-size:10px!important;font-weight:600!important;line-height:1.2!important;white-space:nowrap!important;text-align:left!important}
+
+/* Slightly wider invite action without increasing height. */
+.team-list .team-info .team-invite-renew{padding-left:15px!important;padding-right:15px!important;min-width:150px!important;justify-content:center!important}
