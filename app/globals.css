@@ -926,3 +926,22 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
 
 /* Slightly wider invite action without increasing height. */
 .team-list .team-info .team-invite-renew{padding-left:15px!important;padding-right:15px!important;min-width:150px!important;justify-content:center!important}
+
+/* Unified desktop inbox header: consistent height, rhythm and actions. */
+@media(min-width:769px){
+.app-shell .inbox-pane .pane-header,.app-shell .chat-pane .chat-header,.app-shell .details-pane .details-title{height:80px!important;min-height:80px!important;box-sizing:border-box;display:flex;align-items:center!important;border-bottom:1px solid #e5ebf2}
+.app-shell .inbox-pane .pane-header{padding:0 16px!important;gap:12px}
+.app-shell .chat-pane .chat-header{padding:0 18px!important;gap:16px}
+.app-shell .chat-pane .chat-person{gap:12px;min-width:0}
+.app-shell .chat-pane .chat-person>div:last-child{min-width:0}
+.app-shell .chat-pane .chat-person h2{font-size:13px;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.app-shell .chat-pane .chat-person p{margin-top:4px}
+.app-shell .chat-pane .chat-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.app-shell .chat-pane .chat-actions .icon-btn{width:34px;height:34px;border-radius:8px}
+.app-shell .chat-pane .chat-actions .status-select{height:34px;box-sizing:border-box;padding:0 10px;border-radius:8px}
+.app-shell .details-pane{padding-top:0!important}
+.app-shell .details-pane .details-title{margin:0 -20px 18px;padding:0 20px!important;gap:12px}
+.app-shell .details-pane .details-title .eyebrow{margin:0!important;letter-spacing:.07em;font-size:11px;color:#344866;line-height:1.3}
+.app-shell .details-pane .details-title .icon-btn{flex-shrink:0;width:30px;height:30px}
+.app-shell .inbox-pane .pane-header .pane-brand-heading h1{letter-spacing:.09em!important;font-weight:700!important;font-size:clamp(10px,.9vw,13px)!important}
+}
