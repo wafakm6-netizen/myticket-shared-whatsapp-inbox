@@ -42,6 +42,27 @@ export async function POST(request: NextRequest) {
       conversation = created.id
     }
 
+    // Meta only allows free-form replies within 24 hours of the customer's
+    // latest inbound message. An accepted API request may still fail later
+    // through a delivery-status webhook if this window is closed.
+    if (!template) {
+      const { data: latestInbound, error: inboundError } = await supabase
+        .from('whatsapp_messages')
+        .select('sent_at')
+        .eq('conversation_id', conversation)
+        .eq('direction', 'inbound')
+        .order('sent_at', { ascending: false })
+        .limit(1)
+      if (inboundError) throw inboundError
+      const lastCustomerMessage = latestInbound?.[0]?.sent_at
+      if (!lastCustomerMessage || Date.now() - new Date(lastCustomerMessage).getTime() >= 24 * 60 * 60 * 1000) {
+        return NextResponse.json({
+          error: 'The WhatsApp 24-hour reply window has expired. Send an approved Meta WhatsApp template to reopen this conversation. Normal messages can be sent after the customer replies.',
+          code: 'WHATSAPP_WINDOW_CLOSED',
+        }, { status: 409 })
+      }
+    }
+
     const token = process.env.WHATSAPP_ACCESS_TOKEN
     const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID
     if (!token || !phoneNumberId) {
@@ -94,6 +115,7 @@ export async function POST(request: NextRequest) {
         attachment_url: mediaId ? `/api/media?mediaId=${encodeURIComponent(mediaId)}` : attachmentUrl ?? null,
         attachment_name: mediaId && type === 'audio' ? 'Voice message' : attachmentName ?? null,
         status,
+        failure_reason: accepted ? null : (result?.error?.message || 'Meta rejected this message.'),
         sent_at: new Date().toISOString(),
       })
       .select('id, conversation_id, body, attachment_url, attachment_name, status, created_at, external_id')
