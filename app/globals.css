@@ -963,7 +963,7 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
 .app-shell .sticker-message-bubble .message-meta,.app-shell .sticker-message-bubble .message-time{background:rgba(255,255,255,.82)!important;border-radius:5px!important;padding:2px 5px!important}
 
 /* Compact new conversation action in the inbox header */
-.new-conversation-header-btn { display:inline-flex;align-items:center;justify-content:center;flex:0 0 29px;width:29px;height:29px;border:0;border-radius:50%;background:#ff5a1f;color:#fff;cursor:pointer;box-shadow:none;transition:background .15s ease; }
+.new-conversation-header-btn { display:inline-flex;align-items:center;justify-content:center;flex:0 0 28px;width:28px;height:28px;border:0;border-radius:50%;background:#ff5a1f;color:#fff;cursor:pointer;box-shadow:none;transition:background .15s ease; }
 .new-conversation-header-btn:hover { background:#e84d15; }
 .new-conversation-header-btn:focus-visible { outline:2px solid #ff5a1f;outline-offset:3px; }
-.new-conversation-header-btn span { font-size:21px;line-height:1;font-weight:400;transform:translateY(-1px); }
+.new-conversation-header-btn span { display:block;font-size:21px;line-height:1;font-weight:400;transform:translateY(-1px); }
