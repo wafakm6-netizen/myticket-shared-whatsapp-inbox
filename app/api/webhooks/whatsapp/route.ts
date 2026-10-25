@@ -98,7 +98,11 @@ export async function POST(request: NextRequest) {
         }
         const mapped = ['sent', 'delivered', 'read', 'failed'].includes(status.status) ? status.status : null
         if (mapped) {
-          const { error: statusError } = await supabase.from('whatsapp_messages').update({ status: mapped }).eq('external_id', status.id)
+          const failureReason = mapped === 'failed' && Array.isArray(status.errors)
+            ? status.errors.map((error: any) => [error.code ? `Meta ${error.code}` : '', error.title, error.error_data?.details || error.message].filter(Boolean).join(': ')).join('; ').slice(0, 1500)
+            : null
+          const patch = mapped === 'failed' ? { status: mapped, failure_reason: failureReason || 'WhatsApp delivery failed; check the Meta delivery status.' } : { status: mapped }
+          const { error: statusError } = await supabase.from('whatsapp_messages').update(patch).eq('external_id', status.id)
           if (statusError) throw statusError
         }
       }
