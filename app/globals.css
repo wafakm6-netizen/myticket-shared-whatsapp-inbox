@@ -945,3 +945,6 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
 .app-shell .details-pane .details-title .icon-btn{flex-shrink:0;width:30px;height:30px}
 .app-shell .inbox-pane .pane-header .pane-brand-heading h1{letter-spacing:.09em!important;font-weight:700!important;font-size:clamp(10px,.9vw,13px)!important}
 }
+
+/* Left-align the regenerate invitation action label. */
+.team-list .team-info .team-invite-renew{justify-content:flex-start!important;text-align:left!important}
