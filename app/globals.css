@@ -899,3 +899,11 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
 .saved-sticker-item img{width:90px;height:90px;max-width:94%;max-height:94%;object-fit:contain}
 .saved-sticker-empty{grid-column:1/-1;font-size:12px;color:#8290a3;text-align:center;padding:32px 12px;line-height:1.6}
 @media(max-width:600px){.saved-sticker-panel{position:fixed;left:12px;right:12px;bottom:90px;width:auto;height:min(370px,55vh)}}
+
+/* Team invitation link: responsive, readable confirmation panel */
+.temporary-password:has(input[aria-label="Generated agent invitation link"]){display:grid!important;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px!important;padding:18px!important;margin:16px 0!important;border:1px solid #dbe9df!important;border-radius:14px!important;background:#f6fcf8!important;color:#265c3c!important;overflow:hidden;box-shadow:0 3px 12px rgba(19,80,48,.04)}
+.temporary-password:has(input[aria-label="Generated agent invitation link"])>span{grid-column:1/-1;display:block;font-size:13px;font-weight:600;line-height:1.55;overflow-wrap:anywhere}
+.temporary-password input[aria-label="Generated agent invitation link"]{grid-column:1/-1;min-width:0;width:100%!important;box-sizing:border-box;padding:12px 14px!important;border:1px solid #dce3eb!important;border-radius:9px!important;background:#fff!important;color:#40536b!important;font-size:12px!important;text-overflow:ellipsis;direction:ltr}
+.temporary-password:has(input[aria-label="Generated agent invitation link"])>button.send-btn{grid-column:1;justify-self:start;display:inline-flex;align-items:center;justify-content:center;min-width:145px;min-height:38px;padding:9px 16px!important;border-radius:9px!important;font-size:12px!important;white-space:nowrap;line-height:1.2;cursor:pointer}
+.temporary-password:has(input[aria-label="Generated agent invitation link"])>button[aria-label="Dismiss notice"]{grid-column:2;justify-self:end;align-self:center;padding:9px 12px;border:0;background:transparent;color:#64748b;font-size:12px;cursor:pointer}
+@media(max-width:480px){.temporary-password:has(input[aria-label="Generated agent invitation link"]){padding:14px!important;gap:10px!important}.temporary-password:has(input[aria-label="Generated agent invitation link"])>button.send-btn{min-width:130px}}
