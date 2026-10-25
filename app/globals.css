@@ -875,3 +875,9 @@
   }
   .app-shell .rail { max-height:var(--inbox-visual-height,100dvh); }
 }
+
+/* Bilingual Myticket typography: Latin and Arabic share the IBM Plex family. */
+html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
+:lang(ar){font-family:var(--font-plex-arabic),var(--font-plex-latin),sans-serif}
+.message-bubble .linked-message-text,.message-bubble .message-text,.message-bubble p{font-size:15px;line-height:1.8}
+.conversation-copy strong,.chat-header strong{font-weight:600}
