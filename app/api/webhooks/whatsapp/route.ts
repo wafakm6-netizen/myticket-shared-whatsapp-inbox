@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
         const { data: existingMessage, error: existingMessageError } = await supabase.from('whatsapp_messages').select('id').eq('external_id',item.id).maybeSingle()
         if (existingMessageError) throw existingMessageError
         if (existingMessage) continue
-        const media = item.image || item.document || item.video || item.audio
+        const media = item.image || item.document || item.video || item.audio || item.sticker
         const { error: messageError } = await supabase.from('whatsapp_messages').upsert({ conversation_id: conversation.id, external_id: item.id, reply_to_external_id: item.context?.id ?? null, direction: 'inbound', sender_name: profileName || contact.display_name, body: item.text?.body ?? item.caption ?? media?.filename ?? null, attachment_url: media?.id ? `/api/media?mediaId=${encodeURIComponent(media.id)}` : null, attachment_name: media?.filename ?? (media?.id ? `${item.type} attachment` : null), status: 'delivered', sent_at: new Date(Number(item.timestamp ?? 0) * 1000).toISOString() }, { onConflict: 'external_id' })
         if (messageError) throw messageError
         await supabase.from('whatsapp_conversations').update({ unread_count: (conversation.unread_count ?? 0) + 1, last_message_at: new Date().toISOString() }).eq('id', conversation.id)
