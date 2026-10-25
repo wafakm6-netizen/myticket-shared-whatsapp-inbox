@@ -963,7 +963,11 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
 .app-shell .sticker-message-bubble .message-meta,.app-shell .sticker-message-bubble .message-time{background:rgba(255,255,255,.82)!important;border-radius:5px!important;padding:2px 5px!important}
 
 /* Compact new conversation action in the inbox header */
-.new-conversation-header-btn { display:inline-flex;align-items:center;justify-content:center;flex:0 0 28px;width:28px;height:28px;border:0;border-radius:50%;background:#ff5a1f;color:#fff;cursor:pointer;box-shadow:none;transition:background .15s ease; }
+.new-conversation-header-btn { display:inline-flex;align-items:center;justify-content:center;flex:0 0 26px;width:26px;height:26px;border:0;border-radius:50%;background:#ff5a1f;color:#fff;cursor:pointer;box-shadow:none;transition:background .15s ease; }
 .new-conversation-header-btn:hover { background:#e84d15; }
 .new-conversation-header-btn:focus-visible { outline:2px solid #ff5a1f;outline-offset:3px; }
 .new-conversation-header-btn span { display:block;font-size:15px;line-height:1;font-weight:400;transform:translateY(-1px); }
+
+/* Reference header: keep the orange, align compact actions on a shared baseline. */
+.app-shell .inbox-pane .pane-header .new-conversation-header-btn {flex:0 0 26px;width:26px;height:26px;padding:0;align-self:center;}
+.app-shell .inbox-pane .pane-header .new-conversation-header-btn svg {display:block;flex:none;}
