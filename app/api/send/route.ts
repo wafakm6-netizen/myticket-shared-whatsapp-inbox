@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
   const auth = await requireAgent()
   if (auth.error) return auth.error
 
-  const { to, text, conversationId, attachmentUrl, attachmentName, attachmentType, mediaId, template } = await request.json().catch(() => ({}))
+  const { to, text, conversationId, attachmentUrl, attachmentName, attachmentType, mediaId, template, replyToMessageId } = await request.json().catch(() => ({}))
   if (typeof to !== 'string' || !to.trim() || (typeof text !== 'string' || (!text.trim() && !mediaId && !template))) {
     return NextResponse.json({ error: 'Both recipient and message are required.' }, { status: 400 })
   }
@@ -78,6 +78,15 @@ export async function POST(request: NextRequest) {
       ? { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type, text: { body: text.trim() } }
       : { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type, [type]: { ...(mediaId ? { id: mediaId } : { link: attachmentUrl }), ...(type === 'document' && attachmentName ? { filename: attachmentName } : {}), ...(text.trim() ? { caption: text.trim() } : {}) } }
 
+    let replyToExternalId: string | null = null
+    if (replyToMessageId) {
+      const { data: original, error: originalError } = await supabase.from('whatsapp_messages').select('external_id').eq('id', replyToMessageId).eq('conversation_id', conversation).maybeSingle()
+      if (originalError) throw originalError
+      if (!original?.external_id) return NextResponse.json({ error: 'This message cannot be replied to because its WhatsApp ID is unavailable.' }, { status: 400 })
+      replyToExternalId = original.external_id
+      if (!template) Object.assign(messageBody, { context: { message_id: replyToExternalId } })
+    }
+
     // Diagnostic: send uploaded Ogg/Opus as a regular audio attachment, not a voice note.
     // Deliberately omit audio.voice; Meta webhook delivery status remains authoritative.
     const graphVersion = process.env.META_GRAPH_VERSION ?? 'v23.0'
@@ -110,6 +119,7 @@ export async function POST(request: NextRequest) {
       .insert({
         conversation_id: conversation,
         external_id: externalId,
+        reply_to_external_id: replyToExternalId,
         direction: 'outbound',
         body: template ? `[Template] ${template.name}` : text.trim() || null,
         attachment_url: mediaId ? `/api/media?mediaId=${encodeURIComponent(mediaId)}` : attachmentUrl ?? null,
