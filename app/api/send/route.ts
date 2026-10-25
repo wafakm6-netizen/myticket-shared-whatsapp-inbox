@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
     const type = template ? 'template' : mediaId ? (attachmentType === 'sticker' ? 'sticker' : attachmentType?.startsWith('image/') ? 'image' : attachmentType?.startsWith('audio/') || !attachmentType ? 'audio' : 'document') : attachmentUrl ? (attachmentType?.startsWith('image/') ? 'image' : 'document') : 'text'
     const messageBody = type === 'template' ? { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type: 'template', template: { name: template.name, language: { code: template.languageCode }, ...((template.header || template.parameters.length) ? { components: [...(template.header ? [{ type: 'header', parameters: [{ type: template.header.type, [template.header.type]: { id: template.header.id, ...(template.header.type === 'document' ? { filename: template.header.filename } : {}) } }] }] : []), ...(template.parameters.length ? [{ type: 'body', parameters: template.parameters.map((value: string) => ({ type: 'text', text: value.trim() })) }] : [])] } : {}) } } : type === 'sticker' ? { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type: 'sticker', sticker: { id: mediaId } } : type === 'audio' ? { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type: 'audio', audio: { id: mediaId } } : type === 'text'
       ? { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type, text: { body: text.trim() } }
-      : { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type, [type]: { ...(mediaId ? { id: mediaId } : { link: attachmentUrl }), ...(type === 'document' && attachmentName ? { filename: attachmentName } : {}), ...(text.trim() ? { caption: text.trim() } : {}) } }
+      : { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type, [type]: { ...(mediaId ? { id: mediaId } : { link: attachmentUrl }), ...(type === 'document' && attachmentName ? { filename: attachmentName } : {}), ...(messageText ? { caption: messageText } : {}) } }
 
     let replyToExternalId: string | null = null
     if (replyToMessageId) {
@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
         external_id: externalId,
         reply_to_external_id: replyToExternalId,
         direction: 'outbound',
-        body: template ? `[Template] ${template.name}` : text.trim() || null,
+        body: template ? `[Template] ${template.name}` : messageText || null,
         attachment_url: mediaId ? `/api/media?mediaId=${encodeURIComponent(mediaId)}` : attachmentUrl ?? null,
         attachment_name: type === 'sticker' ? 'sticker attachment' : mediaId && type === 'audio' ? 'Voice message' : attachmentName ?? null,
         status,
