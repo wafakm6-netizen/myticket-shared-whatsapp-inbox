@@ -1276,3 +1276,19 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
    white-space:nowrap!important;
  }
 }
+
+/* Arrow-only sidebar control on desktop and wide iPads. */
+@media(min-width:901px){
+ .app-shell>.rail .desktop-rail-toggle,
+ .app-shell:not(.desktop-rail-collapsed)>.rail .desktop-rail-toggle,
+ .app-shell.desktop-rail-collapsed>.rail .desktop-rail-toggle{
+   width:36px!important;height:36px!important;min-height:36px!important;
+   flex:0 0 36px!important;box-sizing:border-box!important;
+   margin:8px auto 5px!important;padding:0!important;
+   display:grid!important;place-items:center!important;
+   flex-direction:row!important;gap:0!important;
+ }
+ .app-shell>.rail .desktop-rail-toggle>span:first-child{
+   font-size:24px!important;line-height:1!important;
+ }
+}
