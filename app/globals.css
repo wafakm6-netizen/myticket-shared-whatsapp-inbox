@@ -1146,3 +1146,19 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
   .app-shell>.rail .rail-item b{position:static!important;margin-left:auto!important}
   .app-shell>.rail .mini-avatar{margin:4px 10px}
 }
+
+/* Compact mobile navigation and dismiss-on-outside-tap layer. */
+.mobile-nav-dismiss{display:none}
+@media(max-width:900px){
+ .mobile-nav-dismiss{display:block;position:fixed;inset:0;z-index:125;border:0;padding:0;background:transparent;cursor:default}
+ .app-shell>.rail,.app-shell>.rail.rail-open{
+   top:70px!important;right:12px!important;left:auto!important;
+   width:184px!important;max-width:calc(100vw - 24px)!important;
+   padding:8px!important;z-index:140!important;
+   border-radius:12px!important;
+ }
+ .app-shell>.rail .rail-item{min-height:38px!important;padding:7px 9px!important;gap:10px!important}
+ .app-shell>.rail .rail-nav,.app-shell>.rail .rail-bottom{gap:2px!important}
+ .app-shell>.rail .rail-item span{font-size:12px!important}
+ .app-shell>.rail .rail-item b{font-size:10px!important}
+}
