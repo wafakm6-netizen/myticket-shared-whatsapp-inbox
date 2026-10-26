@@ -1255,3 +1255,24 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
  .app-shell.desktop-rail-collapsed>.rail .desktop-rail-toggle-label{display:none!important}
 }
 @media(max-width:900px){.desktop-rail-toggle{display:none!important}}
+
+/* Keep Collapse control fully inside the narrow desktop navigation rail. */
+@media(min-width:901px){
+ .app-shell:not(.desktop-rail-collapsed)>.rail .desktop-rail-toggle{
+   box-sizing:border-box!important;
+   width:calc(100% - 4px)!important;
+   max-width:100%!important;
+   min-width:0!important;
+   margin:8px 2px 5px!important;
+   padding:4px 2px!important;
+   gap:2px!important;
+   flex-direction:column!important;
+   overflow:hidden!important;
+ }
+ .app-shell:not(.desktop-rail-collapsed)>.rail .desktop-rail-toggle>span:first-child{font-size:17px!important;line-height:1!important}
+ .app-shell:not(.desktop-rail-collapsed)>.rail .desktop-rail-toggle-label{
+   font-size:9px!important;
+   line-height:1.1!important;
+   white-space:nowrap!important;
+ }
+}
