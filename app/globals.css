@@ -1177,3 +1177,19 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
  .app-shell .inbox-pane .pane-header .icon-btn{flex-shrink:0!important}
  .app-shell>.rail .rail-nav .rail-item[aria-label="Inbox"] b{display:none!important}
 }
+
+/* Make agent account controls usable within the compact mobile navigation. */
+@media(max-width:900px){
+ .app-shell>.rail .profile-menu-wrap{width:100%;position:relative!important}
+ .app-shell>.rail .profile-menu{
+   position:static!important;
+   width:100%!important;
+   max-width:100%!important;
+   margin-top:8px!important;
+   padding:10px!important;
+   box-shadow:none!important;
+   border:1px solid #e2e8f0!important;
+   border-radius:10px!important;
+ }
+ .app-shell>.rail .profile-menu button{width:100%;text-align:left}
+}
