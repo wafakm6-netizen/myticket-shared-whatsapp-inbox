@@ -1092,3 +1092,19 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
 .app-shell .inbox-pane .conversation-list{height:auto!important;flex:1 1 auto!important;overflow:auto!important}
 .app-shell .chat-pane .chat-header{height:64px!important;min-height:64px!important}
 }
+
+/* Keep the conversation header unobstructed while the mobile navigation is open. */
+@media(max-width:900px){
+  .app-shell>.rail{
+    top:62px!important;
+    bottom:0!important;
+    height:calc(100dvh - 62px)!important;
+    max-height:calc(100dvh - 62px)!important;
+  }
+  .app-shell>.inbox-pane .pane-header,
+  .app-shell.mobile-chat-open>.chat-pane .chat-header{
+    position:relative!important;
+    z-index:120!important;
+    background:#fff;
+  }
+}
