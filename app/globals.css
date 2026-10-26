@@ -1292,3 +1292,16 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
    font-size:24px!important;line-height:1!important;
  }
 }
+
+/* Prevent iOS Safari focus zoom on the chat message field. */
+@media (max-width:900px) {
+  .app-shell .chat-pane .composer textarea,
+  .app-shell .chat-pane .composer textarea::placeholder {
+    font-size:16px!important;
+    line-height:1.5!important;
+  }
+  .app-shell .chat-pane .composer textarea {
+    -webkit-text-size-adjust:100%;
+    text-size-adjust:100%;
+  }
+}
