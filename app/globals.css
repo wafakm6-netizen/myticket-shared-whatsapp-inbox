@@ -1220,3 +1220,19 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
    padding-bottom:calc(12px + env(safe-area-inset-bottom, 0px))!important;
  }
 }
+
+/* Collapsible workspace navigation for desktops and wider iPads. */
+.desktop-rail-toggle{display:none}
+@media(min-width:901px){
+ .app-shell>.rail{transition:width .2s ease,flex-basis .2s ease;position:relative}
+ .desktop-rail-toggle{display:grid;place-items:center;align-self:center;width:32px;height:32px;min-height:32px;border:1px solid #e0e7f0;border-radius:9px;background:#f7f9fc;color:#7185a0;cursor:pointer;margin:6px auto}
+ .desktop-rail-toggle:hover{background:#edf2f8;color:#344866}
+ .app-shell.desktop-rail-collapsed>.rail{width:50px!important;min-width:50px!important;flex:0 0 50px!important;padding-left:3px!important;padding-right:3px!important}
+ .app-shell.desktop-rail-collapsed>.rail .brand-mark{display:none!important}
+ .app-shell.desktop-rail-collapsed>.rail .rail-item{width:40px!important;margin-left:auto!important;margin-right:auto!important;padding-left:0!important;padding-right:0!important}
+ .app-shell.desktop-rail-collapsed>.rail .rail-item span,
+ .app-shell.desktop-rail-collapsed>.rail .rail-item b{display:none!important}
+ .app-shell.desktop-rail-collapsed>.rail .rail-nav,
+ .app-shell.desktop-rail-collapsed>.rail .rail-bottom{align-items:center!important}
+ .app-shell.desktop-rail-collapsed>.rail .profile-menu{left:44px!important}
+}
