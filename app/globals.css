@@ -1293,15 +1293,19 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
  }
 }
 
-/* Prevent iOS Safari focus zoom on the chat message field. */
+/* Safari requires a computed 16px input font to avoid focus zoom.
+   Scale only the rendered text field so its visual typography stays at 14px. */
 @media (max-width:900px) {
   .app-shell .chat-pane .composer textarea,
   .app-shell .chat-pane .composer textarea::placeholder {
     font-size:16px!important;
-    line-height:1.5!important;
+    line-height:1.45!important;
   }
   .app-shell .chat-pane .composer textarea {
+    width:114.2857%!important;
+    max-width:none!important;
+    transform:scale(.875);
+    transform-origin:top left;
     -webkit-text-size-adjust:100%;
-    text-size-adjust:100%;
   }
 }
