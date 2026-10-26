@@ -7,7 +7,7 @@ export async function notifyFirstInbound(supabase: Database, conversationId: str
   if (claimError) throw claimError
   if (!claimed) return
   const query = supabase.from('whatsapp_agents').select('id,email').eq('is_active',true)
-  const {data:agents,error:agentError} = await (assignedAgentId ? query.eq('id',assignedAgentId) : query.eq('role','admin'))
+  const {data:agents,error:agentError} = await query
   if (agentError) throw agentError
   const name = contactName || 'Customer or supplier'
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://whatsapp.myticketom.com'
