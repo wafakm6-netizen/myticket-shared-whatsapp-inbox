@@ -1193,3 +1193,30 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
  }
  .app-shell>.rail .profile-menu button{width:100%;text-align:left}
 }
+
+/* Mobile composer: lift the entire message field above Safari's bottom browser toolbar. */
+@media(max-width:900px){
+ .app-shell.mobile-chat-open>.chat-pane .composer-wrap{
+   position:relative!important;
+   z-index:5!important;
+   background:#fff!important;
+   border-top:1px solid #e2e8f0!important;
+   padding:10px 12px calc(84px + env(safe-area-inset-bottom, 0px))!important;
+   box-sizing:border-box!important;
+ }
+ .app-shell.mobile-chat-open>.chat-pane .composer{
+   background:#fff!important;
+   border:1.5px solid #cbd7e5!important;
+   border-radius:16px!important;
+   box-shadow:0 3px 12px rgba(34,55,82,.10)!important;
+   padding:10px 12px!important;
+   min-height:100px!important;
+   box-sizing:border-box!important;
+ }
+ .app-shell.mobile-chat-open>.chat-pane .thread{min-height:0!important;flex:1 1 auto!important}
+}
+@media(max-width:900px) and (display-mode:standalone){
+ .app-shell.mobile-chat-open>.chat-pane .composer-wrap{
+   padding-bottom:calc(12px + env(safe-area-inset-bottom, 0px))!important;
+ }
+}
