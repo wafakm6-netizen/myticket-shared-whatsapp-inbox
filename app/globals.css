@@ -1108,3 +1108,41 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
     background:#fff;
   }
 }
+
+/* Mobile navigation as a compact menu below the header, not a left rail overlay. */
+@media(max-width:900px){
+  .app-shell>.rail,
+  .app-shell>.rail.rail-open{
+    position:fixed!important;
+    left:auto!important;
+    right:12px!important;
+    top:68px!important;
+    bottom:auto!important;
+    width:210px!important;
+    height:auto!important;
+    max-height:calc(100dvh - 85px)!important;
+    padding:12px!important;
+    border:1px solid #e4e9f0!important;
+    border-radius:14px!important;
+    overflow-y:auto!important;
+    box-shadow:0 12px 32px rgba(30,45,65,.16)!important;
+    background:#fff!important;
+    flex-direction:column!important;
+    align-items:stretch!important;
+    transform:none!important;
+    z-index:140!important;
+  }
+  .app-shell>.rail:not(.rail-open){
+    display:none!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
+  }
+  .app-shell>.rail.rail-open{display:flex!important;visibility:visible!important;pointer-events:auto!important}
+  .app-shell>.rail .brand-mark{display:none!important}
+  .app-shell>.rail .rail-nav,.app-shell>.rail .rail-bottom{width:100%!important;align-items:stretch!important;gap:4px!important}
+  .app-shell>.rail .rail-bottom{margin-top:8px!important;padding-top:8px!important;border-top:1px solid #edf0f4}
+  .app-shell>.rail .rail-item{width:100%!important;min-height:40px!important;flex-direction:row!important;justify-content:flex-start!important;gap:12px!important;padding:8px 10px!important}
+  .app-shell>.rail .rail-item span{font-size:13px!important}
+  .app-shell>.rail .rail-item b{position:static!important;margin-left:auto!important}
+  .app-shell>.rail .mini-avatar{margin:4px 10px}
+}
