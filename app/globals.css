@@ -998,9 +998,9 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
   background: transparent;
 }
 
-/* Phone navigation: show one usable pane at a time rather than squeezing desktop columns. */
+/* Mobile and portrait tablet navigation. */
 .mobile-chat-back{display:none}
-@media(max-width:620px){
+@media(max-width:900px){
   .app-shell{width:100%;min-width:0;min-height:0;height:100dvh;max-height:100dvh}
   .app-shell>.inbox-pane{display:flex!important;flex-direction:column;width:100%!important;flex:1 1 100%!important;min-width:0;overflow:hidden}
   .app-shell>.chat-pane{display:none!important}
@@ -1036,8 +1036,8 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
 .push-permission-allow{background:#ff5a1f;border:1px solid #ff5a1f;color:#fff}
 .push-permission-card small{display:block;margin-top:14px;color:#8a98aa;font-size:11px;line-height:1.5}
 
-/* Phone navigation correction: no permanently visible desktop rail. */
-@media (max-width:620px) {
+/* Hide desktop rail on phones and portrait tablets. */
+@media (max-width:900px) {
   .app-shell > .rail {
     position:fixed!important;
     inset:0 auto 0 0!important;
@@ -1075,4 +1075,20 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
   .app-shell .inbox-pane .conversation-copy p{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
   .app-shell .inbox-pane .conversation-top time{flex-shrink:0;font-size:10px}
   .app-shell .inbox-pane .conversation .contact-avatar{flex-shrink:0}
+}
+
+@media(max-width:900px){
+.app-shell{display:block!important;width:100%!important;max-width:100vw!important;overflow:hidden!important}
+.app-shell>.rail:not(.rail-open){visibility:hidden!important;pointer-events:none!important;transform:translateX(-120%)!important}
+.app-shell>.rail.rail-open{visibility:visible!important;pointer-events:auto!important}
+.app-shell>.inbox-pane{width:100%!important;max-width:100%!important;min-width:0!important;flex-basis:auto!important;margin-left:0!important}
+.app-shell.mobile-chat-open>.inbox-pane{display:none!important}
+.app-shell.mobile-inbox-open>.chat-pane{display:none!important}
+.app-shell.mobile-chat-open>.chat-pane{display:flex!important;width:100%!important;max-width:100%!important}
+.app-shell .inbox-pane .pane-header{height:62px!important;min-height:62px!important}
+.app-shell .inbox-pane .pane-header .pane-brand-heading h1{font-size:0!important;letter-spacing:0!important}
+.app-shell .inbox-pane .pane-header .pane-brand-heading h1::after{font-size:17px!important;content:"Inbox"}
+.app-shell .inbox-pane .conversation{min-height:76px!important;padding:11px 14px!important}
+.app-shell .inbox-pane .conversation-list{height:auto!important;flex:1 1 auto!important;overflow:auto!important}
+.app-shell .chat-pane .chat-header{height:64px!important;min-height:64px!important}
 }
