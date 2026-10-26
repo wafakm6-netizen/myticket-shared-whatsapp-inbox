@@ -1024,3 +1024,14 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
   .app-shell .chat-pane .message-bubble{max-width:min(85%,calc(100vw - 68px));overflow-wrap:anywhere}
   .app-shell .chat-pane .composer-wrap{flex:0 0 auto;min-width:0;padding:10px 12px max(12px,env(safe-area-inset-bottom));}
 }
+
+.push-permission-overlay{position:fixed;inset:0;z-index:2000;display:grid;place-items:center;padding:20px;background:rgba(25,37,53,.35)}
+.push-permission-card{width:min(390px,100%);background:#fff;border-radius:18px;padding:25px;box-shadow:0 20px 65px rgba(21,39,60,.18);text-align:center}
+.push-permission-icon{width:48px;height:48px;border-radius:14px;background:#fff0ea;color:#ff5a1f;display:grid;place-items:center;margin:0 auto 15px}
+.push-permission-card h2{font-size:18px;color:#273c59;font-weight:700;margin:0 0 10px}
+.push-permission-card p{font-size:13px;line-height:1.65;color:#718096;margin:0 0 22px}
+.push-permission-actions{display:flex;gap:9px;justify-content:center}
+.push-permission-actions button{border-radius:9px;padding:11px 14px;font-size:13px;font-weight:700;flex:1}
+.push-permission-later{background:#fff;border:1px solid #dbe3ed;color:#344866}
+.push-permission-allow{background:#ff5a1f;border:1px solid #ff5a1f;color:#fff}
+.push-permission-card small{display:block;margin-top:14px;color:#8a98aa;font-size:11px;line-height:1.5}
