@@ -91,8 +91,21 @@ export function NotificationBridge() {
       event.stopPropagation()
       setOpen((value) => !value)
     }
+    const closeOutside = (event: PointerEvent) => {
+      const target = event.target
+      if (!(target instanceof Element)) return
+      if (target.closest('.notification-panel') || target.closest('button[aria-label="Notifications"]')) return
+      setOpen(false)
+    }
+    const closeEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') setOpen(false) }
     document.addEventListener('click', onClick, true)
-    return () => document.removeEventListener('click', onClick, true)
+    document.addEventListener('pointerdown', closeOutside, true)
+    document.addEventListener('keydown', closeEscape)
+    return () => {
+      document.removeEventListener('click', onClick, true)
+      document.removeEventListener('pointerdown', closeOutside, true)
+      document.removeEventListener('keydown', closeEscape)
+    }
   }, [])
 
   const enableBrowser = async () => {
