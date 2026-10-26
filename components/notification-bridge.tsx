@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { createBrowserSupabaseClient } from '@/lib/supabase/client'
 
 type InboxRow = {
   id: string
@@ -16,8 +17,21 @@ export function NotificationBridge() {
   const [notices, setNotices] = useState<Notice[]>([])
   const [open, setOpen] = useState(false)
   const baseline = useRef<Map<string, number> | null>(null)
+  const [authenticated, setAuthenticated] = useState(false)
 
   useEffect(() => {
+    const supabase = createBrowserSupabaseClient()
+    if (!supabase) return
+    let mounted = true
+    void supabase.auth.getSession().then(({ data }) => { if (mounted) setAuthenticated(!!data.session) })
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (mounted) { setAuthenticated(!!session); if (!session) { setNotices([]); setOpen(false); baseline.current = null } }
+    })
+    return () => { mounted = false; listener.subscription.unsubscribe() }
+  }, [])
+
+  useEffect(() => {
+    if (!authenticated) return
     let cancelled = false
     let timer: ReturnType<typeof setTimeout> | undefined
 
@@ -67,7 +81,7 @@ export function NotificationBridge() {
     void check()
     timer = setTimeout(poll, 5000)
     return () => { cancelled = true; if (timer) clearTimeout(timer) }
-  }, [])
+  }, [authenticated])
 
   useEffect(() => {
     const onClick = (event: MouseEvent) => {
@@ -92,6 +106,8 @@ export function NotificationBridge() {
     setNotices((current) => current.filter((notice) => notice.conversationId !== conversationId))
     setOpen(false)
   }
+
+  if (!authenticated) return null
 
   return <>
     {notices.length > 0 && <span className="notification-count" aria-label={`${notices.length} new notification${notices.length === 1 ? '' : 's'}`}>{notices.length > 99 ? '99+' : notices.length}</span>}
