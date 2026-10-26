@@ -10,6 +10,6 @@ import { NotificationBridge } from '@/components/notification-bridge'
 import './globals.css'
 import './new-conversation.css'
 
-export const metadata: Metadata = { title: 'Myticket Shared Inbox', description: 'A separate WhatsApp shared inbox for the Myticket support team.', generator: 'v0.app', manifest: '/manifest.webmanifest', appleWebApp: { capable: true, title: 'Myticket Inbox', statusBarStyle: 'default' }, icons: { icon: [{ url: '/myticket-favicon.png', type: 'image/png' }], shortcut: '/myticket-favicon.png', apple: '/apple-icon.png' } }
+export const metadata: Metadata = { title: 'Myticket Shared Inbox', description: 'A separate WhatsApp shared inbox for the Myticket support team.', generator: 'v0.app', manifest: '/manifest.webmanifest', appleWebApp: { capable: true, title: 'Myticket Inbox', statusBarStyle: 'default' }, icons: { icon: [{ url: '/brand/myticket-icon.png?v=2', type: 'image/png' }], shortcut: '/brand/myticket-icon.png?v=2', apple: '/brand/myticket-icon.png?v=2' } }
 export const viewport: Viewport = { colorScheme: 'light', themeColor: '#ffffff' }
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) { return <html lang="en" className="bg-white"><body className={`${plex.variable} ${plexArabic.variable} antialiased`}><TagNavBridge/><UnreadBridge/><NotificationBridge/>{children}{process.env.NODE_ENV === 'production' && <Analytics/>}</body></html> }
