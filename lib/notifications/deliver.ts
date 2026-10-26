@@ -3,9 +3,9 @@ import { sendBrowserPush } from '@/lib/notifications/push'
 
 type Database = ReturnType<typeof createServerSupabaseClient>
 export async function notifyFirstInbound(supabase: Database, conversationId: string, externalId: string, contactName: string, assignedAgentId?: string | null) {
-  const { data: claimed, error: claimError } = await supabase.rpc('claim_whatsapp_notification',{p_conversation_id:conversationId,p_external_id:externalId})
-  if (claimError) throw claimError
-  if (!claimed) return
+  // The webhook already checks the incoming WhatsApp message external ID before
+  // invoking this function. Do not gate alerts on a conversation-level claim:
+  // every newly received message should notify subscribed agents.
   const query = supabase.from('whatsapp_agents').select('id,email').eq('is_active',true)
   const {data:agents,error:agentError} = await query
   if (agentError) throw agentError
