@@ -9,7 +9,7 @@
   "theme_color": "#ffffff",
   "icons": [
     {
-      "src": "/myticket-favicon.png",
+      "src": "/brand/myticket-icon.png?v=2",
       "sizes": "any",
       "type": "image/png",
       "purpose": "any"
