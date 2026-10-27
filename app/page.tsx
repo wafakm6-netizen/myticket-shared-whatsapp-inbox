@@ -213,10 +213,16 @@ export default function Page() {
     const viewport = window.visualViewport
     if (!viewport) return
     const shell = document.documentElement
+    // Newer iOS shrinks window.innerHeight together with the keyboard, so compare against the
+    // tallest visible height seen at this width instead.
+    let fullHeight = viewport.height
+    let fullWidth = viewport.width
     const update = () => {
       const editing = document.activeElement instanceof HTMLElement &&
         (document.activeElement.isContentEditable || ['INPUT','TEXTAREA'].includes(document.activeElement.tagName))
-      const keyboardVisible = editing && window.innerHeight - viewport.height > 120
+      if (Math.abs(viewport.width - fullWidth) > 1) { fullWidth = viewport.width; fullHeight = viewport.height }
+      if (!editing || viewport.height > fullHeight) fullHeight = Math.max(viewport.height, editing ? fullHeight : 0)
+      const keyboardVisible = editing && Math.max(fullHeight, window.innerHeight) - viewport.height > 120
       const thread = document.querySelector<HTMLElement>('.app-shell .thread')
       if (keyboardVisible && !shell.classList.contains('keyboard-open') && thread) requestAnimationFrame(() => { thread.scrollTop = thread.scrollHeight })
       shell.classList.toggle('keyboard-open', keyboardVisible)
@@ -224,7 +230,8 @@ export default function Page() {
       if (keyboardVisible && window.scrollY) window.scrollTo(0, 0)
       if (keyboardVisible) {
         shell.style.setProperty('--inbox-visual-height', Math.round(viewport.height) + 'px')
-        shell.style.setProperty('--inbox-visual-top', Math.round(viewport.offsetTop) + 'px')
+        // Some iOS versions report offsetTop including the document scroll; only keep the part not already scrolled.
+        shell.style.setProperty('--inbox-visual-top', Math.max(0, Math.round(viewport.offsetTop - window.scrollY)) + 'px')
       } else {
         shell.style.removeProperty('--inbox-visual-height')
         shell.style.removeProperty('--inbox-visual-top')
@@ -238,7 +245,7 @@ export default function Page() {
       if (!panel) { panel = document.createElement('pre'); panel.dataset.keyboardDebug = 'true'; panel.style.cssText = 'margin:0 0 6px;padding:6px;font:10px/1.35 monospace;background:#fff3cd;color:#222;white-space:pre-wrap;border-radius:6px'; wrap.prepend(panel) }
       const rect = (selector: string) => { const node = document.querySelector(selector); if (!node) return 'none'; const box = node.getBoundingClientRect(); return `${Math.round(box.top)}..${Math.round(box.bottom)}` }
       const scrollTops = ['.app-shell', '.chat-pane', '.thread'].map(selector => `${selector}=${Math.round(document.querySelector(selector)?.scrollTop ?? -1)}`).join(' ')
-      panel.textContent = `innerH=${window.innerHeight} vvH=${Math.round(viewport.height)} vvTop=${Math.round(viewport.offsetTop)} pageTop=${Math.round(viewport.pageTop)} scrollY=${Math.round(window.scrollY)}\nhtmlST=${document.documentElement.scrollTop} bodyST=${document.body.scrollTop} kb=${shell.classList.contains('keyboard-open')} pos=${getComputedStyle(document.querySelector('.app-shell') as Element).position}\nshell=${rect('.app-shell')} header=${rect('.chat-header')} composer=${rect('.composer-wrap')}\n${scrollTops}`
+      panel.textContent = `innerH=${window.innerHeight} vvH=${Math.round(viewport.height)} vvTop=${Math.round(viewport.offsetTop)} pageTop=${Math.round(viewport.pageTop)} scrollY=${Math.round(window.scrollY)}\nhtmlST=${document.documentElement.scrollTop} bodyST=${document.body.scrollTop} kb=${shell.classList.contains('keyboard-open')} full=${Math.round(fullHeight)} top=${getComputedStyle(shell).getPropertyValue('--inbox-visual-top')} pos=${getComputedStyle(document.querySelector('.app-shell') as Element).position}\nshell=${rect('.app-shell')} header=${rect('.chat-header')} composer=${rect('.composer-wrap')}\n${scrollTops}`
     }, 250) : undefined
     viewport.addEventListener('resize', update)
     viewport.addEventListener('scroll', update)
