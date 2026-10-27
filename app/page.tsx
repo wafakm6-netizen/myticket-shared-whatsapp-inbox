@@ -763,6 +763,28 @@ export default function Page() {
     }
     previousThread.current = { id: selected.id, count: selected.messages.length }
   }, [selectedId, selected?.messages.length])
+  // iOS Safari overlays the keyboard and pans the page instead of resizing it; fit the app to the visible area instead.
+  useEffect(() => {
+    const viewport = window.visualViewport
+    if (!viewport) return
+    const root = document.documentElement
+    const sync = () => {
+      root.style.setProperty('--app-height', `${Math.round(viewport.height)}px`)
+      const keyboardOpen = window.innerHeight - viewport.height > 120
+      if (keyboardOpen && !root.classList.contains('keyboard-open') && threadRef.current) threadRef.current.scrollTop = threadRef.current.scrollHeight
+      root.classList.toggle('keyboard-open', keyboardOpen)
+      if (window.scrollY || viewport.offsetTop) window.scrollTo(0, 0)
+    }
+    sync()
+    viewport.addEventListener('resize', sync)
+    viewport.addEventListener('scroll', sync)
+    return () => {
+      viewport.removeEventListener('resize', sync)
+      viewport.removeEventListener('scroll', sync)
+      root.style.removeProperty('--app-height')
+      root.classList.remove('keyboard-open')
+    }
+  }, [])
   // On phones the thread is hidden until a chat opens, so jump to the latest message once it is visible.
   useEffect(() => {
     const thread = threadRef.current
