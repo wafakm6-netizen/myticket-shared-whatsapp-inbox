@@ -237,23 +237,12 @@ export default function Page() {
         shell.style.removeProperty('--inbox-visual-top')
       }
     }
-    // Temporary diagnostics for the iPhone keyboard layout: open the page with ?debug-keyboard.
-    const debugTimer = new URLSearchParams(window.location.search).has('debug-keyboard') ? window.setInterval(() => {
-      const wrap = document.querySelector<HTMLElement>('.composer-wrap')
-      if (!wrap) return
-      let panel = wrap.querySelector<HTMLElement>('[data-keyboard-debug]')
-      if (!panel) { panel = document.createElement('pre'); panel.dataset.keyboardDebug = 'true'; panel.style.cssText = 'margin:0 0 6px;padding:6px;font:10px/1.35 monospace;background:#fff3cd;color:#222;white-space:pre-wrap;border-radius:6px'; wrap.prepend(panel) }
-      const rect = (selector: string) => { const node = document.querySelector(selector); if (!node) return 'none'; const box = node.getBoundingClientRect(); return `${Math.round(box.top)}..${Math.round(box.bottom)}` }
-      const scrollTops = ['.app-shell', '.chat-pane', '.thread'].map(selector => `${selector}=${Math.round(document.querySelector(selector)?.scrollTop ?? -1)}`).join(' ')
-      panel.textContent = `innerH=${window.innerHeight} vvH=${Math.round(viewport.height)} vvTop=${Math.round(viewport.offsetTop)} pageTop=${Math.round(viewport.pageTop)} scrollY=${Math.round(window.scrollY)}\nhtmlST=${document.documentElement.scrollTop} bodyST=${document.body.scrollTop} kb=${shell.classList.contains('keyboard-open')} full=${Math.round(fullHeight)} top=${getComputedStyle(shell).getPropertyValue('--inbox-visual-top')} pos=${getComputedStyle(document.querySelector('.app-shell') as Element).position}\nshell=${rect('.app-shell')} header=${rect('.chat-header')} composer=${rect('.composer-wrap')}\n${scrollTops}`
-    }, 250) : undefined
     viewport.addEventListener('resize', update)
     viewport.addEventListener('scroll', update)
     window.addEventListener('focusin', update)
     window.addEventListener('focusout', update)
     update()
     return () => {
-      if (debugTimer) window.clearInterval(debugTimer)
       viewport.removeEventListener('resize', update)
       viewport.removeEventListener('scroll', update)
       window.removeEventListener('focusin', update)
