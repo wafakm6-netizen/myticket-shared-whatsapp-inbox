@@ -217,6 +217,9 @@ export default function Page() {
       const editing = document.activeElement instanceof HTMLElement &&
         (document.activeElement.isContentEditable || ['INPUT','TEXTAREA'].includes(document.activeElement.tagName))
       const keyboardVisible = editing && window.innerHeight - viewport.height > 120
+      const thread = document.querySelector<HTMLElement>('.app-shell .thread')
+      if (keyboardVisible && !shell.classList.contains('keyboard-open') && thread) requestAnimationFrame(() => { thread.scrollTop = thread.scrollHeight })
+      shell.classList.toggle('keyboard-open', keyboardVisible)
       if (keyboardVisible) {
         shell.style.setProperty('--inbox-visual-height', Math.round(viewport.height) + 'px')
         shell.style.setProperty('--inbox-visual-top', Math.round(viewport.offsetTop) + 'px')
@@ -237,6 +240,7 @@ export default function Page() {
       window.removeEventListener('focusout', update)
       shell.style.removeProperty('--inbox-visual-height')
       shell.style.removeProperty('--inbox-visual-top')
+      shell.classList.remove('keyboard-open')
     }
   }, [])
   const [conversations, setConversations] = useState<Conversation[]>([])
@@ -763,28 +767,6 @@ export default function Page() {
     }
     previousThread.current = { id: selected.id, count: selected.messages.length }
   }, [selectedId, selected?.messages.length])
-  // iOS Safari overlays the keyboard and pans the page instead of resizing it; fit the app to the visible area instead.
-  useEffect(() => {
-    const viewport = window.visualViewport
-    if (!viewport) return
-    const root = document.documentElement
-    const sync = () => {
-      root.style.setProperty('--app-height', `${Math.round(viewport.height)}px`)
-      const keyboardOpen = window.innerHeight - viewport.height > 120
-      if (keyboardOpen && !root.classList.contains('keyboard-open') && threadRef.current) threadRef.current.scrollTop = threadRef.current.scrollHeight
-      root.classList.toggle('keyboard-open', keyboardOpen)
-      if (window.scrollY || viewport.offsetTop) window.scrollTo(0, 0)
-    }
-    sync()
-    viewport.addEventListener('resize', sync)
-    viewport.addEventListener('scroll', sync)
-    return () => {
-      viewport.removeEventListener('resize', sync)
-      viewport.removeEventListener('scroll', sync)
-      root.style.removeProperty('--app-height')
-      root.classList.remove('keyboard-open')
-    }
-  }, [])
   // On phones the thread is hidden until a chat opens, so jump to the latest message once it is visible.
   useEffect(() => {
     const thread = threadRef.current
