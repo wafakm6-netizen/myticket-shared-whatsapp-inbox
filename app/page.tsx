@@ -799,10 +799,19 @@ export default function Page() {
     let start: { x: number; y: number; time: number } | null = null
     let dragging = false
     let offset = 0
+    const shellElement = pane.parentElement
+    const inbox = shellElement?.querySelector<HTMLElement>(':scope > .inbox-pane')
+    // Show the conversation list underneath while dragging, sliding in slightly like WhatsApp.
     const setOffset = (value: number, animate: boolean) => {
       offset = value
-      pane.style.transition = animate ? 'transform .2s ease-out' : 'none'
+      const transition = animate ? 'transform .2s ease-out' : 'none'
+      pane.style.transition = transition
       pane.style.transform = value ? `translateX(${value}px)` : ''
+      shellElement?.classList.toggle('chat-swiping', value > 0)
+      if (inbox) {
+        inbox.style.transition = transition
+        inbox.style.transform = value ? `translateX(${Math.round((value / pane.clientWidth - 1) * pane.clientWidth * 0.3)}px)` : ''
+      }
     }
     const onTouchStart = (event: TouchEvent) => {
       const target = event.target as HTMLElement
@@ -831,7 +840,8 @@ export default function Page() {
       dragging = false
       if (offset > pane.clientWidth * 0.3 || (offset > 40 && speed > 0.5)) {
         setOffset(pane.clientWidth, true)
-        window.setTimeout(() => { setOffset(0, false); closeMobileChat() }, 200)
+        // Keep the chat off screen until the list replaces it; the effect cleanup resets the offset.
+        window.setTimeout(() => { closeMobileChat(); window.setTimeout(() => setMobileChatOpen(false), 400) }, 200)
       } else setOffset(0, true)
     }
     pane.addEventListener('touchstart', onTouchStart, { passive: true })

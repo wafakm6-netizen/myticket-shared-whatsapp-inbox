@@ -1374,3 +1374,9 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
  /* Pin the shell to the visible area so the chat header stays on screen while typing. */
  .keyboard-open .app-shell{position:fixed!important;left:0!important;right:0!important;top:var(--inbox-visual-top,0px)!important}
 }
+
+/* While swiping back from a chat, reveal the conversation list underneath instead of a blank page. */
+@media(max-width:900px){
+ .app-shell.mobile-chat-open.chat-swiping>.inbox-pane{display:flex!important;position:absolute!important;inset:0!important;z-index:0!important;height:100%!important}
+ .app-shell.mobile-chat-open.chat-swiping>.chat-pane{position:relative!important;z-index:1!important;box-shadow:-10px 0 28px rgba(23,39,61,.18)}
+}
