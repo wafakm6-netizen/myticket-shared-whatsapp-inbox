@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
         if (messageError) throw messageError
         await supabase.from('whatsapp_conversations').update({ unread_count: (conversation.unread_count ?? 0) + 1, last_message_at: new Date().toISOString() }).eq('id', conversation.id)
         stored++
-        try { await notifyFirstInbound(supabase,conversation.id,item.id,contact.display_name,conversation.assigned_agent_id) } catch (notificationError) { console.error('[whatsapp webhook] notification failed',notificationError) }
+        try { await notifyFirstInbound(supabase,conversation.id,item.id,contact.display_name,conversation.assigned_agent_id,item.text?.body ?? item.caption ?? media?.filename ?? (item.type === 'image' ? '📷 Photo' : item.type === 'video' ? '🎥 Video' : item.type === 'audio' ? '🎤 Voice message' : item.type === 'sticker' ? 'Sticker' : 'Attachment')) } catch (notificationError) { console.error('[whatsapp webhook] notification failed',notificationError) }
       }
       for (const status of value.statuses ?? []) {
         if (status.status === 'failed') {
