@@ -1362,17 +1362,17 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
  .app-shell .emoji-composer-editor{line-height:22px!important}
 }
 
-/* Size the shell to the area above the keyboard and let the panes follow; new-conversation.css pins them to 100vh. */
+/* Size the shell to the visible area (above the keyboard while typing) and let the panes follow; new-conversation.css pins them to 100vh. */
 @media(max-width:900px),(pointer:coarse){
- :root .app-shell{height:var(--inbox-visual-height,100dvh)!important;max-height:var(--inbox-visual-height,100dvh)!important;position:relative!important;top:var(--inbox-visual-top,0px)!important}
+ /* Pinned to the viewport so the document never has anything to scroll: iOS would otherwise scroll it
+    towards the focused composer and briefly push the chat header off screen. */
+ :root .app-shell{position:fixed!important;left:0!important;right:0!important;top:var(--inbox-visual-top,0px)!important;height:var(--inbox-visual-height,100%)!important;max-height:var(--inbox-visual-height,100%)!important}
  :root .app-shell>.chat-pane,
  :root .app-shell>.inbox-pane,
  :root .app-shell>.details-pane{height:100%!important;max-height:100%!important}
 }
 @media(max-width:900px){
  .keyboard-open .app-shell.mobile-chat-open>.chat-pane .composer-wrap{padding-bottom:8px!important}
- /* Pin the shell to the visible area so the chat header stays on screen while typing. */
- .keyboard-open .app-shell{position:fixed!important;left:0!important;right:0!important;top:var(--inbox-visual-top,0px)!important}
 }
 
 /* While swiping back from a chat, reveal the conversation list underneath instead of a blank page. */
