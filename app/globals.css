@@ -1309,3 +1309,45 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
     -webkit-text-size-adjust:100%;
   }
 }
+
+/* Phone polish: denser conversation list, cleaner chat chrome and a full-screen contact sheet. */
+@media(max-width:900px){
+ .app-shell .inbox-pane .filter-tabs{gap:6px!important;padding:8px 12px!important;scrollbar-width:none}
+ .app-shell .inbox-pane .filter-tabs::-webkit-scrollbar{display:none}
+ .app-shell .inbox-pane .conversation{min-height:0!important;padding:12px 14px!important;gap:12px!important;align-items:center!important;border-left:0!important;box-shadow:none!important;background:#fff!important;-webkit-tap-highlight-color:transparent}
+ .app-shell .inbox-pane .conversation:active{background:#f3f6fa!important}
+ .app-shell .inbox-pane .conversation .contact-avatar{width:48px!important;height:48px!important;flex:0 0 48px!important}
+ .app-shell .inbox-pane .conversation-copy{display:flex;flex-direction:column;gap:3px}
+ .app-shell .inbox-pane .conversation-top{display:flex;align-items:baseline;gap:8px;min-width:0}
+ .app-shell .inbox-pane .conversation-top strong{flex:1 1 auto;min-width:0;font-size:15px!important;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ .app-shell .inbox-pane .conversation-top time{order:2;font-size:11px!important;color:#8a97a8}
+ .app-shell .inbox-pane .conversation-top .conversation-unread-badge{order:3;margin-left:0!important;align-self:center}
+ .app-shell .inbox-pane .conversation-copy p{margin:0!important;font-size:13.5px!important;line-height:1.35;color:#66768a}
+ .app-shell .inbox-pane .conversation:has(.conversation-unread-badge) .conversation-top strong{font-weight:700;color:#162239}
+ .app-shell .inbox-pane .conversation:has(.conversation-unread-badge) .conversation-top time{color:#ff5a1f;font-weight:600}
+ .app-shell .inbox-pane .conversation:has(.conversation-unread-badge) .conversation-copy p{color:#344866}
+ .app-shell .inbox-pane .conversation-bottom{margin-top:2px!important;gap:5px!important}
+ .app-shell .inbox-pane .conversation-bottom .type-badge,
+ .app-shell .inbox-pane .conversation-bottom .assigned-label{font-size:10.5px!important;padding:1px 7px!important;border-radius:6px!important}
+
+ .app-shell.mobile-chat-open>.chat-pane .chat-header{flex:0 0 60px!important;height:60px!important;min-height:60px!important;padding:0 8px 0 4px!important;gap:6px!important}
+ .app-shell .mobile-chat-back{flex:0 0 40px!important;width:40px!important;height:44px!important;font-size:34px!important}
+ .app-shell .chat-pane .chat-person .contact-avatar{width:38px!important;height:38px!important;flex:0 0 38px!important}
+ .app-shell .chat-pane .chat-person h2{font-size:15px!important;margin:0!important}
+ .app-shell .chat-pane .chat-person p{font-size:11.5px!important;margin:1px 0 0!important}
+ .app-shell .chat-pane .chat-actions .icon-btn{width:36px!important;height:36px!important}
+ .app-shell .chat-pane .status-select{height:30px;padding:0 10px!important;border-radius:999px!important;text-transform:capitalize}
+ .app-shell .chat-pane .message-bubble{font-size:14.5px;line-height:1.42}
+ .app-shell.mobile-chat-open>.chat-pane .composer{min-height:0!important;padding:8px 10px!important}
+ .app-shell .chat-pane .composer-hint{display:none!important}
+
+ .app-shell .modal-backdrop{z-index:200}
+ .app-shell.mobile-details-open>.details-pane{
+   display:block!important;position:fixed!important;inset:0!important;z-index:130!important;
+   width:100%!important;max-width:100%!important;height:100dvh!important;flex:none!important;
+   overflow-y:auto!important;overscroll-behavior:contain;
+   padding:0 16px calc(24px + env(safe-area-inset-bottom, 0px))!important;
+ }
+ .app-shell.mobile-details-open>.details-pane .details-title{height:62px!important;min-height:62px!important;margin:0 -16px 16px!important;position:sticky;top:0;z-index:2}
+ .app-shell.mobile-details-open>.details-pane .details-title .icon-btn{width:40px;height:40px}
+}
