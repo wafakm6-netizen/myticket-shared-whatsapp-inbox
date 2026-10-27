@@ -230,8 +230,10 @@ export default function Page() {
       if (keyboardVisible && window.scrollY) window.scrollTo(0, 0)
       if (keyboardVisible) {
         shell.style.setProperty('--inbox-visual-height', Math.round(viewport.height) + 'px')
-        // Some iOS versions report offsetTop including the document scroll; only keep the part not already scrolled.
-        shell.style.setProperty('--inbox-visual-top', Math.max(0, Math.round(viewport.offsetTop - window.scrollY)) + 'px')
+        // iPadOS pans the visual viewport, so the fixed shell follows offsetTop there. On iPhone, offsetTop
+        // spikes while the keyboard animates and following it pushed the chat header down and back up.
+        const phone = window.matchMedia('(max-width: 900px)').matches
+        shell.style.setProperty('--inbox-visual-top', phone ? '0px' : Math.max(0, Math.round(viewport.offsetTop - window.scrollY)) + 'px')
       } else {
         shell.style.removeProperty('--inbox-visual-height')
         shell.style.removeProperty('--inbox-visual-top')
