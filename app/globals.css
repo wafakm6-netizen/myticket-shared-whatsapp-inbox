@@ -1351,3 +1351,13 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
  .app-shell.mobile-details-open>.details-pane .details-title{height:62px!important;min-height:62px!important;margin:0 -16px 16px!important;position:sticky;top:0;z-index:2}
  .app-shell.mobile-details-open>.details-pane .details-title .icon-btn{width:40px;height:40px}
 }
+
+/* iOS Safari zooms into any focused field under 16px; the composer is a contenteditable, so the textarea rule above misses it. */
+@media(max-width:900px){
+ .app-shell .emoji-composer-editor,
+ .app-shell [contenteditable="true"],
+ .app-shell input:not([type=checkbox]):not([type=radio]):not([type=range]),
+ .app-shell select,
+ .app-shell textarea{font-size:16px!important}
+ .app-shell .emoji-composer-editor{line-height:22px!important}
+}
