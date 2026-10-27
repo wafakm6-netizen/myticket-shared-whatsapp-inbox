@@ -1362,8 +1362,13 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
  .app-shell .emoji-composer-editor{line-height:22px!important}
 }
 
-/* Follow the visible viewport so the iOS keyboard pushes the composer up instead of panning the page. */
+/* Size the shell to the area above the keyboard and let the panes follow; new-conversation.css pins them to 100vh. */
+@media(max-width:900px),(pointer:coarse){
+ :root .app-shell{height:var(--inbox-visual-height,100dvh)!important;max-height:var(--inbox-visual-height,100dvh)!important;position:relative!important;top:var(--inbox-visual-top,0px)!important}
+ :root .app-shell>.chat-pane,
+ :root .app-shell>.inbox-pane,
+ :root .app-shell>.details-pane{height:100%!important;max-height:100%!important}
+}
 @media(max-width:900px){
- .app-shell{height:var(--app-height,100dvh)!important;max-height:var(--app-height,100dvh)!important}
  .keyboard-open .app-shell.mobile-chat-open>.chat-pane .composer-wrap{padding-bottom:8px!important}
 }
