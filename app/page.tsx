@@ -686,7 +686,37 @@ export default function Page() {
     } else setDraft(current => current + emoji)
   }
 
-  const uploadAttachment = async (file: File) => { const form = new FormData(); form.append('file', file); const response = await fetch('/api/media', { method: 'POST', body: form }); const payload = await response.json().catch(() => ({})); if (!response.ok) throw new Error(payload.error || 'Media upload failed'); return payload }
+  // Re-encode phone images as standard 8-bit RGB JPEG before Meta processes them.
+  // iOS screenshots/photos can otherwise retain unsupported PNG/HEIC color profiles.
+  const normalizeImageForWhatsApp = async (file: File): Promise<File> => {
+    if (!file.type.startsWith('image/') && !/\\.(heic|heif)$/i.test(file.name)) return file
+    if (file.type === 'image/gif') return file
+    let imageUrl: string | null = null
+    try {
+      imageUrl = URL.createObjectURL(file)
+      const image = new Image()
+      image.src = imageUrl
+      await image.decode()
+      const maxSide = 2048
+      const scale = Math.min(1, maxSide / Math.max(image.naturalWidth, image.naturalHeight))
+      const canvas = document.createElement('canvas')
+      canvas.width = Math.max(1, Math.round(image.naturalWidth * scale))
+      canvas.height = Math.max(1, Math.round(image.naturalHeight * scale))
+      const ctx = canvas.getContext('2d', { alpha: false })
+      if (!ctx) throw new Error('Image conversion is not supported on this device.')
+      ctx.fillStyle = '#ffffff'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      ctx.drawImage(image, 0, 0, canvas.width, canvas.height)
+      const blob = await new Promise<Blob>((resolve, reject) => canvas.toBlob(result => result ? resolve(result) : reject(new Error('Could not convert image.')), 'image/jpeg', 0.88))
+      if (blob.type !== 'image/jpeg') throw new Error('Could not convert image to JPEG.')
+      return new File([blob], file.name.replace(/\\.[^.]+$/, '') + '.jpg', { type: 'image/jpeg' })
+    } catch (error) {
+      throw new Error('Could not prepare this image for WhatsApp. Try saving it as a JPEG first. ' + (error instanceof Error ? error.message : ''))
+    } finally {
+      if (imageUrl) URL.revokeObjectURL(imageUrl)
+    }
+  }
+  const uploadAttachment = async (file: File) => { const prepared = await normalizeImageForWhatsApp(file); const form = new FormData(); form.append('file', prepared); const response = await fetch('/api/media', { method: 'POST', body: form }); const payload = await response.json().catch(() => ({})); if (!response.ok) throw new Error(payload.error || 'Media upload failed'); return payload }
   const sendMessage = async () => {
     if (sendInProgress.current || !selected || (!draft.trim() && !attachment)) return
     sendInProgress.current = true
