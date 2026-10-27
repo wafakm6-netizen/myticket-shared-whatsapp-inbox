@@ -76,11 +76,15 @@ export async function POST(request: NextRequest) {
         if (existingMessageError) throw existingMessageError
         if (existingMessage) continue
         const media = item.image || item.document || item.video || item.audio || item.sticker
-        const { error: messageError } = await supabase.from('whatsapp_messages').upsert({ conversation_id: conversation.id, external_id: item.id, reply_to_external_id: item.context?.id ?? null, direction: 'inbound', sender_name: profileName || contact.display_name, body: item.text?.body ?? item.caption ?? media?.filename ?? null, attachment_url: media?.id ? `/api/media?mediaId=${encodeURIComponent(media.id)}` : null, attachment_name: media?.filename ?? (item.type === 'text' ? null : `${item.type || 'unknown'} attachment`), status: 'delivered', sent_at: new Date(Number(item.timestamp ?? 0) * 1000).toISOString() }, { onConflict: 'external_id' })
+        // Meta delivers template quick-reply buttons as type "button" and
+        // interactive buttons as type "interactive", not as text messages.
+        const buttonReply = item.button?.text ?? item.interactive?.button_reply?.title ?? item.interactive?.list_reply?.title ?? null
+        const incomingBody = item.text?.body ?? buttonReply ?? item.image?.caption ?? item.video?.caption ?? item.document?.caption ?? item.caption ?? media?.filename ?? null
+        const { error: messageError } = await supabase.from('whatsapp_messages').upsert({ conversation_id: conversation.id, external_id: item.id, reply_to_external_id: item.context?.id ?? null, direction: 'inbound', sender_name: profileName || contact.display_name, body: incomingBody, attachment_url: media?.id ? `/api/media?mediaId=${encodeURIComponent(media.id)}` : null, attachment_name: media?.filename ?? (item.type === 'text' ? null : `${item.type || 'unknown'} attachment`), status: 'delivered', sent_at: new Date(Number(item.timestamp ?? 0) * 1000).toISOString() }, { onConflict: 'external_id' })
         if (messageError) throw messageError
         await supabase.from('whatsapp_conversations').update({ unread_count: (conversation.unread_count ?? 0) + 1, last_message_at: new Date().toISOString() }).eq('id', conversation.id)
         stored++
-        try { await notifyFirstInbound(supabase,conversation.id,item.id,contact.display_name,conversation.assigned_agent_id,item.text?.body ?? item.caption ?? media?.filename ?? (item.type === 'image' ? '📷 Photo' : item.type === 'video' ? '🎥 Video' : item.type === 'audio' ? '🎤 Voice message' : item.type === 'sticker' ? 'Sticker' : 'Attachment')) } catch (notificationError) { console.error('[whatsapp webhook] notification failed',notificationError) }
+        try { await notifyFirstInbound(supabase,conversation.id,item.id,contact.display_name,conversation.assigned_agent_id,incomingBody ?? (item.type === 'image' ? '📷 Photo' : item.type === 'video' ? '🎥 Video' : item.type === 'audio' ? '🎤 Voice message' : item.type === 'sticker' ? 'Sticker' : 'Attachment')) } catch (notificationError) { console.error('[whatsapp webhook] notification failed',notificationError) }
       }
       for (const status of value.statuses ?? []) {
         if (status.status === 'failed') {
