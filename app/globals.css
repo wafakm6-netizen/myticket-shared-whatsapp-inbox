@@ -1371,4 +1371,6 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
 }
 @media(max-width:900px){
  .keyboard-open .app-shell.mobile-chat-open>.chat-pane .composer-wrap{padding-bottom:8px!important}
+ /* Pin the shell to the visible area so the chat header stays on screen while typing. */
+ .keyboard-open .app-shell{position:fixed!important;left:0!important;right:0!important;top:var(--inbox-visual-top,0px)!important}
 }

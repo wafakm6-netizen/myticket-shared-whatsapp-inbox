@@ -213,16 +213,25 @@ export default function Page() {
     const viewport = window.visualViewport
     if (!viewport) return
     const shell = document.documentElement
+    // Newer iOS shrinks window.innerHeight together with the keyboard, so compare against the
+    // tallest visible height seen at this width instead.
+    let fullHeight = viewport.height
+    let fullWidth = viewport.width
     const update = () => {
       const editing = document.activeElement instanceof HTMLElement &&
         (document.activeElement.isContentEditable || ['INPUT','TEXTAREA'].includes(document.activeElement.tagName))
-      const keyboardVisible = editing && window.innerHeight - viewport.height > 120
+      if (Math.abs(viewport.width - fullWidth) > 1) { fullWidth = viewport.width; fullHeight = viewport.height }
+      if (!editing || viewport.height > fullHeight) fullHeight = Math.max(viewport.height, editing ? fullHeight : 0)
+      const keyboardVisible = editing && Math.max(fullHeight, window.innerHeight) - viewport.height > 120
       const thread = document.querySelector<HTMLElement>('.app-shell .thread')
       if (keyboardVisible && !shell.classList.contains('keyboard-open') && thread) requestAnimationFrame(() => { thread.scrollTop = thread.scrollHeight })
       shell.classList.toggle('keyboard-open', keyboardVisible)
+      // iOS also scrolls the document towards the focused composer, which pushes the chat header off screen.
+      if (keyboardVisible && window.scrollY) window.scrollTo(0, 0)
       if (keyboardVisible) {
         shell.style.setProperty('--inbox-visual-height', Math.round(viewport.height) + 'px')
-        shell.style.setProperty('--inbox-visual-top', Math.round(viewport.offsetTop) + 'px')
+        // Some iOS versions report offsetTop including the document scroll; only keep the part not already scrolled.
+        shell.style.setProperty('--inbox-visual-top', Math.max(0, Math.round(viewport.offsetTop - window.scrollY)) + 'px')
       } else {
         shell.style.removeProperty('--inbox-visual-height')
         shell.style.removeProperty('--inbox-visual-top')
