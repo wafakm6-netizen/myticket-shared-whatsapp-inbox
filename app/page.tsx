@@ -220,6 +220,8 @@ export default function Page() {
       const thread = document.querySelector<HTMLElement>('.app-shell .thread')
       if (keyboardVisible && !shell.classList.contains('keyboard-open') && thread) requestAnimationFrame(() => { thread.scrollTop = thread.scrollHeight })
       shell.classList.toggle('keyboard-open', keyboardVisible)
+      // iOS also scrolls the document towards the focused composer, which pushes the chat header off screen.
+      if (keyboardVisible && window.scrollY) window.scrollTo(0, 0)
       if (keyboardVisible) {
         shell.style.setProperty('--inbox-visual-height', Math.round(viewport.height) + 'px')
         shell.style.setProperty('--inbox-visual-top', Math.round(viewport.offsetTop) + 'px')
