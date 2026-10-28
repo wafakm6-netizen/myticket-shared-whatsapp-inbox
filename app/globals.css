@@ -1427,10 +1427,10 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
 .mobile-tabbar{display:none}
 @media(max-width:900px){
  .app-shell>.inbox-pane{position:relative}
- .app-shell .inbox-pane .conversation-list{padding-bottom:calc(170px + env(safe-area-inset-bottom, 0px))!important}
+ .app-shell .inbox-pane .conversation-list{padding-bottom:calc(100px + env(safe-area-inset-bottom, 0px))!important}
  .mobile-tabbar{
    display:flex;position:absolute;z-index:20;left:12px;right:12px;
-   bottom:calc(76px + env(safe-area-inset-bottom, 0px));
+   bottom:max(10px, env(safe-area-inset-bottom, 0px));
    justify-content:space-between;gap:2px;padding:6px;border-radius:34px;
    background:rgba(255,255,255,.95);-webkit-backdrop-filter:blur(18px) saturate(1.6);backdrop-filter:blur(18px) saturate(1.6);
    border:1px solid #e6eaf0;box-shadow:0 10px 30px rgba(23,39,61,.14);
@@ -1443,8 +1443,4 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
  .mobile-tab-avatar{width:26px;height:26px;border-radius:999px;background:#ffe6dc;color:#e64a14;font-size:10px;font-weight:800}
  .mobile-tab-presence{position:absolute;right:-2px;top:-2px;width:9px;height:9px;border-radius:999px;border:2px solid #fff;background:#22c55e}
  .mobile-tab-presence.away{background:#f59e0b}
-}
-@media(max-width:900px) and (display-mode:standalone){
- .mobile-tabbar{bottom:calc(10px + env(safe-area-inset-bottom, 0px))}
- .app-shell .inbox-pane .conversation-list{padding-bottom:calc(100px + env(safe-area-inset-bottom, 0px))!important}
 }
