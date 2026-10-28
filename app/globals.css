@@ -1662,3 +1662,10 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
 @media(max-width:900px){
  .app-shell .chat-pane .composer .saved-sticker-header strong{display:none}
 }
+
+/* While a voice note is recording or being previewed, the voice bar replaces +, stickers and camera. */
+@media(max-width:900px){
+ .app-shell .chat-pane .composer:has(.voice-inline) .composer-plus-wrap,
+ .app-shell .chat-pane .composer:has(.voice-inline) .composer-sticker-wrap,
+ .app-shell .chat-pane .composer:has(.voice-inline) .composer-camera{display:none!important}
+}
