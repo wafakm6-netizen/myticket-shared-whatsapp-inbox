@@ -1447,3 +1447,53 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
  .app-shell .inbox-pane .pane-header{grid-template-columns:1fr auto auto!important}
  .app-shell .inbox-pane .pane-header .mobile-menu{display:none!important}
 }
+
+/* WhatsApp-style one-row composer on phones: + menu, rounded field with the sticker button, camera, mic/send. */
+.composer-plus-wrap,.composer-camera{display:none}
+@media(max-width:900px){
+ .app-shell.mobile-chat-open>.chat-pane .composer-wrap{padding-top:8px!important;padding-left:10px!important;padding-right:10px!important}
+ .app-shell.mobile-chat-open>.chat-pane .composer{
+   display:grid!important;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:end;column-gap:6px;row-gap:8px;
+   padding:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;min-height:0!important;
+ }
+ .app-shell .chat-pane .composer>*{grid-column:1/-1;grid-row:1}
+ .app-shell .chat-pane .composer-tools,.app-shell .chat-pane .composer-left-tools{display:contents!important}
+ .app-shell .chat-pane .composer .composer-plus-wrap{display:block;position:relative;grid-column:1;grid-row:2}
+ .app-shell .chat-pane .composer .emoji-composer-editor{
+   grid-column:2;grid-row:2;min-height:44px;max-height:140px;box-sizing:border-box;margin:0;
+   padding:11px 46px 11px 16px!important;border-radius:22px;background:#f0f2f5;border:0;
+ }
+ .app-shell .chat-pane .composer .voice-inline{grid-column:1/4!important;grid-row:2!important}
+ .app-shell .chat-pane .composer .composer-sticker-wrap{grid-column:2;grid-row:2;justify-self:end;align-self:end;margin:0 4px 4px 0;z-index:1}
+ .app-shell .chat-pane .composer .composer-camera{display:grid;grid-column:3;grid-row:2}
+ .app-shell .chat-pane .composer .composer-mic,
+ .app-shell .chat-pane .composer .send-btn{grid-column:4;grid-row:2}
+ .app-shell .chat-pane .composer .composer-emoji-wrap,
+ .app-shell .chat-pane .composer .quick-reply-wrap{grid-column:1;grid-row:2;width:0;height:44px;align-self:end}
+ .app-shell .chat-pane .composer .composer-tool-template,
+ .app-shell .chat-pane .composer .composer-tool-attach,
+ .app-shell .chat-pane .composer .composer-emoji-wrap>button,
+ .app-shell .chat-pane .composer .quick-reply-wrap>button{display:none!important}
+ .app-shell .chat-pane .composer .composer-plus,
+ .app-shell .chat-pane .composer .composer-camera,
+ .app-shell .chat-pane .composer .composer-sticker-wrap>button{
+   display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:999px;background:transparent;color:#344866;cursor:pointer;
+ }
+ .app-shell .chat-pane .composer .composer-sticker-wrap>button{width:36px;height:36px}
+ .app-shell .chat-pane .composer .composer-mic,
+ .app-shell .chat-pane .composer .send-btn{
+   display:grid!important;place-items:center;width:44px!important;height:44px!important;min-width:44px;padding:0!important;
+   border:0!important;border-radius:999px!important;background:#ff5a1f!important;color:#fff!important;
+ }
+ .app-shell .chat-pane .composer .composer-mic svg{color:#fff;stroke:#fff}
+ .app-shell .chat-pane .composer .send-btn svg{width:20px;height:20px}
+ .app-shell .chat-pane .composer .send-btn:disabled{display:none!important}
+ .app-shell .chat-pane .composer:has(.send-btn:not(:disabled)) .composer-mic{display:none!important}
+ .app-shell .chat-pane .composer .quick-reply-menu{left:0;bottom:52px}
+ .composer-plus-menu{
+   position:absolute;left:0;bottom:52px;z-index:30;min-width:200px;padding:6px;border-radius:16px;
+   background:#fff;border:1px solid #e3e8ef;box-shadow:0 14px 40px rgba(23,39,61,.18);
+ }
+ .composer-plus-menu button{display:flex;align-items:center;gap:12px;width:100%;padding:11px 12px;border:0;border-radius:10px;background:transparent;color:#243149;font-size:15px;text-align:left;cursor:pointer}
+ .composer-plus-menu button:active{background:#f2f4f7}
+}
