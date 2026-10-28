@@ -1669,3 +1669,44 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
  .app-shell .chat-pane .composer:has(.voice-inline) .composer-sticker-wrap,
  .app-shell .chat-pane .composer:has(.voice-inline) .composer-camera{display:none!important}
 }
+
+/* Phone contact details: same look as the profile page (grey page, large avatar, white rounded row groups). */
+@media(max-width:900px){
+ .app-shell.mobile-details-open>.details-pane{background:#f2f4f7!important;padding:0 16px calc(24px + env(safe-area-inset-bottom, 0px))!important}
+ .app-shell.mobile-details-open>.details-pane .details-title{background:#f2f4f7!important;border:0!important;box-shadow:none!important;justify-content:center!important}
+ .app-shell.mobile-details-open>.details-pane .details-title .eyebrow{font-size:17px!important;font-weight:700!important;letter-spacing:0!important;color:#16243a!important;text-transform:lowercase}
+ .app-shell.mobile-details-open>.details-pane .details-title .eyebrow::first-letter{text-transform:uppercase}
+ .app-shell.mobile-details-open>.details-pane .details-title .icon-btn{position:absolute;right:12px;border:0!important;border-radius:999px!important;background:#fff!important;color:#16243a!important}
+ .app-shell.mobile-details-open>.details-pane .profile{display:flex!important;flex-direction:column;align-items:center;gap:4px;margin:8px 0 26px!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+ .app-shell.mobile-details-open>.details-pane .profile .profile-avatar{flex:0 0 auto!important;width:132px!important;min-width:132px!important;max-width:132px!important;height:132px!important;min-height:132px!important;max-height:132px!important;border-radius:999px!important;margin:0 0 12px!important;font-size:52px!important}
+ .app-shell.mobile-details-open>.details-pane .profile .profile-avatar svg{width:64px!important;height:64px!important}
+ .app-shell.mobile-details-open>.details-pane .profile h2{margin:0!important;font-size:18px!important;font-weight:700!important;color:#16243a!important}
+ .app-shell.mobile-details-open>.details-pane .profile .type-badge{margin:2px 0 0!important;padding:0!important;border:0!important;background:transparent!important;font-size:13.5px!important;font-weight:400!important;color:#7a8799!important}
+ .app-shell.mobile-details-open>.details-pane .profile>button{margin:14px auto 0!important;padding:9px 20px!important;border:0!important;border-radius:999px!important;background:#fff!important;color:#16243a!important;font-size:15px!important;font-weight:600!important;box-shadow:0 1px 2px rgba(23,39,61,.06)!important}
+
+ .app-shell.mobile-details-open>.details-pane .detail-section,
+ .app-shell.mobile-details-open>.details-pane .detail-row{margin:0 0 22px!important;padding:0!important;border:0!important;border-radius:18px!important;background:#fff!important;overflow:hidden;box-shadow:0 1px 2px rgba(23,39,61,.04)!important}
+ .app-shell.mobile-details-open>.details-pane .section-heading{display:flex!important;align-items:center;justify-content:space-between;min-height:0!important;margin:0!important;padding:14px 16px 6px!important;border:0!important}
+ .app-shell.mobile-details-open>.details-pane .section-heading h3{margin:0!important;font-size:12.5px!important;font-weight:600!important;letter-spacing:.04em!important;text-transform:uppercase;color:#7a8799!important}
+ .app-shell.mobile-details-open>.details-pane .section-heading button{border:0!important;background:transparent!important;color:#e6531a!important;font-size:15px!important;font-weight:600!important;padding:0!important}
+
+ .app-shell.mobile-details-open>.details-pane .contact-card dl{display:grid!important;grid-template-columns:auto 1fr;margin:0!important;padding:0 0 0 16px!important;gap:0!important}
+ .app-shell.mobile-details-open>.details-pane .contact-card dt,
+ .app-shell.mobile-details-open>.details-pane .contact-card dd{display:flex!important;align-items:center;min-height:52px;margin:0!important;padding:0!important;font-size:16px!important}
+ .app-shell.mobile-details-open>.details-pane .contact-card dt{color:#16243a!important;font-weight:400!important}
+ .app-shell.mobile-details-open>.details-pane .contact-card dd{justify-content:flex-end;gap:8px;padding-right:16px!important;color:#7a8799!important;font-weight:400!important}
+ .app-shell.mobile-details-open>.details-pane .contact-card dt:not(:first-of-type),
+ .app-shell.mobile-details-open>.details-pane .contact-card dd:not(:first-of-type){border-top:1px solid #edf0f4}
+
+ .app-shell.mobile-details-open>.details-pane .assignment-card{display:grid!important;grid-template-columns:auto 1fr;padding-left:16px!important}
+ .app-shell.mobile-details-open>.details-pane .assignment-card .section-heading{grid-column:1/-1;margin-left:-16px!important}
+ .app-shell.mobile-details-open>.details-pane .assignment-card .field-label{display:flex!important;align-items:center;min-height:52px;margin:0!important;font-size:16px!important;font-weight:400!important;letter-spacing:0!important;text-transform:none!important;color:#16243a!important}
+ .app-shell.mobile-details-open>.details-pane .assignment-card select{min-height:52px;height:52px!important;width:100%!important;margin:0!important;padding:0 34px 0 8px!important;border:0!important;border-radius:0!important;box-shadow:none!important;text-align:right;text-align-last:right;color:#7a8799!important;font-weight:400!important;-webkit-appearance:none;appearance:none;background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a3adbb' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E") no-repeat right 14px center!important}
+ .app-shell.mobile-details-open>.details-pane .assignment-card select:last-of-type,
+ .app-shell.mobile-details-open>.details-pane .assignment-card .field-label:last-of-type{border-top:1px solid #edf0f4!important}
+
+ .app-shell.mobile-details-open>.details-pane .notes textarea{display:block;box-sizing:border-box;width:calc(100% - 32px)!important;margin:4px 16px 16px!important;padding:12px 14px!important;border:0!important;border-radius:12px!important;background:#f5f7fa!important;box-shadow:none!important;color:#16243a!important;resize:none}
+ .app-shell.mobile-details-open>.details-pane .notes .note-item{margin:0 16px!important;padding:12px 0!important;border:0!important;border-top:1px solid #edf0f4!important;background:transparent!important;font-size:14.5px!important;color:#16243a!important}
+ .app-shell.mobile-details-open>.details-pane .detail-row{display:flex!important;align-items:center;gap:14px;min-height:56px;padding:0 16px!important;font-size:16px!important;color:#16243a!important}
+ .app-shell.mobile-details-open>.details-pane .detail-row svg{color:#7a8799}
+}
