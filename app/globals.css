@@ -1519,3 +1519,64 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
 @media(max-width:900px) and (display-mode:standalone){
  .app-shell.mobile-chat-open>.chat-pane .composer-wrap{padding-bottom:calc(32px + env(safe-area-inset-bottom, 0px))!important}
 }
+
+/* Phone composer sheets: stickers, emoji and the + menu open docked where the keyboard sits. */
+@media(max-width:900px){
+ .app-shell{--composer-sheet:300px}
+ .app-shell.mobile-chat-open>.chat-pane .composer-wrap:has(.saved-sticker-panel),
+ .app-shell.mobile-chat-open>.chat-pane .composer-wrap:has(.emoji-picker),
+ .app-shell.mobile-chat-open>.chat-pane .composer-wrap:has(.composer-plus-menu){
+   padding-bottom:calc(var(--composer-sheet) + 10px + env(safe-area-inset-bottom, 0px))!important;
+ }
+ .app-shell .chat-pane .composer .saved-sticker-panel,
+ .app-shell .chat-pane .composer .emoji-picker,
+ .app-shell .chat-pane .composer .composer-plus-menu{
+   position:fixed!important;left:0!important;right:0!important;top:auto!important;bottom:0!important;
+   width:auto!important;max-width:none!important;min-width:0!important;
+   height:calc(var(--composer-sheet) + env(safe-area-inset-bottom, 0px))!important;
+   margin:0!important;border:0!important;border-top:1px solid #e3e8ef!important;border-radius:20px 20px 0 0!important;
+   box-shadow:0 -8px 24px rgba(23,39,61,.08)!important;background:#f7f8fa!important;z-index:60!important;box-sizing:border-box!important;
+   padding-bottom:env(safe-area-inset-bottom, 0px)!important;
+ }
+ .app-shell .chat-pane .composer .saved-sticker-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+ .app-shell .chat-pane .composer .composer-plus-menu{
+   display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));align-content:start;row-gap:18px;
+   padding:26px 12px calc(12px + env(safe-area-inset-bottom, 0px))!important;
+ }
+ .app-shell .chat-pane .composer .composer-plus-menu button{
+   flex-direction:column;align-items:center;gap:8px;padding:0;border-radius:0;background:transparent;font-size:12.5px;font-weight:500;color:#344866;text-align:center;
+ }
+ .app-shell .chat-pane .composer .composer-plus-menu button:active{background:transparent;opacity:.7}
+ .composer-plus-icon{display:grid;place-items:center;width:62px;height:62px;border-radius:999px;background:#fff;border:1px solid #e6eaf0;box-shadow:0 2px 6px rgba(23,39,61,.06)}
+ .composer-plus-icon.attach{color:#2f6fed}
+ .composer-plus-icon.template{color:#e35a20}
+ .composer-plus-icon.replies{color:#f2a516}
+ .composer-plus-icon.emoji{color:#16a34a}
+}
+
+/* Phone profile page opened from the "You" tab. */
+.mobile-profile{display:none}
+@media(max-width:900px){
+ .app-shell .inbox-pane.profile-open>:not(.mobile-profile):not(.mobile-tabbar){display:none!important}
+ .app-shell .inbox-pane.profile-open{background:#f2f4f7}
+ .mobile-profile{display:block;flex:1 1 auto;min-height:0;overflow-y:auto;padding:28px 16px 16px;background:#f2f4f7}
+ .mobile-profile-hero{display:flex;flex-direction:column;align-items:center;gap:4px;margin-bottom:26px}
+ .mobile-profile-status{position:relative;margin-bottom:-6px;z-index:1;padding:9px 18px;border:0;border-radius:999px;background:#fff;color:#16243a;font-size:14px;font-weight:600;box-shadow:0 4px 14px rgba(23,39,61,.10);cursor:pointer}
+ .mobile-profile-status::after{content:"";position:absolute;right:28px;bottom:-7px;width:12px;height:12px;border-radius:999px;background:#fff;box-shadow:0 4px 10px rgba(23,39,61,.08)}
+ .mobile-profile-status.available{color:#15803d}
+ .mobile-profile-status.away{color:#b45309}
+ .mobile-profile-avatar{position:relative;display:grid;place-items:center;width:132px;height:132px;margin:10px 0 12px;border-radius:999px;background:#ffe6dc;color:#e64a14;font-size:44px;font-weight:700;letter-spacing:.02em}
+ .mobile-profile-avatar .mobile-tab-presence{left:10px;right:auto;top:auto;bottom:8px;width:24px;height:24px;border-width:4px;border-color:#f2f4f7}
+ .mobile-profile-hero strong{font-size:18px;color:#16243a}
+ .mobile-profile-hero>span{font-size:13.5px;color:#7a8799}
+ .mobile-profile-group{margin-bottom:22px;border-radius:18px;background:#fff;overflow:hidden;box-shadow:0 1px 2px rgba(23,39,61,.04)}
+ .mobile-profile-group button{position:relative;display:flex;align-items:center;gap:14px;width:100%;min-height:56px;padding:0 16px;border:0;background:#fff;color:#344866;font-size:16px;text-align:left;cursor:pointer}
+ .mobile-profile-group button:active{background:#f5f7fa}
+ .mobile-profile-group button+button::before{content:"";position:absolute;top:0;left:52px;right:0;height:1px;background:#edf0f4}
+ .mobile-profile-group button>span:not(.mobile-profile-dot){flex:1 1 auto;color:#16243a}
+ .mobile-profile-group button>em{font-style:normal;font-size:14px;color:#7a8799}
+ .mobile-profile-group button>svg:last-child{color:#a3adbb}
+ .mobile-profile-dot{width:12px;height:12px;margin:0 4px;border-radius:999px;background:#22c55e}
+ .mobile-profile-dot.away{background:#f59e0b}
+ .mobile-profile-group .mobile-profile-logout,.mobile-profile-group .mobile-profile-logout>span{color:#d92d20!important}
+}
