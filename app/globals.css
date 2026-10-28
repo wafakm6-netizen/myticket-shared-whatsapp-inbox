@@ -1497,3 +1497,25 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
  .composer-plus-menu button{display:flex;align-items:center;gap:12px;width:100%;padding:11px 12px;border:0;border-radius:10px;background:transparent;color:#243149;font-size:15px;text-align:left;cursor:pointer}
  .composer-plus-menu button:active{background:#f2f4f7}
 }
+
+/* Roomier phone composer: taller field and buttons, more space around the bar, larger sticker icon. */
+@media(max-width:900px){
+ .app-shell.mobile-chat-open>.chat-pane .composer-wrap{padding-top:12px!important}
+ .app-shell.mobile-chat-open>.chat-pane .composer{column-gap:8px}
+ .app-shell .chat-pane .composer .emoji-composer-editor{min-height:50px;padding:14px 50px 14px 18px!important;border-radius:25px}
+ .app-shell .chat-pane .composer .composer-plus,
+ .app-shell .chat-pane .composer .composer-camera{width:48px;height:50px}
+ .app-shell .chat-pane .composer .composer-mic,
+ .app-shell .chat-pane .composer .send-btn{width:50px!important;height:50px!important;min-width:50px}
+ .app-shell .chat-pane .composer .composer-emoji-wrap,
+ .app-shell .chat-pane .composer .quick-reply-wrap{height:50px}
+ .app-shell .chat-pane .composer .composer-sticker-wrap{margin:0 5px 5px 0}
+ .app-shell .chat-pane .composer .composer-sticker-wrap>button{width:40px;height:40px}
+ .app-shell .chat-pane .composer .composer-sticker-wrap>button svg{width:26px;height:26px}
+ .app-shell .chat-pane .composer .composer-mic svg{width:22px;height:22px}
+ .app-shell .chat-pane .composer .composer-plus svg,
+ .app-shell .chat-pane .composer .composer-camera svg{width:27px;height:27px}
+}
+@media(max-width:900px) and (display-mode:standalone){
+ .app-shell.mobile-chat-open>.chat-pane .composer-wrap{padding-bottom:calc(18px + env(safe-area-inset-bottom, 0px))!important}
+}
