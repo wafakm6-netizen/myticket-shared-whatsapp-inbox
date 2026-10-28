@@ -1747,3 +1747,94 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
  .conversation-modal .modal-actions .secondary-btn{border:0!important;background:#fff!important;color:#16243a!important}
  .conversation-modal .modal-actions button.send-btn{width:auto!important;min-width:0!important;height:48px!important;border-radius:999px!important}
 }
+
+/* Phone New conversation, Team, Replies and Tags: profile page type and theme (sentence-case labels, 16px rows,
+   white borderless fields on grey) with one compact control size. */
+@media(max-width:900px){
+ /* New conversation */
+ .conversation-modal:has(.conversation-form) .modal-header h2{font-size:18px!important;letter-spacing:0!important}
+ .conversation-modal .conversation-form>label,
+ .conversation-modal .meta-template-picker>label{margin:14px 4px 6px!important;font-size:14px!important;font-weight:500!important;letter-spacing:0!important;text-transform:none!important;color:#7a8799!important}
+ .conversation-modal .conversation-form>label:first-child{margin-top:4px!important}
+ .conversation-modal .conversation-form input,.conversation-modal .meta-template-picker>select{min-height:46px!important;height:46px!important;font-size:16px!important;font-weight:400!important}
+ .conversation-modal .modal-actions button,
+ .conversation-modal .modal-actions button.send-btn{height:44px!important;font-size:16px!important;font-weight:500!important}
+
+ /* Page headers: centred title like the contact details page */
+ .app-shell .modal-backdrop>.team-modal>.modal-header{display:flex!important;justify-content:center!important;padding:6px 0 16px!important}
+ .app-shell .modal-backdrop>.team-modal>.modal-header .eyebrow{display:none!important}
+ .app-shell .modal-backdrop>.team-modal>.modal-header h2{font-size:18px!important;letter-spacing:0!important;margin:0!important;text-align:center}
+ .mobile-tags-page .tag-manager-title{text-align:center}
+ .mobile-tags-page .tag-manager-title h2{font-size:18px!important;letter-spacing:0!important;margin:6px 0 4px!important}
+ .mobile-tags-page .tag-manager-title p{font-size:14px!important;margin:0 0 16px!important}
+
+ /* Shared fields and buttons */
+ .app-shell .team-modal .team-add-form>input,
+ .app-shell .team-modal .team-add-form>select,
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-add-form>input,
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-add-form>select,
+ .mobile-tags-page .tag-create-row input,
+ .mobile-tags-page .tag-search{height:46px!important;min-height:46px!important;border:0!important;border-radius:12px!important;background-color:#f2f4f7!important;box-shadow:none!important;font-size:16px!important;font-weight:400!important;color:#16243a!important}
+ .mobile-tags-page .tag-search{background:#fff!important}
+ .mobile-tags-page .tag-search input{font-size:16px!important}
+ .app-shell .team-modal .team-add-form>.send-btn,
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-add-form>.send-btn,
+ .mobile-tags-page .primary-small{height:44px!important;min-height:44px!important;border:0!important;border-radius:999px!important;font-size:16px!important;font-weight:500!important}
+ .app-shell .team-modal .team-add-form>.secondary-btn{height:44px!important;border:0!important;border-radius:999px!important;background:#f2f4f7!important;font-size:16px!important}
+ /* Small row actions: one pill size everywhere */
+ .app-shell .team-modal .saved-reply-row button,
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-list .team-row>.team-toggle,
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-list .team-invite-renew,
+ .mobile-tags-page .tag-row-actions button{
+   width:auto!important;height:32px!important;min-height:32px!important;margin:0!important;padding:0 14px!important;
+   border:0!important;border-radius:999px!important;background:#f2f4f7!important;color:#16243a!important;
+   font-size:14px!important;font-weight:500!important;line-height:32px!important;white-space:nowrap
+ }
+ .app-shell .team-modal .saved-reply-row .team-toggle,
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-list .team-row>.team-toggle+.team-toggle,
+ .mobile-tags-page .tag-row-actions .danger-text{background:#fdecea!important;color:#d92d20!important}
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-list .team-invite-renew{background:#fff0ea!important;color:#d9480f!important;margin:4px 0!important}
+
+ /* Saved replies: title and text on top, actions in one row below */
+ .app-shell .team-modal .saved-reply-list{display:grid!important;gap:0!important;padding:0!important;border-radius:18px!important;background:#fff!important;overflow:hidden}
+ .app-shell .team-modal .saved-reply-row{display:block!important;margin:0!important;padding:14px 16px!important;border:0!important;border-radius:0!important;background:#fff!important}
+ .app-shell .team-modal .saved-reply-row+.saved-reply-row{border-top:1px solid #edf0f4!important}
+ .app-shell .team-modal .saved-reply-row>div:first-child{display:block!important;width:auto!important}
+ .app-shell .team-modal .saved-reply-row strong{display:block;font-size:16px!important;font-weight:600!important;color:#16243a!important;margin:0 0 2px!important;line-height:1.35!important}
+ .app-shell .team-modal .saved-reply-row p{margin:0!important;font-size:14.5px!important;color:#7a8799!important;line-height:1.4!important;overflow-wrap:anywhere}
+ .app-shell .team-modal .saved-reply-row>div:last-child{display:flex!important;flex-wrap:wrap;gap:8px!important;margin-top:10px!important;width:auto!important}
+ .app-shell .team-modal .saved-reply-form{display:grid!important;grid-template-columns:1fr!important;gap:10px!important;padding:14px!important}
+
+ /* Tags: list rows like profile rows */
+ .mobile-tags-page .tag-create-row{padding:14px!important;gap:10px!important}
+ .mobile-tags-page .tag-list{padding:0!important;gap:0!important;overflow:hidden}
+ .mobile-tags-page .tag-row{min-height:56px!important;padding:8px 16px!important;border:0!important;border-radius:0!important}
+ .mobile-tags-page .tag-row+.tag-row{border-top:1px solid #edf0f4!important}
+ .mobile-tags-page .tag-row-actions{gap:8px!important}
+ .mobile-tags-page .tag-pill{font-size:14px!important;font-weight:600!important;padding:5px 11px!important}
+
+ /* Team: compact member cards */
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-add-form{gap:10px!important;padding:14px!important}
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-list .team-row{row-gap:10px!important;padding:14px!important}
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-list .team-info strong{font-size:16px!important;font-weight:600!important}
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-list .team-info span,
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-list .team-info small{font-size:13.5px!important;font-weight:400!important}
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-row>select{height:38px!important;min-height:38px!important;padding:0 12px!important;border:0!important;border-radius:999px!important;background-color:#f2f4f7!important;font-size:16px!important}
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-departments{gap:8px!important;padding:0!important;border:0!important;background:transparent!important}
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-departments legend,
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-departments>small{padding:0 2px 2px!important;font-size:14px!important;font-weight:500!important;color:#7a8799!important}
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-departments label{gap:6px!important;height:32px;padding:0 12px;border-radius:999px;background:#f2f4f7;font-size:14px!important}
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-departments label:has(input:checked){background:#fff0ea;color:#d9480f}
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-departments input{width:16px!important;height:16px!important}
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-list .team-row>.team-toggle,
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-list .team-row:not(:has(.team-toggle+.team-toggle))>.team-toggle{grid-column:auto!important;justify-self:start}
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-list .team-row{display:flex!important;flex-wrap:wrap!important;gap:10px!important;align-items:flex-start!important}
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-list .team-avatar{flex:0 0 44px!important}
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-list .team-info{flex:1 1 0!important;margin-left:2px!important}
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-list .team-row>select{flex:1 1 calc(50% - 5px)!important;width:auto!important;min-width:0!important}
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-list .team-row>.team-departments{flex:1 1 100%!important}
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-list .team-row>.team-toggle{flex:0 0 auto!important}
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-list .team-info{flex:1 1 calc(100% - 56px)!important}
+ .app-shell .modal-backdrop>.team-modal[aria-labelledby="saved-replies-title"] .saved-reply-list{padding:0!important}
+ .app-shell .modal-backdrop>.team-modal[aria-labelledby="saved-replies-title"] .team-add-form{padding:14px!important}
+}
