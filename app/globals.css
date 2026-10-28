@@ -1422,3 +1422,29 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
  .app-shell .inbox-pane .conversation-bottom .type-badge,
  .app-shell .inbox-pane .conversation-bottom .assigned-label{font-size:10.5px!important;padding:0 7px!important;line-height:18px!important;border-radius:999px!important}
 }
+
+/* WhatsApp-style floating tab bar under the conversation list on phones. */
+.mobile-tabbar{display:none}
+@media(max-width:900px){
+ .app-shell>.inbox-pane{position:relative}
+ .app-shell .inbox-pane .conversation-list{padding-bottom:calc(170px + env(safe-area-inset-bottom, 0px))!important}
+ .mobile-tabbar{
+   display:flex;position:absolute;z-index:20;left:12px;right:12px;
+   bottom:calc(76px + env(safe-area-inset-bottom, 0px));
+   justify-content:space-between;gap:2px;padding:6px;border-radius:34px;
+   background:rgba(255,255,255,.95);-webkit-backdrop-filter:blur(18px) saturate(1.6);backdrop-filter:blur(18px) saturate(1.6);
+   border:1px solid #e6eaf0;box-shadow:0 10px 30px rgba(23,39,61,.14);
+ }
+ .mobile-tab{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 2px 6px;border:0;border-radius:26px;background:transparent;color:#344866;font-size:11px;font-weight:600;-webkit-tap-highlight-color:transparent;cursor:pointer}
+ .mobile-tab.active{background:#eef1f5;color:#16243a}
+ .mobile-tab:active{background:#eef1f5}
+ .mobile-tab-icon{position:relative;display:grid;place-items:center;height:26px}
+ .mobile-tab-icon b{position:absolute;top:-5px;left:14px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:#ff5a1f;color:#fff;font-size:10px;font-weight:800;line-height:18px;text-align:center;border:2px solid #fff;box-sizing:content-box}
+ .mobile-tab-avatar{width:26px;height:26px;border-radius:999px;background:#ffe6dc;color:#e64a14;font-size:10px;font-weight:800}
+ .mobile-tab-presence{position:absolute;right:-2px;top:-2px;width:9px;height:9px;border-radius:999px;border:2px solid #fff;background:#22c55e}
+ .mobile-tab-presence.away{background:#f59e0b}
+}
+@media(max-width:900px) and (display-mode:standalone){
+ .mobile-tabbar{bottom:calc(10px + env(safe-area-inset-bottom, 0px))}
+ .app-shell .inbox-pane .conversation-list{padding-bottom:calc(100px + env(safe-area-inset-bottom, 0px))!important}
+}
