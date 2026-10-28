@@ -1894,3 +1894,26 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
  .app-shell .workspace-settings-modal .account-password-form label{display:flex!important;flex-direction:column;gap:6px;font-size:14px!important;font-weight:500!important;color:#7a8799!important}
  .app-shell .workspace-settings-modal .account-password-form input{height:46px!important;padding:0 14px!important;border:0!important;border-radius:12px!important;background:#f2f4f7!important;box-shadow:none!important;font-size:16px!important;color:#16243a!important}
 }
+
+/* Account settings: team invitation status per agent (admins). */
+.account-invitations .account-invitation{display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:10px 0;border-top:1px solid #edf0f4}
+.account-invitations .account-invitation:first-of-type{border-top:0}
+.account-invitations .account-invitation strong{font-size:14px;color:#16243a}
+.account-invitations .account-invitation span{font-size:13px;color:#7a8799;overflow-wrap:anywhere}
+.account-invitations .account-invitation small{font-size:12.5px;font-weight:600}
+.account-invitations .account-invitation .team-invite-renew{margin-top:4px}
+@media(max-width:900px){
+ .app-shell .workspace-settings-modal .account-invitations{gap:0!important}
+ .app-shell .workspace-settings-modal .account-invitations h3{margin-bottom:4px!important}
+ .app-shell .workspace-settings-modal .account-invitation strong{font-size:16px!important;font-weight:600!important}
+ .app-shell .workspace-settings-modal .account-invitation span{font-size:14px!important}
+ .app-shell .workspace-settings-modal .account-invitation small{font-size:13.5px!important}
+ .app-shell .workspace-settings-modal .workspace-settings-content .account-invitation .team-invite-renew{
+   height:32px!important;min-height:32px!important;margin-top:6px!important;padding:0 14px!important;
+   background:#fff0ea!important;color:#d9480f!important;font-size:14px!important;
+ }
+ .app-shell .workspace-settings-modal .account-invitations .temporary-password{margin-top:10px;padding:12px;border-radius:12px;background:#f2f4f7;font-size:14px}
+
+ /* Team: more space between agent cards */
+ .app-shell .team-modal[aria-labelledby="team-title"] .team-list{display:flex!important;flex-direction:column!important;gap:18px!important;background:transparent!important}
+}
