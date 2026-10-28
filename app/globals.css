@@ -1657,3 +1657,8 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
  }
  .app-shell .team-modal[aria-labelledby="team-title"] .team-list .team-row:not(:has(.team-toggle+.team-toggle))>.team-toggle{grid-column:1/-1!important}
 }
+
+/* Phone sticker sheet: no "Saved stickers" title, just the count and the grid. */
+@media(max-width:900px){
+ .app-shell .chat-pane .composer .saved-sticker-header strong{display:none}
+}
