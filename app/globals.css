@@ -1500,7 +1500,7 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
 
 /* Roomier phone composer: taller field and buttons, more space around the bar, larger sticker icon. */
 @media(max-width:900px){
- .app-shell.mobile-chat-open>.chat-pane .composer-wrap{padding-top:12px!important}
+ .app-shell.mobile-chat-open>.chat-pane .composer-wrap{padding-top:6px!important}
  .app-shell.mobile-chat-open>.chat-pane .composer{column-gap:8px}
  .app-shell .chat-pane .composer .emoji-composer-editor{min-height:50px;padding:14px 50px 14px 18px!important;border-radius:25px}
  .app-shell .chat-pane .composer .composer-plus,
@@ -1517,5 +1517,5 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
  .app-shell .chat-pane .composer .composer-camera svg{width:27px;height:27px}
 }
 @media(max-width:900px) and (display-mode:standalone){
- .app-shell.mobile-chat-open>.chat-pane .composer-wrap{padding-bottom:calc(18px + env(safe-area-inset-bottom, 0px))!important}
+ .app-shell.mobile-chat-open>.chat-pane .composer-wrap{padding-bottom:calc(32px + env(safe-area-inset-bottom, 0px))!important}
 }
