@@ -1710,3 +1710,40 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
  .app-shell.mobile-details-open>.details-pane .detail-row{display:flex!important;align-items:center;gap:14px;min-height:56px;padding:0 16px!important;font-size:16px!important;color:#16243a!important}
  .app-shell.mobile-details-open>.details-pane .detail-row svg{color:#7a8799}
 }
+
+/* Tapping the contact's name or avatar in the chat header opens contact details. */
+.app-shell .chat-pane .chat-header .chat-person{cursor:pointer;-webkit-tap-highlight-color:transparent}
+
+/* Phone new conversation: centred sheet in the profile page style (grey page, white rounded fields, pill buttons). */
+@media(max-width:900px){
+ .modal-backdrop:has(.conversation-modal .conversation-form){position:fixed!important;inset:0!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:16px!important;box-sizing:border-box!important}
+ .modal-backdrop .conversation-modal:has(.conversation-form){position:relative!important;inset:auto!important;transform:none!important;margin:0 auto!important;width:100%!important;max-width:520px!important;max-height:calc(100% - 24px)!important;border:0!important;border-radius:22px!important;background:#f2f4f7!important;box-shadow:0 24px 60px rgba(23,39,61,.25)!important}
+ .conversation-modal:has(.conversation-form) .modal-header{display:flex!important;align-items:center!important;justify-content:center!important;padding:18px 56px 10px!important;background:#f2f4f7!important;border:0!important}
+ .conversation-modal:has(.conversation-form) .modal-header .eyebrow{display:none!important}
+ .conversation-modal:has(.conversation-form) .modal-header h2{margin:0!important;font-size:17px!important;font-weight:700!important;color:#16243a!important;text-align:center}
+ .conversation-modal:has(.conversation-form) .modal-header .icon-btn{position:absolute!important;right:12px;top:12px;width:36px!important;height:36px!important;border:0!important;border-radius:999px!important;background:#fff!important;color:#16243a!important}
+ .conversation-modal .conversation-form{padding:6px 16px 0!important;gap:0!important;scrollbar-gutter:auto!important}
+ .conversation-modal .conversation-form>label{margin:14px 4px 6px!important;font-size:12.5px!important;font-weight:600!important;letter-spacing:.04em;text-transform:uppercase;color:#7a8799!important}
+ .conversation-modal .conversation-form>label:first-child{margin-top:4px!important}
+ .conversation-modal .conversation-form input,
+ .conversation-modal .conversation-form textarea,
+ .conversation-modal .conversation-form select,
+ .conversation-modal .international-phone-input,
+ .conversation-modal .country-code-control,
+ .conversation-modal .meta-template-picker>select{border:0!important;border-radius:14px!important;background:#fff!important;box-shadow:0 1px 2px rgba(23,39,61,.04)!important;color:#16243a!important}
+ .conversation-modal .conversation-form input:focus,
+ .conversation-modal .conversation-form textarea:focus{box-shadow:0 0 0 2px rgba(255,90,31,.35)!important}
+ .conversation-modal .international-phone-input input,
+ .conversation-modal .country-code-control select{box-shadow:none!important;background:transparent!important}
+ .conversation-modal .conversation-form input{min-height:50px!important}
+ html body .modal-backdrop .conversation-modal form.conversation-form textarea#new-first-message{height:120px!important;min-height:120px!important;resize:none!important}
+ .conversation-modal .meta-template-picker{margin-top:14px!important}
+ .conversation-modal .meta-template-picker>label{margin:0 4px!important;font-size:12.5px!important;font-weight:600!important;letter-spacing:.04em;text-transform:uppercase;color:#7a8799!important}
+ .conversation-modal .meta-template-picker>select{min-height:50px!important}
+ .conversation-modal .template-preview{border:0!important;border-radius:14px!important;background:#fff!important}
+ .conversation-modal .form-help{margin:10px 4px 0!important;font-size:13px!important;line-height:1.45;color:#7a8799!important}
+ .conversation-modal .modal-actions{width:calc(100% + 32px)!important;margin:16px -16px 0!important;padding:12px 16px calc(16px + env(safe-area-inset-bottom, 0px))!important;background:#f2f4f7!important;border:0!important;justify-content:stretch!important}
+ .conversation-modal .modal-actions button{flex:1 1 0!important;width:auto!important;min-width:0!important;height:48px!important;border-radius:999px!important;font-size:16px!important;font-weight:600!important}
+ .conversation-modal .modal-actions .secondary-btn{border:0!important;background:#fff!important;color:#16243a!important}
+ .conversation-modal .modal-actions button.send-btn{width:auto!important;min-width:0!important;height:48px!important;border-radius:999px!important}
+}
