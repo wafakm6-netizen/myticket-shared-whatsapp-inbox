@@ -2038,3 +2038,7 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
 .reaction-picker-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
 .reaction-picker-grid button{height:50px;border:0;border-radius:12px;background:transparent;font-size:32px;line-height:1;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
 .reaction-picker-grid button:active{background:#f2f4f7}
+
+/* Your current reaction is highlighted in the reaction bar and list; tapping it again removes it. */
+.message-reaction-bar button.chosen,.reaction-picker-grid button.chosen{background:#e8ecf2}
+.app-shell .chat-pane .message-bubble button.message-reaction{cursor:pointer;color:inherit;font-family:inherit}
