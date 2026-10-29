@@ -305,19 +305,6 @@ export default function Page() {
   const saveSticker=async(id:string)=>{const r=await fetch('/api/stickers',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messageId:id})});if(r.ok){await loadStickers();setStickerOpen(true)}else alert((await r.json()).error||'Could not save sticker')}
   const sendSticker=async(mediaId:string)=>{if(!selected)return;setSendingMessage(true);try{const r=await fetch('/api/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({conversationId:selected.id,to:selected.phone,mediaId,attachmentType:'sticker'})});const p=await r.json();if(!r.ok)throw Error(p.error||'Could not send sticker');setStickerOpen(false);await load()}catch(e){setMessageSendError(e instanceof Error?e.message:'Could not send sticker')}finally{setSendingMessage(false)}}
   const [mediaPreview, setMediaPreview] = useState<{url:string;kind:'image'|'video';name:string}|null>(null)
-  // While a phone sheet is open the chat keeps the keyboard-open layout. Closing it to type keeps that layout
-  // until the keyboard reports in, so the composer doesn't drop to the bottom and jump back up.
-  const composerSheetOpen = composerMenuOpen || stickerOpen || emojiOpen
-  useEffect(() => {
-    const root = document.documentElement
-    if (composerSheetOpen) { root.classList.add('composer-sheet-open'); root.classList.remove('composer-sheet-hold'); return }
-    if (!root.classList.contains('composer-sheet-open')) return
-    root.classList.remove('composer-sheet-open')
-    if (!(document.activeElement instanceof HTMLElement && document.activeElement.isContentEditable)) return
-    root.classList.add('composer-sheet-hold')
-    const release = window.setTimeout(() => root.classList.remove('composer-sheet-hold'), 900)
-    return () => window.clearTimeout(release)
-  }, [composerSheetOpen])
   // Only one transient popover may be open at a time.
   const closeTransientMenus = () => {
     setOpenMessageMenu(null)
@@ -565,6 +552,19 @@ export default function Page() {
   const [savedReplies, setSavedReplies] = useState<SavedReply[]>([])
   const [savedRepliesOpen, setSavedRepliesOpen] = useState(false)
   const [quickRepliesOpen, setQuickRepliesOpen] = useState(false)
+  // While a phone sheet is open the chat keeps the keyboard-open layout. Closing it to type keeps that layout
+  // until the keyboard reports in, so the composer doesn't drop to the bottom and jump back up.
+  const composerSheetOpen = composerMenuOpen || stickerOpen || emojiOpen || quickRepliesOpen || chatTemplateOpen
+  useEffect(() => {
+    const root = document.documentElement
+    if (composerSheetOpen) { root.classList.add('composer-sheet-open'); root.classList.remove('composer-sheet-hold'); return }
+    if (!root.classList.contains('composer-sheet-open')) return
+    root.classList.remove('composer-sheet-open')
+    if (!(document.activeElement instanceof HTMLElement && document.activeElement.isContentEditable)) return
+    root.classList.add('composer-sheet-hold')
+    const release = window.setTimeout(() => root.classList.remove('composer-sheet-hold'), 900)
+    return () => window.clearTimeout(release)
+  }, [composerSheetOpen])
   const [savedReplySearch, setSavedReplySearch] = useState('')
   const [savedReplyBusy, setSavedReplyBusy] = useState(false)
   const [savedReplyError, setSavedReplyError] = useState('')

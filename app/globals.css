@@ -1944,3 +1944,43 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
  html.composer-sheet-open,html.composer-sheet-open body,
  html.composer-sheet-hold,html.composer-sheet-hold body{background:#f7f8fa!important}
 }
+
+/* Phone: saved replies and template picker dock where the keyboard sits, like stickers and the + menu. */
+@media(max-width:900px){
+ .app-shell .chat-pane .composer .quick-reply-menu,
+ .app-shell .chat-pane .composer .chat-template-panel{
+   position:fixed!important;left:0!important;right:0!important;top:auto!important;bottom:0!important;
+   width:auto!important;max-width:none!important;min-width:0!important;max-height:none!important;
+   height:calc(var(--composer-sheet) + env(safe-area-inset-bottom, 0px))!important;
+   margin:0!important;border:0!important;border-top:1px solid #e3e8ef!important;border-radius:0!important;
+   box-shadow:none!important;background:#f7f8fa!important;z-index:60!important;box-sizing:border-box!important;
+   display:flex!important;flex-direction:column!important;overflow:hidden!important;
+   padding:12px 16px calc(12px + env(safe-area-inset-bottom, 0px))!important;
+ }
+ html.composer-sheet-open .app-shell .chat-pane .composer .quick-reply-menu,
+ html.composer-sheet-open .app-shell .chat-pane .composer .chat-template-panel{
+   top:calc(var(--inbox-full-height,100dvh) - var(--composer-sheet))!important;bottom:auto!important;height:var(--composer-sheet)!important;
+ }
+ /* Saved replies sheet */
+ .app-shell .chat-pane .composer .quick-reply-menu .quick-reply-heading{display:none!important}
+ .app-shell .chat-pane .composer .quick-reply-menu .quick-reply-search{flex:0 0 auto;height:40px!important;margin:0 0 10px!important;padding:0 14px!important;border:0!important;border-radius:999px!important;background:#fff!important}
+ .app-shell .chat-pane .composer .quick-reply-menu .quick-reply-search input{font-size:16px!important;background:transparent!important}
+ .app-shell .chat-pane .composer .quick-reply-menu .quick-reply-options{flex:1 1 auto;min-height:0;max-height:none!important;overflow-y:auto!important;border-radius:14px;background:#fff}
+ .app-shell .chat-pane .composer .quick-reply-menu .quick-reply-options button{display:block;width:100%;padding:11px 14px!important;border:0!important;border-radius:0!important;background:#fff!important;text-align:start}
+ .app-shell .chat-pane .composer .quick-reply-menu .quick-reply-options button+button{border-top:1px solid #edf0f4!important}
+ .app-shell .chat-pane .composer .quick-reply-menu .quick-reply-options strong{display:block;font-size:15px!important;color:#16243a}
+ .app-shell .chat-pane .composer .quick-reply-menu .quick-reply-options span{display:block;font-size:13.5px!important;color:#7a8799;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .app-shell .chat-pane .composer .quick-reply-menu .manage-replies-link{flex:0 0 auto;margin-top:10px!important;border:0!important;background:transparent!important;color:#e6531a!important;font-size:15px!important;font-weight:600}
+ /* Template sheet */
+ .app-shell .chat-pane .composer .chat-template-panel{overflow-y:auto!important;display:block!important}
+ .app-shell .chat-pane .composer .chat-template-panel-head{margin-bottom:6px}
+ .app-shell .chat-pane .composer .chat-template-panel-head strong{font-size:15px!important}
+ .app-shell .chat-pane .composer .chat-template-panel-head button{display:none!important}
+ .app-shell .chat-pane .composer .chat-template-panel select{font-size:16px!important;border:0!important;border-radius:12px!important;min-height:44px!important}
+ .app-shell .chat-pane .composer .chat-template-send{width:100%;height:44px;border-radius:999px!important;font-size:16px!important}
+
+ /* Bottom tab bar: slightly larger icons */
+ .mobile-tabbar .mobile-tab-icon{height:30px!important}
+ .mobile-tabbar .mobile-tab-icon svg{width:27px!important;height:27px!important}
+ .mobile-tabbar .mobile-tab-avatar{width:30px!important;height:30px!important;font-size:11px!important}
+}
