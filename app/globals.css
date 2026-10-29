@@ -2228,3 +2228,18 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
 .message-reaction-bar button .emoji-artwork,.message-reaction-bar button .emoji-native-fallback{width:30px;height:30px;font-size:26px;line-height:30px;text-align:center}
 .reaction-picker-grid button .emoji-artwork,.reaction-picker-grid button .emoji-native-fallback{width:32px;height:32px;font-size:28px;line-height:32px;text-align:center}
 .app-shell .chat-pane .message-bubble .message-reaction .emoji-artwork,.app-shell .chat-pane .message-bubble .message-reaction .emoji-native-fallback{width:16px;height:16px;font-size:14px;line-height:16px;text-align:center}
+
+/* Full reaction list as a compact box next to the message. */
+.reaction-picker-overlay.anchored{display:block}
+.reaction-picker-overlay.anchored .reaction-picker-sheet{position:fixed;max-width:none;border-radius:18px;box-shadow:0 12px 36px rgba(15,23,42,.24);animation:message-actions-pop .16s ease-out;padding-bottom:0}
+.reaction-picker-overlay.anchored .reaction-picker-grabber{display:none}
+.reaction-picker-overlay.anchored .reaction-picker-scroll{padding:4px 8px 10px}
+.reaction-picker-overlay.anchored .reaction-picker-scroll strong{margin:8px 4px 4px;font-size:12.5px}
+.reaction-picker-overlay.anchored .reaction-picker-grid{grid-template-columns:repeat(7,minmax(0,1fr))}
+.reaction-picker-overlay.anchored .reaction-picker-grid button{height:40px;border-radius:10px}
+.reaction-picker-overlay.anchored .reaction-picker-grid button .emoji-artwork,.reaction-picker-overlay.anchored .reaction-picker-grid button .emoji-native-fallback{width:26px;height:26px;font-size:22px;line-height:26px}
+
+/* Contact details header: white like the chat header. */
+.app-shell>.details-pane .details-title,
+.app-shell.mobile-details-open>.details-pane .details-title{background:#fff!important;margin-left:-16px!important;margin-right:-16px!important;padding-left:16px!important;padding-right:16px!important;border-bottom:1px solid #e3e8ef!important}
+.app-shell>.details-pane .details-title .icon-btn{background:#f2f4f7!important}
