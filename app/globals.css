@@ -1984,3 +1984,9 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
  .mobile-tabbar .mobile-tab-icon svg{width:27px!important;height:27px!important}
  .mobile-tabbar .mobile-tab-avatar{width:30px!important;height:30px!important;font-size:11px!important}
 }
+
+/* Phone template and saved-reply sheets: the composer's send button does the sending, so no extra buttons. */
+@media(max-width:900px){
+ .app-shell .chat-pane .composer .chat-template-send,
+ .app-shell .chat-pane .composer .quick-reply-menu .manage-replies-link{display:none!important}
+}
