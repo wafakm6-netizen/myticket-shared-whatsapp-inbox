@@ -1917,3 +1917,25 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
  /* Team: more space between agent cards */
  .app-shell .team-modal[aria-labelledby="team-title"] .team-list{display:flex!important;flex-direction:column!important;gap:18px!important;background:transparent!important}
 }
+
+/* Phone keyboard <-> sheet switching: sheets take the measured keyboard height and sit where the keyboard was,
+   and the chat keeps the same height in both states, so the composer and messages don't move. */
+@media(max-width:900px){
+ .app-shell{--composer-sheet:var(--kb-height,300px)}
+ html.composer-sheet-open .app-shell.mobile-chat-open,
+ html.composer-sheet-hold .app-shell.mobile-chat-open{
+   top:0!important;
+   height:calc(var(--inbox-full-height,100dvh) - var(--composer-sheet))!important;
+   max-height:calc(var(--inbox-full-height,100dvh) - var(--composer-sheet))!important;
+ }
+ html.composer-sheet-open .app-shell.mobile-chat-open>.chat-pane .composer-wrap,
+ html.composer-sheet-hold .app-shell.mobile-chat-open>.chat-pane .composer-wrap{padding-bottom:8px!important}
+ html.composer-sheet-open .app-shell .chat-pane .composer .saved-sticker-panel,
+ html.composer-sheet-open .app-shell .chat-pane .composer .emoji-picker,
+ html.composer-sheet-open .app-shell .chat-pane .composer .composer-plus-menu{
+   top:calc(var(--inbox-full-height,100dvh) - var(--composer-sheet))!important;bottom:auto!important;
+   height:var(--composer-sheet)!important;border-radius:0!important;box-shadow:none!important;
+ }
+ html.composer-sheet-open,html.composer-sheet-open body,
+ html.composer-sheet-hold,html.composer-sheet-hold body{background:#f7f8fa!important}
+}
