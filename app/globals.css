@@ -2221,3 +2221,10 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
 .message-reaction-bar button,.reaction-picker-grid button{display:grid;place-items:center}
 /* Contact details panel never scrolls sideways. */
 .app-shell>.details-pane{overflow-x:hidden!important}
+
+/* Full reaction list: no blur behind it either, just a faint dim. */
+.message-actions-overlay.reaction-picker-overlay{background:rgba(15,23,42,.08);-webkit-backdrop-filter:none;backdrop-filter:none}
+/* Reactions keep one size whether the Apple image or the system emoji is shown. */
+.message-reaction-bar button .emoji-artwork,.message-reaction-bar button .emoji-native-fallback{width:30px;height:30px;font-size:26px;line-height:30px;text-align:center}
+.reaction-picker-grid button .emoji-artwork,.reaction-picker-grid button .emoji-native-fallback{width:32px;height:32px;font-size:28px;line-height:32px;text-align:center}
+.app-shell .chat-pane .message-bubble .message-reaction .emoji-artwork,.app-shell .chat-pane .message-bubble .message-reaction .emoji-native-fallback{width:16px;height:16px;font-size:14px;line-height:16px;text-align:center}

@@ -8,15 +8,25 @@ import { Archive, Bell, Camera, Check, ChevronDown, ChevronRight, Copy, Forward,
 
 // Apple-style emoji sprites for a WhatsApp-like picker; Unicode text remains unchanged.
 // Keep the original Unicode character for messages; only the picker appearance changes.
-function emojiArtworkUrl(emoji: string) {
-  const codepoints = Array.from(emoji).map((char) => char.codePointAt(0)!).filter((point) => point !== 0xfe0f)
-  return `https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.1.2/img/apple/64/${codepoints.map((point) => point.toString(16)).join('-')}.png`
+// The Apple set names some files with the FE0F selector (❤️ → 2764-fe0f.png) and others without, so try both.
+function emojiArtworkUrls(emoji: string) {
+  const base = 'https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.1.2/img/apple/64/'
+  const bare = Array.from(emoji).map((char) => char.codePointAt(0)!).filter((point) => point !== 0xfe0f).map((point) => point.toString(16)).join('-')
+  return [...new Set([`${base}${bare}.png`, `${base}${bare}-fe0f.png`])]
+}
+function emojiArtworkUrl(emoji: string) { return emojiArtworkUrls(emoji)[0] }
+// Image elements built outside React (composer): walk the candidates, then fall back to the text emoji.
+function attachEmojiFallback(img: HTMLImageElement, emoji: string) {
+  const urls = emojiArtworkUrls(emoji)
+  let attempt = 0
+  img.addEventListener('error', function retry() { attempt += 1; if (attempt < urls.length) img.src = urls[attempt]; else { img.removeEventListener('error', retry); img.replaceWith(document.createTextNode(emoji)) } })
 }
 
 function EmojiArtwork({ emoji }: { emoji: string }) {
-  const [failed, setFailed] = useState(false)
-  useEffect(() => setFailed(false), [emoji])
-  return failed ? <span className="emoji-native-fallback">{emoji}</span> : <img className="emoji-artwork" src={emojiArtworkUrl(emoji)} alt="" loading="lazy" onError={() => setFailed(true)} />
+  const [attempt, setAttempt] = useState(0)
+  useEffect(() => setAttempt(0), [emoji])
+  const urls = emojiArtworkUrls(emoji)
+  return attempt >= urls.length ? <span className="emoji-native-fallback">{emoji}</span> : <img className="emoji-artwork" src={urls[attempt]} alt="" loading="lazy" onError={() => setAttempt((current) => current + 1)} />
 }
 
 // Rich-text composer: emoji images are visual only; outgoing messages remain Unicode text.
@@ -47,7 +57,7 @@ function EmojiComposer({ value, onChange, onSend, onFile, editorRef }: { value: 
         img.dataset.emoji = segment
         img.className = 'composer-emoji'
         img.draggable = false
-        img.addEventListener('error', () => { img.replaceWith(document.createTextNode(segment)) }, { once: true })
+        attachEmojiFallback(img, segment)
         root.append(img)
       } else root.append(document.createTextNode(segment))
     }
@@ -867,7 +877,7 @@ export default function Page() {
       img.dataset.emoji = emoji
       img.className = 'composer-emoji'
       img.draggable = false
-      img.addEventListener('error', () => img.replaceWith(document.createTextNode(emoji)), { once: true })
+      attachEmojiFallback(img, emoji)
       range.insertNode(img)
       range.setStartAfter(img)
       range.collapse(true)
