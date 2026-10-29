@@ -218,6 +218,8 @@ export default function Page() {
     // tallest visible height seen at this width instead.
     let fullHeight = viewport.height
     let fullWidth = viewport.width
+    // Phone sheets (+ menu, stickers) open at the keyboard's height so switching between them doesn't move the composer.
+    try { const saved = Number(localStorage.getItem('inbox-keyboard-height')); if (saved > 0) shell.style.setProperty('--kb-height', saved + 'px') } catch {}
     const update = () => {
       const editing = document.activeElement instanceof HTMLElement &&
         (document.activeElement.isContentEditable || ['INPUT','TEXTAREA'].includes(document.activeElement.tagName))
@@ -227,6 +229,15 @@ export default function Page() {
       const thread = document.querySelector<HTMLElement>('.app-shell .thread')
       if (keyboardVisible && !shell.classList.contains('keyboard-open') && thread) requestAnimationFrame(() => { thread.scrollTop = thread.scrollHeight })
       shell.classList.toggle('keyboard-open', keyboardVisible)
+      shell.style.setProperty('--inbox-full-height', Math.round(fullHeight) + 'px')
+      if (keyboardVisible) {
+        const keyboardHeight = Math.round(fullHeight - viewport.height)
+        if (keyboardHeight > 200 && keyboardHeight < 520) {
+          shell.style.setProperty('--kb-height', keyboardHeight + 'px')
+          try { localStorage.setItem('inbox-keyboard-height', String(keyboardHeight)) } catch {}
+        }
+        shell.classList.remove('composer-sheet-hold')
+      }
       // iOS also scrolls the document towards the focused composer, which pushes the chat header off screen.
       if (keyboardVisible && window.scrollY) window.scrollTo(0, 0)
       if (keyboardVisible) {
@@ -252,7 +263,8 @@ export default function Page() {
       window.removeEventListener('focusout', update)
       shell.style.removeProperty('--inbox-visual-height')
       shell.style.removeProperty('--inbox-visual-top')
-      shell.classList.remove('keyboard-open')
+      shell.style.removeProperty('--inbox-full-height')
+      shell.classList.remove('keyboard-open', 'composer-sheet-open', 'composer-sheet-hold')
     }
   }, [])
   const [conversations, setConversations] = useState<Conversation[]>([])
@@ -293,6 +305,19 @@ export default function Page() {
   const saveSticker=async(id:string)=>{const r=await fetch('/api/stickers',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messageId:id})});if(r.ok){await loadStickers();setStickerOpen(true)}else alert((await r.json()).error||'Could not save sticker')}
   const sendSticker=async(mediaId:string)=>{if(!selected)return;setSendingMessage(true);try{const r=await fetch('/api/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({conversationId:selected.id,to:selected.phone,mediaId,attachmentType:'sticker'})});const p=await r.json();if(!r.ok)throw Error(p.error||'Could not send sticker');setStickerOpen(false);await load()}catch(e){setMessageSendError(e instanceof Error?e.message:'Could not send sticker')}finally{setSendingMessage(false)}}
   const [mediaPreview, setMediaPreview] = useState<{url:string;kind:'image'|'video';name:string}|null>(null)
+  // While a phone sheet is open the chat keeps the keyboard-open layout. Closing it to type keeps that layout
+  // until the keyboard reports in, so the composer doesn't drop to the bottom and jump back up.
+  const composerSheetOpen = composerMenuOpen || stickerOpen || emojiOpen
+  useEffect(() => {
+    const root = document.documentElement
+    if (composerSheetOpen) { root.classList.add('composer-sheet-open'); root.classList.remove('composer-sheet-hold'); return }
+    if (!root.classList.contains('composer-sheet-open')) return
+    root.classList.remove('composer-sheet-open')
+    if (!(document.activeElement instanceof HTMLElement && document.activeElement.isContentEditable)) return
+    root.classList.add('composer-sheet-hold')
+    const release = window.setTimeout(() => root.classList.remove('composer-sheet-hold'), 900)
+    return () => window.clearTimeout(release)
+  }, [composerSheetOpen])
   // Only one transient popover may be open at a time.
   const closeTransientMenus = () => {
     setOpenMessageMenu(null)
