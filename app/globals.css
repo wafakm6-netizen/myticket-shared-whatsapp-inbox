@@ -2024,3 +2024,17 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
  .app-shell .chat-pane .hover-message-options{display:none!important}
  .app-shell .chat-pane .message-bubble{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 }
+
+/* Press-and-hold menu: never start a text selection or iOS callout inside it. */
+.message-actions-overlay,.message-actions-overlay *{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}
+.message-reaction-bar .message-reaction-more{display:grid;place-items:center;width:40px;height:40px;margin:3px 0 3px 4px;border-radius:999px;background:#f2f4f7;color:#344866;font-size:0}
+/* Full reaction list (the + on the reaction bar), docked at the bottom like WhatsApp. */
+.reaction-picker-overlay{align-items:flex-end;padding:0}
+.reaction-picker-sheet{display:flex;flex-direction:column;width:100%;max-width:560px;height:62vh;border-radius:22px 22px 0 0;background:#fff;box-shadow:0 -10px 32px rgba(15,23,42,.2);padding-bottom:env(safe-area-inset-bottom, 0px);animation:reaction-picker-up .2s ease-out}
+@keyframes reaction-picker-up{from{transform:translateY(40px);opacity:.6}to{transform:none;opacity:1}}
+.reaction-picker-grabber{flex:0 0 auto;width:40px;height:5px;margin:8px auto 6px;border-radius:999px;background:#d5dbe3}
+.reaction-picker-scroll{flex:1 1 auto;min-height:0;overflow-y:auto;padding:0 12px 16px}
+.reaction-picker-scroll strong{display:block;margin:12px 6px 6px;font-size:14px;font-weight:600;color:#7a8799}
+.reaction-picker-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.reaction-picker-grid button{height:50px;border:0;border-radius:12px;background:transparent;font-size:32px;line-height:1;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+.reaction-picker-grid button:active{background:#f2f4f7}
