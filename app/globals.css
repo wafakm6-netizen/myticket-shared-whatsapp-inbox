@@ -2042,3 +2042,167 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
 /* Your current reaction is highlighted in the reaction bar and list; tapping it again removes it. */
 .message-reaction-bar button.chosen,.reaction-picker-grid button.chosen{background:#e8ecf2}
 .app-shell .chat-pane .message-bubble button.message-reaction{cursor:pointer;color:inherit;font-family:inherit}
+
+/* ===== Desktop: the phone work brought to larger screens ===== */
+/* Header status pill reads "Open", not "open". */
+.app-shell .chat-pane .status-select{text-transform:capitalize}
+/* Chat list: the name gives way to the time and unread count instead of running into them. */
+.app-shell .inbox-pane .conversation-top{display:flex;align-items:baseline;gap:8px;min-width:0}
+.app-shell .inbox-pane .conversation-top strong{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.app-shell .inbox-pane .conversation-top time{flex:0 0 auto}
+.app-shell .inbox-pane .conversation-top .conversation-unread-badge{flex:0 0 auto;align-self:center}
+/* Template and saved-reply popovers: the composer's send button sends, Esc or a click outside closes. */
+.app-shell .chat-pane .composer .chat-template-send,
+.app-shell .chat-pane .composer .quick-reply-menu .manage-replies-link,
+.app-shell .chat-pane .composer .chat-template-panel-head button,
+.app-shell .chat-pane .composer .quick-reply-heading button{display:none!important}
+/* Drop a file on the chat to attach it. */
+.app-shell .chat-pane.chat-drop-target .thread{outline:3px dashed #ff8a5c;outline-offset:-14px;background-color:#fff7f3}
+
+@media(min-width:901px){
+ /* Contact details: profile-page look. */
+ .app-shell>.details-pane{background:#f2f4f7!important;padding:0 16px 24px!important;width:320px!important;flex:0 0 320px!important}
+ .app-shell>.details-pane .details-title{background:#f2f4f7!important;border:0!important;justify-content:center!important;position:relative}
+ .app-shell>.details-pane .details-title .eyebrow{font-size:15px!important;font-weight:700!important;letter-spacing:0!important;color:#16243a!important;text-transform:lowercase}
+ .app-shell>.details-pane .details-title .eyebrow::first-letter{text-transform:uppercase}
+ .app-shell>.details-pane .details-title .icon-btn{border:0!important;border-radius:999px!important;background:#fff!important;color:#16243a!important}
+ .app-shell>.details-pane .profile{display:flex!important;flex-direction:column;align-items:center;gap:4px;margin:8px 0 26px!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+ .app-shell>.details-pane .profile .profile-avatar{flex:0 0 auto!important;width:132px!important;min-width:132px!important;max-width:132px!important;height:132px!important;min-height:132px!important;max-height:132px!important;border-radius:999px!important;margin:0 0 12px!important;font-size:52px!important}
+ .app-shell>.details-pane .profile .profile-avatar svg{width:64px!important;height:64px!important}
+ .app-shell>.details-pane .profile h2{margin:0!important;font-size:18px!important;font-weight:700!important;color:#16243a!important}
+ .app-shell>.details-pane .profile .type-badge{margin:2px 0 0!important;padding:0!important;border:0!important;background:transparent!important;font-size:13.5px!important;font-weight:400!important;color:#7a8799!important}
+ .app-shell>.details-pane .profile>button{margin:14px auto 0!important;padding:9px 20px!important;border:0!important;border-radius:999px!important;background:#fff!important;color:#16243a!important;font-size:15px!important;font-weight:600!important;box-shadow:0 1px 2px rgba(23,39,61,.06)!important}
+ .app-shell>.details-pane .detail-section,
+ .app-shell>.details-pane .detail-row{margin:0 0 22px!important;padding:0!important;border:0!important;border-radius:18px!important;background:#fff!important;overflow:hidden;box-shadow:0 1px 2px rgba(23,39,61,.04)!important}
+ .app-shell>.details-pane .section-heading{display:flex!important;align-items:center;justify-content:space-between;min-height:0!important;margin:0!important;padding:14px 16px 6px!important;border:0!important}
+ .app-shell>.details-pane .section-heading h3{margin:0!important;font-size:12.5px!important;font-weight:600!important;letter-spacing:.04em!important;text-transform:uppercase;color:#7a8799!important}
+ .app-shell>.details-pane .section-heading button{border:0!important;background:transparent!important;color:#e6531a!important;font-size:15px!important;font-weight:600!important;padding:0!important}
+ .app-shell>.details-pane .contact-card dl{display:grid!important;grid-template-columns:auto 1fr;margin:0!important;padding:0 0 0 16px!important;gap:0!important}
+ .app-shell>.details-pane .contact-card dt,
+ .app-shell>.details-pane .contact-card dd{display:flex!important;align-items:center;min-height:52px;margin:0!important;padding:0!important;font-size:16px!important}
+ .app-shell>.details-pane .contact-card dt{color:#16243a!important;font-weight:400!important}
+ .app-shell>.details-pane .contact-card dd{justify-content:flex-end;gap:8px;padding-right:16px!important;color:#7a8799!important;font-weight:400!important}
+ .app-shell>.details-pane .contact-card dt:not(:first-of-type),
+ .app-shell>.details-pane .contact-card dd:not(:first-of-type){border-top:1px solid #edf0f4}
+ .app-shell>.details-pane .assignment-card{display:grid!important;grid-template-columns:auto 1fr;padding-left:16px!important}
+ .app-shell>.details-pane .assignment-card .section-heading{grid-column:1/-1;margin-left:-16px!important}
+ .app-shell>.details-pane .assignment-card .field-label{display:flex!important;align-items:center;min-height:52px;margin:0!important;font-size:16px!important;font-weight:400!important;letter-spacing:0!important;text-transform:none!important;color:#16243a!important}
+ .app-shell>.details-pane .assignment-card select{min-height:52px;height:52px!important;width:100%!important;margin:0!important;padding:0 34px 0 8px!important;border:0!important;border-radius:0!important;box-shadow:none!important;text-align:right;text-align-last:right;color:#7a8799!important;font-weight:400!important;-webkit-appearance:none;appearance:none;background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a3adbb' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E") no-repeat right 14px center!important}
+ .app-shell>.details-pane .assignment-card select:last-of-type,
+ .app-shell>.details-pane .assignment-card .field-label:last-of-type{border-top:1px solid #edf0f4!important}
+ .app-shell>.details-pane .notes textarea{display:block;box-sizing:border-box;width:calc(100% - 32px)!important;margin:4px 16px 16px!important;padding:12px 14px!important;border:0!important;border-radius:12px!important;background:#f5f7fa!important;box-shadow:none!important;color:#16243a!important;resize:none}
+ .app-shell>.details-pane .notes .note-item{margin:0 16px!important;padding:12px 0!important;border:0!important;border-top:1px solid #edf0f4!important;background:transparent!important;font-size:14.5px!important;color:#16243a!important}
+ .app-shell>.details-pane .detail-row{display:flex!important;align-items:center;gap:14px;min-height:56px;padding:0 16px!important;font-size:16px!important;color:#16243a!important}
+ .app-shell>.details-pane .detail-row svg{color:#7a8799}
+ .app-shell>.details-pane .profile .profile-avatar{width:96px!important;min-width:96px!important;max-width:96px!important;height:96px!important;min-height:96px!important;max-height:96px!important;font-size:38px!important}
+ .app-shell>.details-pane .profile .profile-avatar svg{width:46px!important;height:46px!important}
+ .app-shell>.details-pane .profile h2{font-size:17px!important}
+ .app-shell>.details-pane .contact-card dt,.app-shell>.details-pane .contact-card dd,
+ .app-shell>.details-pane .assignment-card .field-label,.app-shell>.details-pane .assignment-card select,
+ .app-shell>.details-pane .detail-row{font-size:14px!important;min-height:44px}
+ .app-shell>.details-pane .assignment-card select{height:44px!important}
+ .app-shell>.details-pane .profile>button{font-size:14px!important;padding:7px 18px!important}
+ .app-shell>.details-pane .detail-section,.app-shell>.details-pane .detail-row{margin-bottom:16px!important}
+}
+/* Laptops (901–1280px): contact details opens as a panel over the chat when the name is clicked. */
+@media(min-width:901px) and (max-width:1280px){
+ .app-shell.mobile-details-open>.details-pane{display:block!important;position:fixed!important;top:0!important;right:0!important;bottom:0!important;height:100vh!important;z-index:150!important;overflow-y:auto!important;box-shadow:-12px 0 40px rgba(15,23,42,.18)}
+}
+
+@media(min-width:901px){
+ /* Composer: one round button (mic when empty, send when there's something to send) and a + menu. */
+ .app-shell .chat-pane .composer .composer-mic,
+ .app-shell .chat-pane .composer .composer-tool-template,
+ .app-shell .chat-pane .composer .composer-tool-attach,
+ .app-shell .chat-pane .composer .quick-reply-wrap>button{display:none!important}
+ .app-shell .chat-pane .composer .composer-plus-wrap{display:inline-flex!important;position:relative;order:-1}
+ .app-shell .chat-pane .composer .composer-plus{display:grid;place-items:center;width:32px;height:32px;padding:0;border:0;border-radius:999px;background:transparent;color:#4b5b70;cursor:pointer}
+ .app-shell .chat-pane .composer .composer-plus:hover{background:#eef1f5}
+ .app-shell .chat-pane .composer .composer-plus svg{width:22px;height:22px}
+ .app-shell .chat-pane .composer .composer-plus-menu{position:absolute;left:-8px;bottom:42px;z-index:60;display:flex;gap:14px;padding:16px 18px;border-radius:18px;background:#fff;box-shadow:0 14px 40px rgba(15,23,42,.18)}
+ .app-shell .chat-pane .composer .composer-plus-menu button{display:flex;flex-direction:column;align-items:center;gap:6px;width:76px;padding:0;border:0;background:transparent;color:#16243a;font-size:12.5px;font-weight:500;cursor:pointer}
+ .app-shell .chat-pane .composer .composer-plus-icon{display:grid;place-items:center;width:52px;height:52px;border-radius:999px;background:#f2f4f7}
+ .app-shell .chat-pane .composer .composer-plus-icon.attach{color:#2563eb}.app-shell .chat-pane .composer .composer-plus-icon.template{color:#e6531a}.app-shell .chat-pane .composer .composer-plus-icon.replies{color:#e0a100}
+ .app-shell .chat-pane .composer .composer-plus-menu button:hover .composer-plus-icon{background:#e8ecf2}
+ .app-shell .chat-pane .composer .send-btn-mic{background:#ff5a1f}
+
+ /* Popovers in the profile style. */
+ .app-shell .chat-pane .composer .quick-reply-menu,.app-shell .chat-pane .composer .chat-template-panel{border:0!important;border-radius:18px!important;background:#f7f8fa!important;box-shadow:0 14px 40px rgba(15,23,42,.18)!important}
+ .app-shell .chat-pane .composer .quick-reply-search{border:0!important;border-radius:999px!important;background:#fff!important}
+ .app-shell .chat-pane .composer .quick-reply-options{border-radius:14px;background:#fff}
+ .app-shell .chat-pane .composer .chat-template-panel select{border:0!important;border-radius:12px!important;background:#fff!important}
+
+ /* Shared window look: grey body, centred title, white rounded sections, borderless grey fields, pill buttons. */
+ .modal-backdrop .conversation-modal:has(.conversation-form),
+ .modal-backdrop .team-modal,
+ .modal-backdrop .workspace-settings-modal,
+ .tag-manager-backdrop .tag-manager-modal{border:0!important;border-radius:22px!important;background:#f2f4f7!important;box-shadow:0 24px 60px rgba(15,23,42,.25)!important}
+ .modal-backdrop .conversation-modal>.modal-header,
+ .tag-manager-backdrop .tag-manager-modal-header{position:relative;justify-content:center!important;padding:20px 64px 12px!important;border:0!important;background:transparent!important;text-align:center}
+ .modal-backdrop .conversation-modal>.modal-header .eyebrow,
+ .tag-manager-backdrop .tag-manager-heading p,.tag-manager-backdrop .tag-manager-icon{display:none!important}
+ .modal-backdrop .conversation-modal>.modal-header h2,.tag-manager-backdrop .tag-manager-heading h2{margin:0!important;font-size:18px!important;font-weight:700!important;letter-spacing:0!important;color:#16243a!important}
+ .modal-backdrop .conversation-modal>.modal-header .icon-btn,.tag-manager-backdrop .tag-manager-modal-header .icon-btn{position:absolute!important;right:16px;top:14px;width:36px!important;height:36px!important;border:0!important;border-radius:999px!important;background:#fff!important;color:#16243a!important}
+ .tag-manager-backdrop .tag-manager-description{border:0!important;padding:0 30px 8px!important;text-align:center;font-size:13px!important}
+ .tag-manager-backdrop .tag-manager-modal .tag-manager-title{display:none!important}
+ .tag-manager-backdrop .tag-manager-content{padding:12px 24px 24px!important}
+
+ /* New conversation */
+ .conversation-modal .conversation-form{padding:6px 24px 0!important;gap:0!important}
+ .conversation-modal .conversation-form>label,.conversation-modal .meta-template-picker>label{margin:14px 4px 6px!important;font-size:13.5px!important;font-weight:500!important;letter-spacing:0!important;text-transform:none!important;color:#7a8799!important}
+ .conversation-modal .conversation-form>label:first-child{margin-top:4px!important}
+ .conversation-modal .conversation-form input,.conversation-modal .international-phone-input,.conversation-modal .country-code-control,.conversation-modal .meta-template-picker>select{border:0!important;border-radius:12px!important;background:#fff!important;box-shadow:none!important;min-height:44px}
+ .conversation-modal .international-phone-input input,.conversation-modal .country-code-control select{background:transparent!important}
+ .conversation-modal .form-help{margin:10px 4px 0!important;font-size:12.5px!important;color:#7a8799!important}
+ .conversation-modal .modal-actions{background:#f2f4f7!important;border:0!important;padding:16px 24px 20px!important}
+ .conversation-modal .modal-actions button,.conversation-modal .modal-actions button.send-btn{height:42px!important;border-radius:999px!important;font-size:15px!important;font-weight:500!important;padding:0 22px!important}
+ .conversation-modal .modal-actions .secondary-btn{border:0!important;background:#fff!important;color:#16243a!important}
+
+ /* Team, Saved replies and Settings windows */
+ .modal-backdrop .team-modal .team-add-form,.modal-backdrop .team-modal .saved-reply-list,.modal-backdrop .team-modal .team-list>.team-row,
+ .modal-backdrop .workspace-settings-modal .workspace-settings-content>section,
+ .tag-manager-backdrop .tag-create-row,.tag-manager-backdrop .tag-list{border:0!important;border-radius:16px!important;background:#fff!important;box-shadow:0 1px 2px rgba(23,39,61,.04)!important}
+ .modal-backdrop .team-modal .team-add-form{margin:0 24px 16px!important;padding:16px!important}
+ .modal-backdrop .team-modal .team-add-form>input,.modal-backdrop .team-modal .team-add-form>select,
+ .tag-manager-backdrop .tag-create-row input,.modal-backdrop .workspace-settings-modal .account-password-form input{border:0!important;border-radius:12px!important;background:#f2f4f7!important;box-shadow:none!important}
+ .modal-backdrop .team-modal .team-add-form>.send-btn,.tag-manager-backdrop .primary-small,.modal-backdrop .workspace-settings-modal .workspace-settings-content button.send-btn{border:0!important;border-radius:999px!important;font-weight:500!important}
+ .modal-backdrop .team-modal .saved-reply-row button,.modal-backdrop .team-modal .team-row>.team-toggle,.modal-backdrop .team-modal .team-invite-renew,.tag-manager-backdrop .tag-row-actions button,
+ .modal-backdrop .workspace-settings-modal .workspace-settings-content button:not(.send-btn){height:32px!important;padding:0 14px!important;border:0!important;border-radius:999px!important;background:#f2f4f7!important;color:#16243a!important;font-size:13px!important;font-weight:500!important}
+ .modal-backdrop .team-modal .saved-reply-row .team-toggle,.modal-backdrop .team-modal .team-row>.team-toggle+.team-toggle,.tag-manager-backdrop .tag-row-actions .danger-text,
+ .modal-backdrop .workspace-settings-modal .workspace-settings-content button.logout-button{background:#fdecea!important;color:#d92d20!important}
+ .modal-backdrop .team-modal .saved-reply-list{margin:0 24px 24px!important;padding:0!important;overflow:hidden}
+ .modal-backdrop .team-modal .saved-reply-row{border:0!important;border-radius:0!important;margin:0!important;padding:12px 16px!important}
+ .modal-backdrop .team-modal .saved-reply-row+.saved-reply-row{border-top:1px solid #edf0f4!important}
+ .tag-manager-backdrop .tag-list{padding:0!important;gap:0!important;overflow:hidden}
+ .tag-manager-backdrop .tag-row{border:0!important;border-radius:0!important}
+ .tag-manager-backdrop .tag-row+.tag-row{border-top:1px solid #edf0f4!important}
+ .tag-manager-backdrop .tag-create-row{padding:12px!important}
+ .tag-manager-backdrop .tag-search{border:0!important;border-radius:999px!important;background:#fff!important}
+ .modal-backdrop .workspace-settings-modal .workspace-settings-content h3{font-size:13.5px!important;font-weight:500!important;letter-spacing:0!important;text-transform:none!important;color:#7a8799!important}
+ .modal-backdrop .workspace-settings-modal .workspace-settings-content p strong{font-weight:500;color:#7a8799}
+
+ /* Team: one tidy card per member. */
+ .modal-backdrop .team-modal .team-list{display:flex!important;flex-direction:column!important;gap:12px!important;margin:0 24px 24px!important;padding:0!important;border:0!important;background:transparent!important}
+ .modal-backdrop .team-modal .team-list>.team-row{display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:10px 12px!important;padding:14px 16px!important;grid-template-columns:none!important}
+ .modal-backdrop .team-modal .team-row>*{grid-column:auto!important;grid-row:auto!important;margin:0!important}
+ .modal-backdrop .team-modal .team-row .team-avatar{flex:0 0 40px!important;width:40px!important;height:40px!important}
+ .modal-backdrop .team-modal .team-row .team-info{flex:1 1 180px!important;min-width:0!important;display:flex;flex-direction:column}
+ .modal-backdrop .team-modal .team-row .team-info strong{font-size:15px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .modal-backdrop .team-modal .team-row>select{flex:0 0 auto!important;width:auto!important;min-width:130px!important;height:34px!important;padding:0 30px 0 12px!important;border:0!important;border-radius:999px!important;background-color:#f2f4f7!important;font-size:13px!important}
+ .modal-backdrop .team-modal .team-row>.team-departments{flex:1 1 100%!important;display:flex!important;flex-wrap:wrap;align-items:center;gap:8px!important;padding:0!important;border:0!important;background:transparent!important}
+ .modal-backdrop .team-modal .team-departments>small,.modal-backdrop .team-modal .team-departments legend{font-size:13px!important;color:#7a8799!important;margin-right:4px}
+ .modal-backdrop .team-modal .team-departments label{display:inline-flex!important;align-items:center;gap:6px;height:30px;padding:0 12px;border-radius:999px;background:#f2f4f7;font-size:13px!important;color:#16243a;cursor:pointer}
+ .modal-backdrop .team-modal .team-departments label:has(input:checked){background:#fff0ea;color:#d9480f}
+ .modal-backdrop .team-modal .team-departments input{width:15px;height:15px;margin:0;accent-color:#ff5a1f}
+ .modal-backdrop .team-modal .team-add-form .team-departments{display:flex!important;flex-wrap:wrap;gap:8px;margin:0!important;padding:0!important;border:0!important}
+ .modal-backdrop .team-modal>.modal-header{border:0!important;background:transparent!important}
+}
+/* The open + menu shows a keyboard on phones (tap to type) and an × on desktop. */
+.composer-plus .plus-open-desktop{display:none}
+@media(min-width:901px){
+ .composer-plus .plus-open-phone{display:none}
+ .composer-plus .plus-open-desktop{display:block}
+ .app-shell .chat-pane .composer .composer-tools{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:4px!important}
+ .app-shell .chat-pane .composer .composer-left-tools{display:flex!important;align-items:center;gap:4px;flex:0 0 auto!important;width:auto!important;margin:0!important;justify-content:flex-start!important}
+}
+@media(min-width:901px){ .app-shell .chat-pane .composer .composer-tools+.send-btn,.app-shell .chat-pane .composer .send-btn{margin-left:auto!important} }
