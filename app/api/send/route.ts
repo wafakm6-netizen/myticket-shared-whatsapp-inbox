@@ -14,9 +14,11 @@ export async function POST(request: NextRequest) {
   const auth = await requireAgent()
   if (auth.error) return auth.error
 
-  const { to, text, conversationId, attachmentUrl, attachmentName, attachmentType, mediaId, template, replyToMessageId } = await request.json().catch(() => ({}))
+  const { to, text, conversationId, attachmentUrl, attachmentName, attachmentType, mediaId, template, replyToMessageId, reaction } = await request.json().catch(() => ({}))
   const messageText = typeof text === 'string' ? text.trim() : ''
-  if (typeof to !== 'string' || !to.trim() || (!template && !mediaId && !attachmentUrl && (typeof text !== 'string' || !text.trim()))) {
+  const reactionEmoji = typeof reaction?.emoji === 'string' ? reaction.emoji.trim() : ''
+  if (reaction && (!reactionEmoji || reactionEmoji.length > 16 || typeof reaction.messageId !== 'string')) return NextResponse.json({ error: 'Invalid reaction.' }, { status: 400 })
+  if (typeof to !== 'string' || !to.trim() || (!reaction && !template && !mediaId && !attachmentUrl && (typeof text !== 'string' || !text.trim()))) {
     return NextResponse.json({ error: 'Both recipient and message are required.' }, { status: 400 })
   }
 
@@ -69,6 +71,29 @@ export async function POST(request: NextRequest) {
     if (!token || !phoneNumberId) {
       console.error('[send] WhatsApp configuration missing', { hasAccessToken: Boolean(token), hasPhoneNumberId: Boolean(phoneNumberId) })
       return NextResponse.json({ error: 'WhatsApp Cloud API is not configured.' }, { status: 503 })
+    }
+
+    // Reactions go to Meta as their own message type and are stored as a small row pointing at the reacted message.
+    if (reaction) {
+      const { data: target, error: targetError } = await supabase.from('whatsapp_messages').select('external_id').eq('id', reaction.messageId).eq('conversation_id', conversation).maybeSingle()
+      if (targetError) throw targetError
+      if (!target?.external_id) return NextResponse.json({ error: 'This message cannot be reacted to because its WhatsApp ID is unavailable.' }, { status: 400 })
+      const graphVersion = process.env.META_GRAPH_VERSION ?? 'v23.0'
+      const response = await fetch(`https://graph.facebook.com/${graphVersion}/${phoneNumberId}/messages`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type: 'reaction', reaction: { message_id: target.external_id, emoji: reactionEmoji } }),
+      })
+      const result = await response.json().catch(() => null)
+      const externalId = result?.messages?.[0]?.id ?? null
+      if (!response.ok || !externalId) return NextResponse.json({ error: result?.error?.message || 'Meta rejected this reaction.' }, { status: 502 })
+      const { data: message, error } = await supabase
+        .from('whatsapp_messages')
+        .insert({ conversation_id: conversation, external_id: externalId, reply_to_external_id: target.external_id, direction: 'outbound', body: reactionEmoji, attachment_name: 'reaction', status: 'queued', sent_at: new Date().toISOString() })
+        .select('id')
+        .single()
+      if (error) throw error
+      return NextResponse.json({ message })
     }
 
     if (template && (mediaId || attachmentUrl)) return NextResponse.json({ error: 'Template messages cannot include a separate attachment.' }, { status: 400 })
