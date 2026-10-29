@@ -75,6 +75,14 @@ export async function POST(request: NextRequest) {
         const { data: existingMessage, error: existingMessageError } = await supabase.from('whatsapp_messages').select('id').eq('external_id',item.id).maybeSingle()
         if (existingMessageError) throw existingMessageError
         if (existingMessage) continue
+        // A customer's reaction is stored as a small row pointing at the reacted message (an empty emoji removes it);
+        // it shows as a badge on that message, not as a new message, so it doesn't add to the unread count.
+        if (item.type === 'reaction' && item.reaction?.message_id) {
+          const { error: reactionError } = await supabase.from('whatsapp_messages').upsert({ conversation_id: conversation.id, external_id: item.id, reply_to_external_id: item.reaction.message_id, direction: 'inbound', sender_name: profileName || contact.display_name, body: item.reaction.emoji ?? '', attachment_name: 'reaction', status: 'delivered', sent_at: new Date(Number(item.timestamp ?? 0) * 1000).toISOString() }, { onConflict: 'external_id' })
+          if (reactionError) throw reactionError
+          stored++
+          continue
+        }
         const media = item.image || item.document || item.video || item.audio || item.sticker
         // Meta delivers template quick-reply buttons as type "button" and
         // interactive buttons as type "interactive", not as text messages.
