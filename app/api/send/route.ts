@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
   const { to, text, conversationId, attachmentUrl, attachmentName, attachmentType, mediaId, template, replyToMessageId, reaction } = await request.json().catch(() => ({}))
   const messageText = typeof text === 'string' ? text.trim() : ''
   const reactionEmoji = typeof reaction?.emoji === 'string' ? reaction.emoji.trim() : ''
-  if (reaction && (!reactionEmoji || reactionEmoji.length > 16 || typeof reaction.messageId !== 'string')) return NextResponse.json({ error: 'Invalid reaction.' }, { status: 400 })
+  if (reaction && (typeof reaction.emoji !== 'string' || reactionEmoji.length > 16 || typeof reaction.messageId !== 'string')) return NextResponse.json({ error: 'Invalid reaction.' }, { status: 400 })
   if (typeof to !== 'string' || !to.trim() || (!reaction && !template && !mediaId && !attachmentUrl && (typeof text !== 'string' || !text.trim()))) {
     return NextResponse.json({ error: 'Both recipient and message are required.' }, { status: 400 })
   }
