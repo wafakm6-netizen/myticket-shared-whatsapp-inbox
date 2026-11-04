@@ -844,6 +844,16 @@ export default function Page() {
       typingSentRef.current = { conversationId: selectedId, at: Date.now() }
     }
   }, [draft, selectedId, typingIdentity, sessionUser?.agentId, sessionUser?.email, agents])
+  // Show "typing…" in the customer's WhatsApp while an agent writes a reply. Meta keeps it up to 25 seconds,
+  // so it is renewed every 20 seconds while there is text in the box; failures are ignored.
+  const customerTypingSentRef = useRef<{ conversationId: string | null; at: number }>({ conversationId: null, at: 0 })
+  useEffect(() => {
+    if (!selectedId || !draft.trim()) return
+    const sent = customerTypingSentRef.current
+    if (sent.conversationId === selectedId && Date.now() - sent.at < 20000) return
+    customerTypingSentRef.current = { conversationId: selectedId, at: Date.now() }
+    void fetch('/api/typing', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ conversationId: selectedId }) }).catch(() => {})
+  }, [draft, selectedId])
   // Sidebar highlight follows the open window and returns to Inbox when it closes (Tags is opened by TagNavBridge).
   useEffect(() => {
     if (activeNav === 'team' && !teamOpen) setActiveNav('inbox')
