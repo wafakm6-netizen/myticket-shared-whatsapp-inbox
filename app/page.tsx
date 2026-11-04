@@ -791,11 +791,14 @@ export default function Page() {
   const [agentsTyping, setAgentsTyping] = useState<Record<string, { agentId: string; name: string; at: number }>>({})
   const typingChannelRef = useRef<ReturnType<NonNullable<ReturnType<typeof createBrowserSupabaseClient>>['channel']> | null>(null)
   const typingSentRef = useRef<{ conversationId: string | null; at: number }>({ conversationId: null, at: 0 })
+  // Who is typing: the team member record when this account has one, otherwise the signed-in email,
+  // so admins and accounts without a matching agent row take part too.
+  const typingIdentity = sessionUser?.agentId || sessionUser?.email?.toLowerCase() || ''
   useEffect(() => {
-    if (!sessionUser?.agentId) return
+    if (!typingIdentity) return
     const supabase = createBrowserSupabaseClient()
     if (!supabase) return
-    const myId = sessionUser.agentId
+    const myId = typingIdentity
     const channel = supabase.channel('inbox-agent-typing', { config: { broadcast: { self: false } } })
     channel.on('broadcast', { event: 'typing' }, ({ payload }: { payload?: unknown }) => {
       const { conversationId, agentId, name, typing } = (payload ?? {}) as { conversationId?: string; agentId?: string; name?: string; typing?: boolean }
@@ -809,7 +812,7 @@ export default function Page() {
     }).subscribe()
     typingChannelRef.current = channel
     return () => { typingChannelRef.current = null; void supabase.removeChannel(channel) }
-  }, [sessionUser?.agentId])
+  }, [typingIdentity])
   useEffect(() => {
     if (!Object.keys(agentsTyping).length) return
     const timer = window.setInterval(() => setAgentsTyping((current) => {
@@ -820,10 +823,10 @@ export default function Page() {
   }, [agentsTyping])
   useEffect(() => {
     const channel = typingChannelRef.current
-    if (!channel || !sessionUser?.agentId) return
-    const me = agents.find((agent) => agent.id === sessionUser.agentId)
-    const name = me?.display_name || sessionUser.email?.split('@')[0] || 'An agent'
-    const send = (conversationId: string, typing: boolean) => void channel.send({ type: 'broadcast', event: 'typing', payload: { conversationId, agentId: sessionUser.agentId, name, typing } })
+    if (!channel || !typingIdentity) return
+    const me = agents.find((agent) => agent.id === sessionUser?.agentId || (sessionUser?.email && agent.email?.toLowerCase() === sessionUser.email.toLowerCase()))
+    const name = me?.display_name || sessionUser?.email?.split('@')[0] || 'An agent'
+    const send = (conversationId: string, typing: boolean) => void channel.send({ type: 'broadcast', event: 'typing', payload: { conversationId, agentId: typingIdentity, name, typing } })
     const sent = typingSentRef.current
     const typingNow = Boolean(selectedId && draft.trim())
     if (sent.conversationId && (!typingNow || sent.conversationId !== selectedId)) { send(sent.conversationId, false); typingSentRef.current = { conversationId: null, at: 0 } }
@@ -831,7 +834,7 @@ export default function Page() {
       send(selectedId, true)
       typingSentRef.current = { conversationId: selectedId, at: Date.now() }
     }
-  }, [draft, selectedId, sessionUser?.agentId, sessionUser?.email, agents])
+  }, [draft, selectedId, typingIdentity, sessionUser?.agentId, sessionUser?.email, agents])
   // Sidebar highlight follows the open window and returns to Inbox when it closes (Tags is opened by TagNavBridge).
   useEffect(() => {
     if (activeNav === 'team' && !teamOpen) setActiveNav('inbox')
