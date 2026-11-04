@@ -166,6 +166,15 @@ function VoiceNotePlayer({ src }: { src: string }) {
     audio.currentTime = Math.max(0, Math.min(1, fraction)) * audio.duration
     setPosition(audio.currentTime)
   }
+  // The audio element only reports its time about four times a second, which made the dot jump in steps;
+  // while playing, read the time on every frame so it glides.
+  useEffect(() => {
+    if (!playing) return
+    let frame = 0
+    const tick = () => { const audio = audioRef.current; if (audio) setPosition(audio.currentTime); frame = requestAnimationFrame(tick) }
+    frame = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frame)
+  }, [playing])
   const progress = duration > 0 ? position / duration : 0
   return <div className="myticket-voice-player" style={{ width: 278, maxWidth: '100%', padding: '9px 10px 6px', borderRadius: 13, background: 'transparent', color: '#59616b', boxSizing: 'border-box' }}>
     <audio ref={audioRef} src={src} preload="metadata" onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)} onDurationChange={(event) => setDuration(event.currentTarget.duration)} onTimeUpdate={(event) => setPosition(event.currentTarget.currentTime)} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => { setPlaying(false); setPosition(0) }} aria-label="Voice recording" />
