@@ -2273,3 +2273,16 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
 @media (hover:hover) and (pointer:fine){.app-shell .message-bubble.voice-message-bubble{padding-right:32px!important}}
 .app-shell .myticket-voice-player,.app-shell .message-bubble.voice-message-bubble .myticket-voice-player{width:auto}
 .app-shell .myticket-voice-player .voice-wave{flex:0 1 168px;min-width:120px}
+
+/* Voice note cursor: a round dot riding on the waveform, moved every animation frame. */
+.app-shell .myticket-voice-player .voice-wave{position:relative}
+.app-shell .myticket-voice-player .voice-dot{position:absolute;top:50%;width:12px;height:12px;margin-top:-6px;border-radius:50%;background:#34a6f4;box-shadow:0 0 0 2px rgba(255,255,255,.9);pointer-events:none;will-change:left}
+.app-shell .message-agent .myticket-voice-player .voice-dot{box-shadow:0 0 0 2px rgba(220,255,214,.9)}
+
+/* WhatsApp-style tail on the last bubble of each run: bottom-left for the customer, bottom-right for us. */
+.app-shell .message-bubble.bubble-tail:not(.sticker-message-bubble){border-bottom-left-radius:4px!important}
+.app-shell .message-agent .message-bubble.bubble-tail:not(.sticker-message-bubble){border-bottom-left-radius:12px!important;border-bottom-right-radius:4px!important}
+.app-shell .message-bubble.voice-message-bubble.bubble-tail{border-bottom-left-radius:6px!important}
+.app-shell .message-agent .message-bubble.voice-message-bubble.bubble-tail{border-bottom-left-radius:22px!important;border-bottom-right-radius:6px!important}
+.app-shell .message-bubble.bubble-tail:not(.sticker-message-bubble)::after{content:'';position:absolute;bottom:-1px;left:-7px;width:13px;height:17px;background:inherit;pointer-events:none;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 13 17'%3E%3Cpath d='M13 0v17H1.2C.3 17-.2 16 .4 15.3 3.6 11.9 6.6 7.6 8 0h5Z'/%3E%3C/svg%3E") no-repeat center/100% 100%;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 13 17'%3E%3Cpath d='M13 0v17H1.2C.3 17-.2 16 .4 15.3 3.6 11.9 6.6 7.6 8 0h5Z'/%3E%3C/svg%3E") no-repeat center/100% 100%}
+.app-shell .message-agent .message-bubble.bubble-tail:not(.sticker-message-bubble)::after{left:auto;right:-7px;transform:scaleX(-1)}
