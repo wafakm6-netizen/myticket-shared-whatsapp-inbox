@@ -147,6 +147,7 @@ export async function POST(request: NextRequest) {
         external_id: externalId,
         reply_to_external_id: replyToExternalId,
         direction: 'outbound',
+        sender_name: auth.agent?.display_name ?? null,
         body: template ? `[Template] ${template.name}` : messageText || null,
         attachment_url: mediaId ? `/api/media?mediaId=${encodeURIComponent(mediaId)}` : attachmentUrl ?? null,
         attachment_name: type === 'sticker' ? 'sticker attachment' : mediaId && type === 'audio' ? 'Voice message' : attachmentName ?? null,

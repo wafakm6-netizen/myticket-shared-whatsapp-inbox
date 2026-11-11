@@ -73,6 +73,7 @@ export async function POST(request: NextRequest) {
         conversation_id: conversation.id,
         external_id: externalId,
         direction: 'outbound',
+        sender_name: auth.agent?.display_name ?? null,
         body: template ? `[Template] ${template.name}${message ? ` — ${message}` : ''}` : message,
         status,
         sent_at: new Date().toISOString(),
