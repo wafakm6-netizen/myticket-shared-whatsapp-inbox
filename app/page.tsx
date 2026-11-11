@@ -1149,6 +1149,7 @@ export default function Page() {
     let dragging = false
     let offset = 0
     let passed = false
+    let direction = 1
     const reset = (animate: boolean) => {
       if (bubble) { bubble.style.transition = animate ? 'transform .22s cubic-bezier(.2,.8,.2,1)' : 'none'; bubble.style.transform = '' }
       if (icon) { const old = icon; old.style.transition = 'opacity .18s, transform .18s'; old.style.opacity = '0'; old.style.transform = 'translateY(-50%) scale(.6)'; window.setTimeout(() => old.remove(), 220) }
@@ -1169,20 +1170,23 @@ export default function Page() {
       const dy = event.touches[0].clientY - start.y
       if (!dragging) {
         if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return
-        if (dx <= 0 || Math.abs(dx) < Math.abs(dy) * 1.5) { start = null; bubble = null; return }
+        if (Math.abs(dx) < Math.abs(dy) * 1.5) { start = null; bubble = null; return }
+        // Either direction works: right like WhatsApp, or left, which feels natural on our own right-hand messages.
+        direction = dx > 0 ? 1 : -1
         dragging = true
         icon = document.createElement('span')
         icon.className = 'swipe-reply-icon'
         icon.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>'
-        icon.style.left = `${bubble.offsetLeft + 6}px`
+        icon.style.left = direction > 0 ? `${bubble.offsetLeft + 6}px` : `${bubble.offsetLeft + bubble.offsetWidth - 38}px`
         bubble.parentElement?.insertBefore(icon, bubble)
       }
       event.preventDefault()
       // Follows the finger, then resists past the reply point.
-      offset = dx < trigger ? dx : trigger + (dx - trigger) * 0.25
+      const distance = Math.max(0, dx * direction)
+      offset = distance < trigger ? distance : trigger + (distance - trigger) * 0.25
       offset = Math.min(offset, 96)
       bubble.style.transition = 'none'
-      bubble.style.transform = `translateX(${offset}px)`
+      bubble.style.transform = `translateX(${offset * direction}px)`
       if (icon) {
         const progress = Math.min(1, offset / trigger)
         icon.style.opacity = String(progress)
