@@ -2327,3 +2327,24 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
 .app-shell .message-row{position:relative}
 .app-shell .swipe-reply-icon{position:absolute;left:4px;top:50%;width:32px;height:32px;margin-left:-2px;display:grid;place-items:center;border-radius:50%;background:rgba(28,41,64,.08);color:#5b6b7f;opacity:0;transform:translateY(-50%) scale(.5);pointer-events:none;z-index:0}
 .app-shell .swipe-reply-icon.ready{background:#ff5a36;color:#fff}
+
+/* Document messages: a card with a first-page preview (PDF) and the file's icon, name and details. */
+.app-shell .message-bubble.document-message-bubble{width:min(300px,100%);max-width:min(80%,300px)!important;padding:4px 4px 5px!important}
+.app-shell .message-bubble.document-message-bubble>small{padding:0 8px 0 0}
+.app-shell .message-bubble.document-message-bubble .message-sender-name{margin:4px 8px 4px}
+.app-shell .message-bubble.document-message-bubble .quoted-message{margin:4px 4px 6px}
+.app-shell .message-bubble.document-message-bubble>div[dir=auto]{padding:4px 8px 0}
+.app-shell .document-card{display:block;border-radius:10px;overflow:hidden;background:rgba(28,41,64,.05);color:inherit!important;text-decoration:none!important}
+.app-shell .document-preview{display:block;height:140px;overflow:hidden;background:#fff;border-bottom:1px solid rgba(28,41,64,.08)}
+.app-shell .document-preview canvas{display:block;width:100%;height:auto}
+.app-shell .document-preview.loading{background:linear-gradient(90deg,#f3f1ef 0%,#fbfaf9 50%,#f3f1ef 100%);background-size:200% 100%;animation:document-shimmer 1.2s linear infinite}
+.app-shell .document-preview.loading canvas{visibility:hidden}
+@keyframes document-shimmer{to{background-position:-200% 0}}
+.app-shell .document-info{display:flex;align-items:center;gap:10px;padding:10px}
+.app-shell .document-icon{flex:0 0 auto;display:grid;place-items:center;width:34px;height:40px;border-radius:5px;color:#fff;font-size:9px;font-weight:800;letter-spacing:.02em;clip-path:polygon(0 0,72% 0,100% 22%,100% 100%,0 100%)}
+.app-shell .document-text{min-width:0;display:flex;flex-direction:column;gap:2px}
+.app-shell .document-name{font-size:14px;font-weight:500;line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word}
+.app-shell .document-meta{font-size:11px;opacity:.65;text-transform:none}
+.app-shell .message-agent .document-card{background:rgba(255,255,255,.16)}
+.app-shell .message-agent .document-preview{border-bottom-color:rgba(255,255,255,.25)}
+.app-shell .message-agent .document-meta{opacity:.85}
