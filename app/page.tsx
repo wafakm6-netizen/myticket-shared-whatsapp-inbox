@@ -179,7 +179,16 @@ function VoiceNotePlayer({ src }: { src: string }) {
   useEffect(() => {
     if (!playing) return
     let frame = 0
-    const tick = () => { const audio = audioRef.current; if (audio) setPosition(audio.currentTime); frame = requestAnimationFrame(tick) }
+    const tick = () => {
+      const audio = audioRef.current
+      if (audio) {
+        setPosition(audio.currentTime)
+        // Some browsers never fire a usable durationchange for streamed voice notes; keep asking while playing.
+        const known = Number.isFinite(audio.duration) && audio.duration > 0 ? audio.duration : audio.seekable.length ? audio.seekable.end(audio.seekable.length - 1) : 0
+        if (Number.isFinite(known) && known > 0) setDuration((current) => Number.isFinite(current) && current >= known ? current : known)
+      }
+      frame = requestAnimationFrame(tick)
+    }
     frame = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(frame)
   }, [playing])
@@ -197,7 +206,7 @@ function VoiceNotePlayer({ src }: { src: string }) {
       : <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M7.5 4.8v14.4c0 .9 1 1.4 1.7.9l10.3-7.2c.6-.4.6-1.4 0-1.8L9.2 3.9c-.7-.5-1.7 0-1.7.9Z" fill="currentColor" /></svg>}</button>
     <div className="voice-wave" role="slider" tabIndex={0} aria-label="Voice playback position" aria-valuemin={0} aria-valuemax={Math.max(1, Math.floor(knownDuration ? duration : 0))} aria-valuenow={Math.floor(position)} onKeyDown={(event) => { if (event.key === 'ArrowRight') { event.preventDefault(); seek(progress + 5 / (duration || 1)) } if (event.key === 'ArrowLeft') { event.preventDefault(); seek(progress - 5 / (duration || 1)) } }} onClick={(event) => seek((event.clientX - event.currentTarget.getBoundingClientRect().left) / event.currentTarget.getBoundingClientRect().width)}>
       {bars.map((height, index) => <span key={index} className={(index + 0.5) / bars.length <= progress ? 'played' : ''} style={{ height }} />)}
-      <i className="voice-dot" style={{ left: `calc(${progress} * (100% - 12px))` }} aria-hidden="true" />
+      <i className="voice-dot" style={{ left: `calc(${progress.toFixed(4)} * (100% - 12px))` }} aria-hidden="true" />
     </div>
     <span className="voice-time">{playing || position > 0 ? format(position) : knownDuration ? format(duration) : '0:00'}</span>
     {(playing || speed !== 1) && <button type="button" className="voice-speed" onClick={changeSpeed} aria-label={`Playback speed ${speed} times. Click to change`}>{speed}×</button>}
