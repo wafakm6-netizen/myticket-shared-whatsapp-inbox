@@ -2298,3 +2298,22 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
 .app-shell .message-agent .myticket-voice-player .voice-dot{box-shadow:0 0 0 2px rgba(255,232,223,.9)}
 .app-shell .message-bubble.bubble-tail:not(.sticker-message-bubble)::after{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 18'%3E%3Cpath d='M7 0C6.6 7 4.6 12.8.9 16.6c-.4.4-.2.9.4.9H16V0Z' fill='%23ffffff'/%3E%3Cpath d='M6.5 0C6.1 7 4.1 12.8.6 16.3c-.6.6-.3 1.2.6 1.2H16' fill='none' stroke='%23ece6e1'/%3E%3C/svg%3E")}
 .app-shell .message-agent .message-bubble.bubble-tail:not(.sticker-message-bubble)::after{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 18'%3E%3Cpath d='M7 0C6.6 7 4.6 12.8.9 16.6c-.4.4-.2.9.4.9H16V0Z' fill='%23ffe8df'/%3E%3Cpath d='M6.5 0C6.1 7 4.1 12.8.6 16.3c-.6.6-.3 1.2.6 1.2H16' fill='none' stroke='%23ffd3c2'/%3E%3C/svg%3E")}
+
+/* Brand-orange bubbles for our messages: white text, with ticks, links, voice notes and quotes adjusted to stay readable. */
+.app-shell .message-agent .message-bubble:not(.sticker-message-bubble){background-color:#ff5a36!important;border-color:#f04a26!important;color:#fff!important}
+.app-shell .message-agent .message-bubble:not(.sticker-message-bubble) a{color:#fff!important}
+.app-shell .message-agent .message-bubble:not(.sticker-message-bubble) small{color:rgba(255,255,255,.82)!important}
+.app-shell .message-agent .message-bubble:not(.sticker-message-bubble) .message-delivery-status svg{color:rgba(255,255,255,.85)!important;stroke:rgba(255,255,255,.85)}
+.app-shell .message-agent .message-bubble:not(.sticker-message-bubble) .message-delivery-status svg[style*="83, 183, 239"],.app-shell .message-agent .message-bubble:not(.sticker-message-bubble) .message-delivery-status svg[style*="53b7ef"]{color:#d6efff!important}
+.app-shell .message-agent .message-bubble:not(.sticker-message-bubble) .message-delivery-status button{color:#fff!important;font-weight:700}
+.app-shell .message-agent .message-bubble:not(.sticker-message-bubble) .hover-message-options>button{color:rgba(255,255,255,.9)!important}
+.app-shell .message-agent .message-bubble .quoted-message{background:rgba(255,255,255,.18);border-left-color:#fff}
+.app-shell .message-agent .message-bubble .quoted-message strong,.app-shell .message-agent .message-bubble .quoted-message span{color:#fff}
+.app-shell .message-agent .message-bubble .message-attachment{color:#fff!important}
+.app-shell .message-agent .myticket-voice-player,.app-shell .message-agent .myticket-voice-player .voice-play{color:#fff}
+.app-shell .message-agent .myticket-voice-player .voice-wave span{background:rgba(255,255,255,.45)}
+.app-shell .message-agent .myticket-voice-player .voice-wave span.played{background:#fff}
+.app-shell .message-agent .myticket-voice-player .voice-time{color:rgba(255,255,255,.88)}
+.app-shell .message-agent .myticket-voice-player .voice-speed{background:rgba(255,255,255,.22);color:#fff}
+.app-shell .message-agent .myticket-voice-player .voice-dot{background:#fff;box-shadow:0 0 0 2px rgba(240,74,38,.35),0 1px 3px rgba(120,30,10,.35)}
+.app-shell .message-agent .message-bubble.bubble-tail:not(.sticker-message-bubble)::after{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 18'%3E%3Cpath d='M7 0C6.6 7 4.6 12.8.9 16.6c-.4.4-.2.9.4.9H16V0Z' fill='%23ff5a36'/%3E%3Cpath d='M6.5 0C6.1 7 4.1 12.8.6 16.3c-.6.6-.3 1.2.6 1.2H16' fill='none' stroke='%23f04a26'/%3E%3C/svg%3E")}

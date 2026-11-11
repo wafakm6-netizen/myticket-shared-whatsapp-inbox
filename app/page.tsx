@@ -262,7 +262,8 @@ function contactDisplayName(name: string, phone: string) {
 const dialingCountries = [["🇴🇲","Oman","+968"],["🇦🇪","United Arab Emirates","+971"],["🇸🇦","Saudi Arabia","+966"],["🇶🇦","Qatar","+974"],["🇧🇭","Bahrain","+973"],["🇰🇼","Kuwait","+965"],["🇺🇸","United States","+1"],["🇨🇦","Canada","+1"],["🇬🇧","United Kingdom","+44"],["🇮🇳","India","+91"],["🇵🇰","Pakistan","+92"],["🇪🇬","Egypt","+20"],["🇯🇴","Jordan","+962"],["🇱🇧","Lebanon","+961"],["🇲🇦","Morocco","+212"],["🇩🇪","Germany","+49"],["🇫🇷","France","+33"],["🇹🇷","Türkiye","+90"],["🇵🇭","Philippines","+63"],["🇧🇩","Bangladesh","+880"],["🇮🇩","Indonesia","+62"],["🇲🇾","Malaysia","+60"],["🇦🇺","Australia","+61"],["🇨🇳","China","+86"],["🇯🇵","Japan","+81"],["🇿🇦","South Africa","+27"],["🇳🇵","Nepal","+977"],["🇱🇰","Sri Lanka","+94"],["🇸🇬","Singapore","+65"],["🇮🇹","Italy","+39"],["🇪🇸","Spain","+34"],["🇳🇱","Netherlands","+31"],["🇧🇷","Brazil","+55"],["🇲🇽","Mexico","+52"]]
 
 // Chat list preview for a conversation whose latest activity is a reaction: "You reacted with ❤️ on "Hi"".
-const senderNameColors = ['#c2410c', '#1d4ed8', '#7e22ce', '#047857', '#be185d', '#b45309', '#0e7490', '#4d7c0f', '#b91c1c', '#4338ca']
+// Light tints: agent names sit on brand-orange bubbles, so each agent gets a pale colour that stays readable.
+const senderNameColors = ['#ffffff', '#fff1a8', '#d4f1ff', '#dcffd0', '#ffe0f3', '#ece3ff', '#ffe2c4', '#c9fff1', '#fffbe6', '#e3ebff']
 function senderNameColor(name: string) {
   let hash = 0
   for (const char of name.trim().toLowerCase()) hash = (hash * 31 + char.codePointAt(0)!) >>> 0
