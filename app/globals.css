@@ -2317,3 +2317,8 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
 .app-shell .message-agent .myticket-voice-player .voice-speed{background:rgba(255,255,255,.22);color:#fff}
 .app-shell .message-agent .myticket-voice-player .voice-dot{background:#fff;box-shadow:0 0 0 2px rgba(240,74,38,.35),0 1px 3px rgba(120,30,10,.35)}
 .app-shell .message-agent .message-bubble.bubble-tail:not(.sticker-message-bubble)::after{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 18'%3E%3Cpath d='M7 0C6.6 7 4.6 12.8.9 16.6c-.4.4-.2.9.4.9H16V0Z' fill='%23ff5a36'/%3E%3Cpath d='M6.5 0C6.1 7 4.1 12.8.6 16.3c-.6.6-.3 1.2.6 1.2H16' fill='none' stroke='%23f04a26'/%3E%3C/svg%3E")}
+
+/* Narrower bubbles so the chat breathes like WhatsApp. Touch screens have no hover menu, so drop its reserved right padding there. */
+.app-shell .chat-pane .message-bubble:not(.voice-message-bubble):not(.sticker-message-bubble){max-width:min(62%,480px)!important}
+@media (max-width:900px){.app-shell .chat-pane .message-bubble:not(.voice-message-bubble):not(.sticker-message-bubble){max-width:72%!important}}
+@media (hover:none){.app-shell .chat-pane .message-bubble.text-message-bubble{padding-right:12px!important}}
