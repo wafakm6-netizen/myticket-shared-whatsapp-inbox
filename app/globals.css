@@ -2322,3 +2322,8 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
 .app-shell .chat-pane .message-bubble:not(.voice-message-bubble):not(.sticker-message-bubble){max-width:min(62%,480px)!important}
 @media (max-width:900px){.app-shell .chat-pane .message-bubble:not(.voice-message-bubble):not(.sticker-message-bubble){max-width:72%!important}}
 @media (hover:none){.app-shell .chat-pane .message-bubble.text-message-bubble{padding-right:12px!important}}
+
+/* Swipe-to-reply: an arrow fades in beside the message while it is dragged right. */
+.app-shell .message-row{position:relative}
+.app-shell .swipe-reply-icon{position:absolute;left:4px;top:50%;width:32px;height:32px;margin-left:-2px;display:grid;place-items:center;border-radius:50%;background:rgba(28,41,64,.08);color:#5b6b7f;opacity:0;transform:translateY(-50%) scale(.5);pointer-events:none;z-index:0}
+.app-shell .swipe-reply-icon.ready{background:#ff5a36;color:#fff}
