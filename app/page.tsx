@@ -146,7 +146,15 @@ function VoiceNotePlayer({ src }: { src: string }) {
   const [duration, setDuration] = useState(0)
   const [position, setPosition] = useState(0)
   const [speed, setSpeed] = useState(1)
-  const bars = useMemo(() => Array.from({ length: 47 }, (_, index) => 5 + Math.round(Math.abs(Math.sin(index * 2.17) * Math.cos(index * 0.61)) * 21)), [])
+  // A speech-like waveform: quiet start, louder middle, varied per message so notes don't all look the same.
+  const bars = useMemo(() => {
+    let seed = Array.from(src || 'voice').reduce((value, char) => (value * 31 + char.charCodeAt(0)) >>> 0, 17)
+    const random = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296 }
+    return Array.from({ length: 34 }, (_, index) => {
+      const envelope = index < 4 ? 0.18 + index * 0.08 : index > 30 ? 0.35 : 0.55 + 0.45 * Math.abs(Math.sin(index * 0.42))
+      return Math.max(3, Math.round(24 * envelope * (0.45 + random() * 0.55)))
+    })
+  }, [src])
   const format = (seconds: number) => Number.isFinite(seconds) ? `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}` : '0:00'
   const toggle = async () => {
     const audio = audioRef.current
@@ -175,18 +183,23 @@ function VoiceNotePlayer({ src }: { src: string }) {
     frame = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(frame)
   }, [playing])
-  const progress = duration > 0 ? position / duration : 0
-  return <div className="myticket-voice-player" style={{ width: 278, maxWidth: '100%', padding: '9px 10px 6px', borderRadius: 13, background: 'transparent', color: '#59616b', boxSizing: 'border-box' }}>
-    <audio ref={audioRef} src={src} preload="metadata" onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)} onDurationChange={(event) => setDuration(event.currentTarget.duration)} onTimeUpdate={(event) => setPosition(event.currentTarget.currentTime)} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => { setPlaying(false); setPosition(0) }} aria-label="Voice recording" />
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-      <button type="button" onClick={toggle} aria-label={playing ? 'Pause voice message' : 'Play voice message'} style={{ border: 0, background: 'transparent', color: '#6c747c', width: 29, height: 33, padding: 0, fontSize: 19, cursor: 'pointer', flexShrink: 0 }}>{playing ? '❚❚' : '▶'}</button>
-      <div role="slider" tabIndex={0} aria-label="Voice playback position" aria-valuemin={0} aria-valuemax={Math.max(1, Math.floor(duration))} aria-valuenow={Math.floor(position)} onKeyDown={(event) => { if (event.key === 'ArrowRight') { event.preventDefault(); seek(progress + 5 / (duration || 1)) } if (event.key === 'ArrowLeft') { event.preventDefault(); seek(progress - 5 / (duration || 1)) } }} onClick={(event) => seek((event.clientX - event.currentTarget.getBoundingClientRect().left) / event.currentTarget.getBoundingClientRect().width)} style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', gap: 2, height: 34, cursor: 'pointer', position: 'relative' }}>
-        {bars.map((height, index) => <span key={index} style={{ flex: 1, minWidth: 1, height, borderRadius: 3, background: index / bars.length <= progress ? '#55b5ee' : '#b7bcc1' }} />)}
-        <span style={{ position: 'absolute', left: `${progress * 100}%`, top: '50%', transform: 'translate(-50%,-50%)', width: 11, height: 11, borderRadius: '50%', background: '#43b8f5', pointerEvents: 'none' }} />
-      </div>
-      <button type="button" onClick={changeSpeed} aria-label={`Playback speed ${speed} times. Click to change`} style={{ border: 0, borderRadius: 20, background: '#85898d', color: 'white', fontSize: 11, fontWeight: 700, padding: '5px 9px', cursor: 'pointer', flexShrink: 0 }}>{speed}×</button>
+  const progress = duration > 0 ? Math.min(1, position / duration) : 0
+  const knownDuration = Number.isFinite(duration) && duration > 0
+  return <div className={`myticket-voice-player ${playing ? 'is-playing' : ''}`}>
+    <audio ref={audioRef} src={src} preload="metadata" onLoadedMetadata={(event) => {
+      const audio = event.currentTarget
+      setDuration(audio.duration)
+      // Recorded WebM/Ogg files often report an unknown length until the end is read; jump there once to learn it.
+      if (!Number.isFinite(audio.duration)) { const reset = () => { audio.removeEventListener('timeupdate', reset); setDuration(audio.duration); audio.currentTime = 0; setPosition(0) }; audio.addEventListener('timeupdate', reset); audio.currentTime = 1e101 }
+    }} onDurationChange={(event) => { if (Number.isFinite(event.currentTarget.duration)) setDuration(event.currentTarget.duration) }} onTimeUpdate={(event) => { if (Number.isFinite(event.currentTarget.duration) && event.currentTarget.currentTime <= event.currentTarget.duration) setPosition(event.currentTarget.currentTime) }} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => { setPlaying(false); setPosition(0) }} aria-label="Voice recording" />
+    <button type="button" className="voice-play" onClick={toggle} aria-label={playing ? 'Pause voice message' : 'Play voice message'}>{playing
+      ? <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="6" y="4.5" width="4" height="15" rx="1.4" fill="currentColor" /><rect x="14" y="4.5" width="4" height="15" rx="1.4" fill="currentColor" /></svg>
+      : <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M7.5 4.8v14.4c0 .9 1 1.4 1.7.9l10.3-7.2c.6-.4.6-1.4 0-1.8L9.2 3.9c-.7-.5-1.7 0-1.7.9Z" fill="currentColor" /></svg>}</button>
+    <div className="voice-wave" role="slider" tabIndex={0} aria-label="Voice playback position" aria-valuemin={0} aria-valuemax={Math.max(1, Math.floor(knownDuration ? duration : 0))} aria-valuenow={Math.floor(position)} onKeyDown={(event) => { if (event.key === 'ArrowRight') { event.preventDefault(); seek(progress + 5 / (duration || 1)) } if (event.key === 'ArrowLeft') { event.preventDefault(); seek(progress - 5 / (duration || 1)) } }} onClick={(event) => seek((event.clientX - event.currentTarget.getBoundingClientRect().left) / event.currentTarget.getBoundingClientRect().width)}>
+      {bars.map((height, index) => <span key={index} className={(index + 0.5) / bars.length <= progress ? 'played' : ''} style={{ height }} />)}
     </div>
-    <div style={{ display: 'flex', justifyContent: 'space-between', paddingLeft: 37, paddingRight: 45, fontSize: 11, color: '#879098', lineHeight: '14px' }}><span>{format(position)}</span><span>{format(duration)}</span></div>
+    <span className="voice-time">{playing || position > 0 ? format(position) : knownDuration ? format(duration) : '0:00'}</span>
+    {(playing || speed !== 1) && <button type="button" className="voice-speed" onClick={changeSpeed} aria-label={`Playback speed ${speed} times. Click to change`}>{speed}×</button>}
   </div>
 }
 
