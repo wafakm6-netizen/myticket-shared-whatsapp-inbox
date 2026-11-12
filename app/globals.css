@@ -2348,3 +2348,40 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
 .app-shell .message-agent .document-card{background:rgba(255,255,255,.16)}
 .app-shell .message-agent .document-preview{border-bottom-color:rgba(255,255,255,.25)}
 .app-shell .message-agent .document-meta{opacity:.85}
+
+/* ---------- @mentions and internal notes ---------- */
+.app-shell .composer-wrap{position:relative}
+.app-shell .composer-mode-toggle{display:flex;align-items:center;gap:6px;margin:0 2px 8px;flex-wrap:wrap}
+.app-shell .composer-mode-toggle>button{border:1px solid #e3ddd7;background:#fff;color:#5b6b7f;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:600;line-height:1.4;cursor:pointer}
+.app-shell .composer-mode-toggle>button.active{background:#1c2940;border-color:#1c2940;color:#fff}
+.app-shell .composer-mode-toggle>button.note.active{background:#f5b400;border-color:#e2a500;color:#3d2d00}
+.app-shell .composer-mode-hint{font-size:11px;color:#8a6d00}
+.app-shell .composer-note-mode .composer{background:#fff8dc!important;border-color:#f1d77a!important}
+.app-shell .composer-note-mode .emoji-composer-editor{background:transparent!important}
+.app-shell .composer-note-mode .composer-camera,.app-shell .composer-note-mode .composer-plus-wrap,.app-shell .composer-note-mode .composer-sticker-wrap,.app-shell .composer-note-mode .composer-tool-attach,.app-shell .composer-note-mode .composer-mic,.app-shell .composer-note-mode .composer-tool-template{display:none!important}
+.app-shell .send-btn.send-btn-note{background:#f5b400!important;color:#3d2d00!important}
+.app-shell .send-btn.send-btn-note:disabled{opacity:.5}
+.app-shell .mention-picker{position:absolute;left:12px;bottom:calc(100% - 4px);z-index:60;width:min(300px,calc(100% - 24px));max-height:260px;overflow:auto;background:#fff;border:1px solid #e3e8ee;border-radius:12px;box-shadow:0 12px 32px rgba(16,42,67,.18);padding:6px}
+.app-shell .mention-picker button{display:flex;align-items:center;gap:10px;width:100%;border:0;background:transparent;border-radius:8px;padding:8px 10px;text-align:left;font-size:14px;color:#1c2940;cursor:pointer}
+.app-shell .mention-picker button.active,.app-shell .mention-picker button:hover{background:#fff1ea}
+.app-shell .mention-picker-avatar{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#ff5a36;color:#fff;font-size:11px;font-weight:700;flex:0 0 auto}
+.app-shell .mention-picker-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.app-shell .mention-picker-online{width:8px;height:8px;border-radius:50%;background:#36a875;flex:0 0 auto}
+.app-shell .thread-note{align-self:center;margin:4px auto 14px;width:fit-content;max-width:min(82%,520px);background:#fff8dc;border:1px solid #f1d77a;border-radius:12px;padding:7px 12px 8px;color:#3d2d00;font-size:13px;line-height:1.45;box-shadow:0 1px 2px rgba(120,90,0,.08)}
+.app-shell .thread-note-mentions-me{background:#fff1c2;border-color:#f5b400;box-shadow:0 0 0 2px rgba(245,180,0,.25)}
+.app-shell .thread-note-head{display:flex;align-items:center;gap:5px;font-size:11px;color:#8a6d00;margin-bottom:2px}
+.app-shell .thread-note-head strong{color:#5c4600}
+.app-shell .note-mention{display:inline-block;padding:0 5px;border-radius:6px;background:rgba(245,180,0,.22);color:#6b4f00;font-weight:600}
+.app-shell .note-mention-me{background:#ff5a36;color:#fff}
+.app-shell .filter-tab-mentions span{background:#ff5a36!important;color:#fff!important}
+.app-shell .conversation-mention-badge{display:inline-grid;place-items:center;width:20px;height:20px;margin-left:6px;border-radius:50%;background:#ff5a36;color:#fff;font-size:12px;font-weight:700;line-height:1;flex:0 0 auto}
+.app-shell .mention-toast{position:absolute;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%);z-index:70;display:flex;align-items:center;gap:10px;max-width:min(420px,calc(100% - 24px));padding:10px 14px;border:0;border-radius:12px;background:#1c2940;color:#fff;font-size:13px;line-height:1.35;text-align:left;box-shadow:0 10px 28px rgba(16,42,67,.3);cursor:pointer}
+.app-shell .mention-toast-at{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#ff5a36;font-weight:700;flex:0 0 auto}
+.app-shell .chat-pane .composer-wrap.composer-note-mode .composer .send-btn{background:#f5b400!important;color:#3d2d00!important}
+.app-shell .inbox-pane .filter-tabs{overflow-x:auto;scrollbar-width:none}
+@media (min-width:901px){.app-shell .inbox-pane .filter-tabs{gap:16px}}
+@media (max-width:900px){
+ .app-shell .chat-pane .composer-wrap.composer-note-mode .composer{background:transparent!important;border-color:transparent!important}
+ .app-shell .chat-pane .composer-wrap.composer-note-mode .composer .emoji-composer-editor{background:#fff8dc!important;box-shadow:inset 0 0 0 1px #f1d77a}
+ .app-shell .composer-mode-toggle{margin:0 12px 6px}
+}

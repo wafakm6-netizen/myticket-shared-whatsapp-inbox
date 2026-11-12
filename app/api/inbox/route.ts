@@ -1,3 +1,4 @@
+import { notifyMentions } from '@/lib/notifications/deliver'
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { requireAgent } from '@/lib/auth'
@@ -35,6 +36,8 @@ export async function POST(request: NextRequest) {
   try {
     const body=await request.json();if(!body.conversationId||!body.body?.trim())return NextResponse.json({error:'Conversation and note body are required.'},{status:400})
     const supabase=createServerSupabaseClient();const {data,error}=await supabase.from('whatsapp_internal_notes').insert({conversation_id:body.conversationId,agent_id:auth.agent.id,body:body.body.trim()}).select('id, body, created_at, agent_id').single();if(error)throw error
+    // Mentioned teammates get a push alert; a delivery problem never fails the note itself.
+    try { await notifyMentions(supabase, body.conversationId, data.id, auth.agent.id, auth.agent.display_name || 'A teammate', data.body) } catch (mentionError) { console.error('[inbox] mention alerts failed', mentionError) }
     return NextResponse.json({note:data})
   }catch(error){console.error('[inbox] note failed',error);return NextResponse.json({error:'Note could not be saved.'},{status:500})}
 }
