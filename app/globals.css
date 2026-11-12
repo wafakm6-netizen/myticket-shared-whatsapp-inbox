@@ -2256,3 +2256,95 @@ html,body{font-family:Arial,Helvetica,sans-serif}
 
 /* Which agent sent an outgoing message (first of a run from the same agent). */
 .app-shell .chat-pane .message-bubble .message-sender-name{display:block;margin:0 0 3px;font-size:12px;font-weight:600;line-height:1.3;color:#c2410c}
+
+/* Voice notes: a clean pill with a plain play triangle and a rounded-bar waveform. */
+.app-shell .myticket-voice-player{display:flex;align-items:center;gap:8px;width:250px;max-width:100%;padding:2px 0;box-sizing:border-box;color:#1c2940}
+.app-shell .myticket-voice-player .voice-play{flex:0 0 auto;display:grid;place-items:center;width:34px;height:34px;padding:0;border:0;border-radius:50%;background:transparent;color:#1c2940;cursor:pointer}
+.app-shell .myticket-voice-player .voice-play:active{transform:scale(.92)}
+.app-shell .myticket-voice-player .voice-wave{flex:1;min-width:0;height:30px;display:flex;align-items:center;justify-content:space-between;gap:2px;cursor:pointer;outline:0}
+.app-shell .myticket-voice-player .voice-wave span{flex:0 0 3px;width:3px;border-radius:3px;background:rgba(28,41,64,.28);transition:background-color .12s linear}
+.app-shell .myticket-voice-player .voice-wave span.played{background:#1c2940}
+.app-shell .myticket-voice-player .voice-time{flex:0 0 auto;min-width:30px;font-size:11px;font-variant-numeric:tabular-nums;color:#6d7b8c;text-align:right}
+.app-shell .myticket-voice-player .voice-speed{flex:0 0 auto;border:0;border-radius:12px;background:rgba(28,41,64,.12);color:#1c2940;font-size:11px;font-weight:700;padding:3px 7px;cursor:pointer}
+.app-shell .message-bubble.voice-message-bubble{width:auto!important;max-width:min(88%,330px)!important;padding:8px 14px 5px 8px!important;border-radius:22px!important}
+.app-shell .message-bubble.voice-message-bubble .myticket-voice-player{width:250px;max-width:100%;padding:2px 0}
+.app-shell .message-bubble.voice-message-bubble small{margin-top:0!important;padding-right:4px}
+.app-shell .voice-inline:not(:has(.voice-recording-bar)) .myticket-voice-player{width:auto!important}
+@media (hover:hover) and (pointer:fine){.app-shell .message-bubble.voice-message-bubble{padding-right:32px!important}}
+.app-shell .myticket-voice-player,.app-shell .message-bubble.voice-message-bubble .myticket-voice-player{width:auto}
+.app-shell .myticket-voice-player .voice-wave{flex:0 1 168px;min-width:120px}
+
+/* Voice note cursor: a round dot riding on the waveform, moved every animation frame. */
+.app-shell .myticket-voice-player .voice-wave{position:relative}
+.app-shell .myticket-voice-player .voice-dot{position:absolute;top:50%;width:12px;height:12px;margin-top:-6px;border-radius:50%;background:#34a6f4;box-shadow:0 0 0 2px rgba(255,255,255,.9);pointer-events:none;will-change:left}
+.app-shell .message-agent .myticket-voice-player .voice-dot{box-shadow:0 0 0 2px rgba(220,255,214,.9)}
+
+/* WhatsApp-style tail on the last bubble of each run: bottom-left for the customer, bottom-right for us. */
+.app-shell .message-bubble.bubble-tail:not(.sticker-message-bubble){border-bottom-left-radius:4px!important}
+.app-shell .message-agent .message-bubble.bubble-tail:not(.sticker-message-bubble){border-bottom-left-radius:12px!important;border-bottom-right-radius:4px!important}
+.app-shell .message-bubble.voice-message-bubble.bubble-tail{border-bottom-left-radius:6px!important}
+.app-shell .message-agent .message-bubble.voice-message-bubble.bubble-tail{border-bottom-left-radius:22px!important;border-bottom-right-radius:6px!important}
+.app-shell .message-bubble.bubble-tail:not(.sticker-message-bubble)::after{content:'';position:absolute;bottom:-1px;left:-7px;width:13px;height:17px;background:inherit;pointer-events:none;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 13 17'%3E%3Cpath d='M13 0v17H1.2C.3 17-.2 16 .4 15.3 3.6 11.9 6.6 7.6 8 0h5Z'/%3E%3C/svg%3E") no-repeat center/100% 100%;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 13 17'%3E%3Cpath d='M13 0v17H1.2C.3 17-.2 16 .4 15.3 3.6 11.9 6.6 7.6 8 0h5Z'/%3E%3C/svg%3E") no-repeat center/100% 100%}
+.app-shell .message-agent .message-bubble.bubble-tail:not(.sticker-message-bubble)::after{left:auto;right:-7px;transform:scaleX(-1)}
+
+/* Bubble tail drawn as an SVG with the bubble's own fill and outline, so the edge continues without a seam. */
+.app-shell .message-bubble.bubble-tail:not(.sticker-message-bubble)::after{-webkit-mask:none;mask:none;left:-7px;right:auto;bottom:-1px;width:16px;height:18px;transform:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 18'%3E%3Cpath d='M7 0C6.6 7 4.6 12.8.9 16.6c-.4.4-.2.9.4.9H16V0Z' fill='%23ffffff'/%3E%3Cpath d='M6.5 0C6.1 7 4.1 12.8.6 16.3c-.6.6-.3 1.2.6 1.2H16' fill='none' stroke='%23e0e7ef'/%3E%3C/svg%3E") no-repeat 0 0/16px 18px}
+.app-shell .message-agent .message-bubble.bubble-tail:not(.sticker-message-bubble)::after{left:auto;right:-7px;transform:scaleX(-1);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 18'%3E%3Cpath d='M7 0C6.6 7 4.6 12.8.9 16.6c-.4.4-.2.9.4.9H16V0Z' fill='%23dcffd6'/%3E%3Cpath d='M6.5 0C6.1 7 4.1 12.8.6 16.3c-.6.6-.3 1.2.6 1.2H16' fill='none' stroke='%23c1edba'/%3E%3C/svg%3E")}
+
+/* Myticket orange bubble theme: light brand-orange for us, white for the customer, warm off-white wallpaper. */
+.app-shell .chat-pane{background-color:#f6f3f0!important}
+.app-shell .message-bubble:not(.sticker-message-bubble){background-color:#fff;border-color:#ece6e1}
+.app-shell .message-agent .message-bubble:not(.sticker-message-bubble){background-color:#ffe8df!important;border-color:#ffd3c2!important}
+.app-shell .message-agent .myticket-voice-player .voice-dot{box-shadow:0 0 0 2px rgba(255,232,223,.9)}
+.app-shell .message-bubble.bubble-tail:not(.sticker-message-bubble)::after{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 18'%3E%3Cpath d='M7 0C6.6 7 4.6 12.8.9 16.6c-.4.4-.2.9.4.9H16V0Z' fill='%23ffffff'/%3E%3Cpath d='M6.5 0C6.1 7 4.1 12.8.6 16.3c-.6.6-.3 1.2.6 1.2H16' fill='none' stroke='%23ece6e1'/%3E%3C/svg%3E")}
+.app-shell .message-agent .message-bubble.bubble-tail:not(.sticker-message-bubble)::after{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 18'%3E%3Cpath d='M7 0C6.6 7 4.6 12.8.9 16.6c-.4.4-.2.9.4.9H16V0Z' fill='%23ffe8df'/%3E%3Cpath d='M6.5 0C6.1 7 4.1 12.8.6 16.3c-.6.6-.3 1.2.6 1.2H16' fill='none' stroke='%23ffd3c2'/%3E%3C/svg%3E")}
+
+/* Brand-orange bubbles for our messages: white text, with ticks, links, voice notes and quotes adjusted to stay readable. */
+.app-shell .message-agent .message-bubble:not(.sticker-message-bubble){background-color:#ff5a36!important;border-color:#f04a26!important;color:#fff!important}
+.app-shell .message-agent .message-bubble:not(.sticker-message-bubble) a{color:#fff!important}
+.app-shell .message-agent .message-bubble:not(.sticker-message-bubble) small{color:rgba(255,255,255,.82)!important}
+.app-shell .message-agent .message-bubble:not(.sticker-message-bubble) .message-delivery-status svg{color:rgba(255,255,255,.85)!important;stroke:rgba(255,255,255,.85)}
+.app-shell .message-agent .message-bubble:not(.sticker-message-bubble) .message-delivery-status svg[style*="83, 183, 239"],.app-shell .message-agent .message-bubble:not(.sticker-message-bubble) .message-delivery-status svg[style*="53b7ef"]{color:#d6efff!important}
+.app-shell .message-agent .message-bubble:not(.sticker-message-bubble) .message-delivery-status button{color:#fff!important;font-weight:700}
+.app-shell .message-agent .message-bubble:not(.sticker-message-bubble) .hover-message-options>button{color:rgba(255,255,255,.9)!important}
+.app-shell .message-agent .message-bubble .quoted-message{background:rgba(255,255,255,.18);border-left-color:#fff}
+.app-shell .message-agent .message-bubble .quoted-message strong,.app-shell .message-agent .message-bubble .quoted-message span{color:#fff}
+.app-shell .message-agent .message-bubble .message-attachment{color:#fff!important}
+.app-shell .message-agent .myticket-voice-player,.app-shell .message-agent .myticket-voice-player .voice-play{color:#fff}
+.app-shell .message-agent .myticket-voice-player .voice-wave span{background:rgba(255,255,255,.45)}
+.app-shell .message-agent .myticket-voice-player .voice-wave span.played{background:#fff}
+.app-shell .message-agent .myticket-voice-player .voice-time{color:rgba(255,255,255,.88)}
+.app-shell .message-agent .myticket-voice-player .voice-speed{background:rgba(255,255,255,.22);color:#fff}
+.app-shell .message-agent .myticket-voice-player .voice-dot{background:#fff;box-shadow:0 0 0 2px rgba(240,74,38,.35),0 1px 3px rgba(120,30,10,.35)}
+.app-shell .message-agent .message-bubble.bubble-tail:not(.sticker-message-bubble)::after{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 18'%3E%3Cpath d='M7 0C6.6 7 4.6 12.8.9 16.6c-.4.4-.2.9.4.9H16V0Z' fill='%23ff5a36'/%3E%3Cpath d='M6.5 0C6.1 7 4.1 12.8.6 16.3c-.6.6-.3 1.2.6 1.2H16' fill='none' stroke='%23f04a26'/%3E%3C/svg%3E")}
+
+/* Narrower bubbles so the chat breathes like WhatsApp. Touch screens have no hover menu, so drop its reserved right padding there. */
+.app-shell .chat-pane .message-bubble:not(.voice-message-bubble):not(.sticker-message-bubble){max-width:min(62%,480px)!important}
+@media (max-width:900px){.app-shell .chat-pane .message-bubble:not(.voice-message-bubble):not(.sticker-message-bubble){max-width:72%!important}}
+@media (hover:none){.app-shell .chat-pane .message-bubble.text-message-bubble{padding-right:12px!important}}
+
+/* Swipe-to-reply: an arrow fades in beside the message while it is dragged right. */
+.app-shell .message-row{position:relative}
+.app-shell .swipe-reply-icon{position:absolute;left:4px;top:50%;width:32px;height:32px;margin-left:-2px;display:grid;place-items:center;border-radius:50%;background:rgba(28,41,64,.08);color:#5b6b7f;opacity:0;transform:translateY(-50%) scale(.5);pointer-events:none;z-index:0}
+.app-shell .swipe-reply-icon.ready{background:#ff5a36;color:#fff}
+
+/* Document messages: a card with a first-page preview (PDF) and the file's icon, name and details. */
+.app-shell .message-bubble.document-message-bubble{width:min(300px,100%);max-width:min(80%,300px)!important;padding:4px 4px 5px!important}
+.app-shell .message-bubble.document-message-bubble>small{padding:0 8px 0 0}
+.app-shell .message-bubble.document-message-bubble .message-sender-name{margin:4px 8px 4px}
+.app-shell .message-bubble.document-message-bubble .quoted-message{margin:4px 4px 6px}
+.app-shell .message-bubble.document-message-bubble>div[dir=auto]{padding:4px 8px 0}
+.app-shell .document-card{display:block;border-radius:10px;overflow:hidden;background:rgba(28,41,64,.05);color:inherit!important;text-decoration:none!important}
+.app-shell .document-preview{display:block;height:140px;overflow:hidden;background:#fff;border-bottom:1px solid rgba(28,41,64,.08)}
+.app-shell .document-preview canvas{display:block;width:100%;height:auto}
+.app-shell .document-preview.loading{background:linear-gradient(90deg,#f3f1ef 0%,#fbfaf9 50%,#f3f1ef 100%);background-size:200% 100%;animation:document-shimmer 1.2s linear infinite}
+.app-shell .document-preview.loading canvas{visibility:hidden}
+@keyframes document-shimmer{to{background-position:-200% 0}}
+.app-shell .document-info{display:flex;align-items:center;gap:10px;padding:10px}
+.app-shell .document-icon{flex:0 0 auto;display:grid;place-items:center;width:34px;height:40px;border-radius:5px;color:#fff;font-size:9px;font-weight:800;letter-spacing:.02em;clip-path:polygon(0 0,72% 0,100% 22%,100% 100%,0 100%)}
+.app-shell .document-text{min-width:0;display:flex;flex-direction:column;gap:2px}
+.app-shell .document-name{font-size:14px;font-weight:500;line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word}
+.app-shell .document-meta{font-size:11px;opacity:.65;text-transform:none}
+.app-shell .message-agent .document-card{background:rgba(255,255,255,.16)}
+.app-shell .message-agent .document-preview{border-bottom-color:rgba(255,255,255,.25)}
+.app-shell .message-agent .document-meta{opacity:.85}

@@ -64,7 +64,7 @@ export function NotificationBridge() {
           setNotices((current) => [...incoming, ...current].slice(0, 30))
           for (const notice of incoming) {
             if ('Notification' in window && Notification.permission === 'granted' && document.visibilityState !== 'visible') {
-              const notification = new Notification(`New message from ${notice.name}`, { body: notice.preview, icon: '/brand/myticket-icon.png', tag: `conversation-${notice.conversationId}` })
+              const notification = new Notification(`New message from ${notice.name}`, { body: notice.preview, icon: '/brand/app-icon-192.png?v=3', tag: `conversation-${notice.conversationId}` })
               notification.onclick = () => { window.focus(); notification.close() }
             }
           }
