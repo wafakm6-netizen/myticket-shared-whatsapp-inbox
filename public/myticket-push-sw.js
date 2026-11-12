@@ -3,8 +3,8 @@ self.addEventListener('push', event => {
   try { data=event.data ? event.data.json() : {} } catch {}
   event.waitUntil(self.registration.showNotification(data.title || 'Myticket Shared Inbox',{
     body:data.body || 'Someone sent you messages.',
-    icon:'/myticket-favicon.png',
-    badge:'/myticket-favicon.png',
+    icon:'/brand/app-icon-192.png?v=3',
+    badge:'/brand/app-icon-96.png?v=3',
     tag:data.tag || 'myticket-incoming',
     data:{url:data.url || '/'}
   }))
