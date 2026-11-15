@@ -2541,3 +2541,4 @@ html,body{font-family:Arial,Helvetica,sans-serif}
 .inbox-skeleton{display:none!important}
 html[data-session="1"] .inbox-skeleton{display:flex!important}
 html[data-session="1"] .auth-loading-shell{display:none!important}
+.inbox-skeleton.is-shown{display:flex!important}
