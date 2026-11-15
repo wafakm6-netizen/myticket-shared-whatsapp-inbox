@@ -2427,3 +2427,8 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
  .app-shell .inbox-pane .filter-tabs button span{font-size:10px!important}
  .app-shell .inbox-pane .filter-tabs .filter-tab-mentions{font-size:13px!important;min-width:32px}
 }
+/* Sidebar logo sits in the same 80px band as the list header, centred on its line. */
+@media (min-width:901px){
+ .app-shell>.rail{padding-top:0!important}
+ .app-shell .rail .brand-mark{height:80px!important;margin:0 auto 12px!important;align-items:center!important}
+}
