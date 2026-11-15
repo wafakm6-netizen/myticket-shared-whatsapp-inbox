@@ -77,3 +77,8 @@ html[data-theme="dark"] input:autofill{background:#1a222c!important;color:#e8edf
 html[data-theme="dark"] .modal-backdrop,html[data-theme="dark"] .tag-manager-backdrop{background:rgba(3,6,10,.62)!important}
 html[data-theme="dark"] .modal-backdrop>section,html[data-theme="dark"] .modal-backdrop>div,html[data-theme="dark"] .conversation-modal,html[data-theme="dark"] .tag-manager-modal{border:1px solid #2f3a48!important;box-shadow:0 0 0 1px rgba(255,255,255,.03),0 24px 64px rgba(0,0,0,.6)!important}
 html[data-theme="dark"] .login-input-wrap .login-field-icon{background:transparent!important}
+
+/* Skeleton shimmer in dark mode (the generated shorthand resets background-size) */
+html[data-theme="dark"] .inbox-skeleton .sk{background:linear-gradient(90deg,#1e2732 0%,#26313d 40%,#1e2732 80%);background-size:300% 100%}
+html[data-theme="dark"] .inbox-skeleton .sk-thread .out{background:linear-gradient(90deg,#4a2618 0%,#5a2f1d 40%,#4a2618 80%);background-size:300% 100%}
+html[data-theme="dark"] .inbox-skeleton .sk-rail i,html[data-theme="dark"] .inbox-skeleton .sk-tabbar i{background:#1e2732}
