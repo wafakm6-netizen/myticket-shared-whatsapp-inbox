@@ -150,7 +150,8 @@ def parse_blocks(css):
     while i < n:
         j = css.find('{', i)
         if j < 0: break
-        prelude = css[i:j].strip()
+        # Drop statements without a block (e.g. @import …;) that precede this rule.
+        prelude = css[i:j].rsplit(';', 1)[-1].strip()
         depth, k = 1, j + 1
         while k < n and depth:
             if css[k] == '{': depth += 1
@@ -174,6 +175,18 @@ def convert_rules(css):
             if ':' not in decl: continue
             prop, val = decl.split(':', 1)
             prop = prop.strip().lower()
+            if prop.startswith('--'):
+                # Colour variables (--line, --paper, --ink…): pale ones are surfaces, dark greys are text.
+                v = val.replace('!important', '').strip()
+                c = parse_color(v) if COLOR_RE.fullmatch(v) else None
+                if not c: continue
+                l = hsl(*c[:3])[2]
+                if any(k in prop for k in ('line', 'border')):
+                    mapped = fmt(*from_hsl(SLATE_H, 0.2, 0.22), c[3]) if l >= 0.62 else None
+                else:
+                    mapped = map_surface(c) if l >= 0.62 else map_text(c)
+                if mapped: decls.append(f'{prop}:{mapped}')
+                continue
             if prop not in COLOR_PROPS: continue
             important = '!important' in val
             val = val.replace('!important', '').strip()

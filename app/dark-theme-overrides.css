@@ -59,3 +59,10 @@ html[data-theme="dark"] input::placeholder,html[data-theme="dark"] textarea::pla
 html[data-theme="dark"] .app-shell .search-box input,html[data-theme="dark"] .app-shell .inbox-pane input{color:#e8edf3!important}
 /* Your own @mention stays orange */
 html[data-theme="dark"] .app-shell .note-mention.note-mention-me{background:#ff5a36;color:#fff}
+
+/* Dark scrollbars (Windows otherwise draws bright white ones) */
+html[data-theme="dark"],html[data-theme="dark"] *{scrollbar-color:#334050 transparent}
+html[data-theme="dark"] ::-webkit-scrollbar{width:10px;height:10px;background:transparent}
+html[data-theme="dark"] ::-webkit-scrollbar-thumb{background:#334050;border-radius:8px;border:2px solid transparent;background-clip:padding-box}
+html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover{background:#435366;background-clip:padding-box}
+html[data-theme="dark"] ::-webkit-scrollbar-track,html[data-theme="dark"] ::-webkit-scrollbar-corner{background:transparent}
