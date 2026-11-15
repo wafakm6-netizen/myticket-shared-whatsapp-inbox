@@ -163,9 +163,9 @@ function NoteBody({ body, myAgentId }: { body: string; myAgentId?: string }) {
 }
 
 // Inbox-shaped placeholders that shimmer while a signed-in agent's chats load.
-function InboxSkeleton() {
+function InboxSkeleton({ shown = false }: { shown?: boolean }) {
   const rows = Array.from({ length: 7 })
-  return <main className="inbox-skeleton" aria-label="Loading inbox" role="status">
+  return <main className={shown ? 'inbox-skeleton is-shown' : 'inbox-skeleton'} aria-label="Loading inbox" role="status">
     <aside className="sk-rail"><img src="/brand/myticket-mark.png" alt="" className="sk-logo" /><i /><i /><i /><i /></aside>
     <section className="sk-list">
       <div className="sk-list-head"><b className="sk w55" /><b className="sk dot" /></div>
@@ -694,6 +694,8 @@ export default function Page() {
   }
 
   const [isLoading, setIsLoading] = useState(true)
+  // False until the signed-in agent's conversations have loaded once, so a fresh sign-in shows the skeleton, not an empty inbox.
+  const [inboxReady, setInboxReady] = useState(false)
   const [sessionUser, setSessionUser] = useState<{ email?: string; role?: string; agentId?: string } | null>(null)
   const [authEmail, setAuthEmail] = useState('')
   const [authPassword, setAuthPassword] = useState('')
@@ -816,7 +818,7 @@ export default function Page() {
       if (!active) return
       setSessionUser({ email: user.email, agentId: agent?.id, role: agent?.role || 'agent' })
       setSelfAvailability(agent?.availability === 'away' ? 'away' : 'available')
-      await load()
+      try { await load() } finally { if (active) setInboxReady(true) }
       if (!active) return
       try { channel = supabase.channel('whatsapp-inbox').on('postgres_changes', { event: '*', schema: 'public', table: 'whatsapp_messages' }, () => void load()).on('postgres_changes', { event: '*', schema: 'public', table: 'whatsapp_conversations' }, () => void load()).on('postgres_changes', { event: '*', schema: 'public', table: 'whatsapp_internal_notes' }, () => void load()).subscribe() } catch (error) { console.error('[v0] realtime failed', error) }
     }
@@ -827,7 +829,7 @@ export default function Page() {
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!active) return
       if (session?.user) void loadAuthenticatedInbox(session.user).finally(() => { if (active) setIsLoading(false) })
-      else { setSessionUser(null); setConversations([]); setSelectedId(null); setIsLoading(false); if (channel) void channel.unsubscribe() }
+      else { setSessionUser(null); setInboxReady(false); setConversations([]); setSelectedId(null); setIsLoading(false); if (channel) void channel.unsubscribe() }
     })
     return () => { active = false; if (channel) void channel.unsubscribe() }
   }, [])
@@ -1615,6 +1617,7 @@ export default function Page() {
     return notes.map((note) => <div key={`note-${note.id}`} className={`thread-note ${myAgentId && note.mentions.includes(myAgentId) && note.agentId !== myAgentId ? 'thread-note-mentions-me' : ''}`}><div className="thread-note-head"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Internal note</span><span>·</span><strong>{note.agentId === myAgentId ? 'You' : note.agentName}</strong><span>·</span><span>{note.time}</span></div><div className="thread-note-body"><NoteBody body={note.body} myAgentId={myAgentId} /></div></div>)
   }
   if (isLoading) return <>{/* layout.tsx marks html[data-session] before first paint: signed-in agents see the inbox skeleton, others the logo loader. */}<InboxSkeleton /><main className="auth-loading-shell" aria-label="Loading inbox" role="status"><div className="auth-loading-stack"><img className="auth-loading-mark" src="/brand/myticket-mark.png" alt="Myticket" /><span className="auth-loading-bar" aria-hidden="true"><i /></span></div></main></>
+  if (sessionUser && !inboxReady) return <InboxSkeleton shown />
   if (!sessionUser) return <main className="login-shell"><div className="login-bg-orb login-bg-orb-orange" aria-hidden="true" /><div className="login-bg-orb login-bg-orb-green" aria-hidden="true" /><section className="login-card"><div className="login-head"><img className="login-head-mark" src="/brand/myticket-mark.png" alt="Myticket" /><h1 className="login-head-title">Sign in to Inbox</h1><p className="login-head-subtitle">Myticket WhatsApp inbox</p></div><form className="login-form" onSubmit={(event) => { event.preventDefault(); void signIn() }}><label htmlFor="login-email">EMAIL</label><div className="login-input-wrap"><span className="login-field-icon" aria-hidden="true">✉</span><input id="login-email" aria-label="Email" type="email" placeholder="you@example.com" value={authEmail} onChange={(event) => setAuthEmail(event.target.value)} required /></div><label htmlFor="login-password">PASSWORD</label><div className="login-input-wrap"><span className="login-field-icon login-lock" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15" r="1"/></svg></span><input id="login-password" aria-label="Password" type="password" placeholder="Enter your password" value={authPassword} onChange={(event) => setAuthPassword(event.target.value)} required /></div><button className="send-btn login-submit" type="submit" disabled={authBusy}>{authBusy ? 'Signing in…' : <>Sign in <span aria-hidden="true">→</span></>}</button></form>{authError && <p className="login-error" role="alert">{authError}</p>}<div className="login-security"><span className="login-check">✓</span><span>Secure shared messaging workspace<br/>for your support team.</span></div></section><p className="login-help">Trouble logging in? <strong>Contact Organization Administrator</strong></p><p className="login-privacy-link"><a href="/privacy">Privacy Policy</a></p><footer className="login-page-footer"><span>© 2026 Myticket. All rights reserved.</span><span>WhatsApp Shared Inbox · Secure team access</span></footer></main>
   return <main className={`app-shell ${mobileChatOpen ? "mobile-chat-open" : "mobile-inbox-open"} ${mobileDetailsOpen ? "mobile-details-open" : ""} ${desktopSidebarCollapsed ? "desktop-rail-collapsed" : ""}`}>
     {showPushPrompt && <div className="push-permission-overlay"><section className="push-permission-card" role="dialog" aria-modal="true" aria-labelledby="push-permission-title"><div className="push-permission-icon"><Bell size={22}/></div><h2 id="push-permission-title">Stay updated with new messages</h2><p>Allow Myticket Shared Inbox to notify you when customers send new WhatsApp messages, even when you are away from the inbox.</p><div className="push-permission-actions"><button type="button" className="push-permission-later" onClick={() => { sessionStorage.setItem('myticket-push-prompt-dismissed','1');setShowPushPrompt(false) }}>Not now</button><button type="button" className="push-permission-allow" onClick={() => { setShowPushPrompt(false);void configureBrowserPush() }}>Enable notifications</button></div><small>On iPhone or iPad, add the inbox to your Home Screen first to enable push notifications.</small></section></div>}
