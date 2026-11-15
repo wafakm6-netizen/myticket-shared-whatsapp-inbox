@@ -2497,3 +2497,43 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
 .auth-loading-bar i{position:absolute;top:0;left:0;height:100%;width:40%;border-radius:2px;background:#ff5a1f;animation:auth-loading-slide 1.2s cubic-bezier(.45,0,.2,1) infinite}
 @keyframes auth-loading-slide{0%{transform:translateX(-100%)}100%{transform:translateX(250%)}}
 @media (prefers-reduced-motion:reduce){.auth-loading-bar i{animation-duration:2.4s}}
+
+/* Sidebar logo: the outlined speech-bubble mark (same as the login page). */
+.app-shell .rail .brand-mark img{border-radius:0!important;object-fit:contain!important}
+
+/* Inbox skeleton shown while a signed-in agent's chats load. */
+.inbox-skeleton{position:fixed;inset:0;display:flex;background:#f6f3f0;overflow:hidden}
+.inbox-skeleton .sk{display:block;height:10px;border-radius:6px;background:linear-gradient(90deg,#ebe7e3 0%,#f6f3f0 40%,#ebe7e3 80%);background-size:300% 100%;animation:sk-shimmer 1.4s ease-in-out infinite}
+@keyframes sk-shimmer{0%{background-position:100% 0}100%{background-position:0 0}}
+@media (prefers-reduced-motion:reduce){.inbox-skeleton .sk{animation:none}}
+.sk-rail{width:88px;flex:0 0 88px;background:#fff;border-right:1px solid #ece6e1;display:flex;flex-direction:column;align-items:center;gap:22px}
+.sk-rail .sk-logo{width:42px;height:42px;object-fit:contain;margin:19px 0 4px}
+.sk-rail i{display:block;width:26px;height:26px;border-radius:8px;background:#ebe7e3}
+.sk-list{width:330px;flex:0 0 330px;background:#fff;border-right:1px solid #ece6e1;display:flex;flex-direction:column}
+.sk-list-head{height:80px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid #ece6e1}
+.sk-list-head .w55{width:55%;height:12px}.sk-list-head .dot{width:30px;height:30px;border-radius:50%}
+.sk-search{margin:14px 12px 10px;height:34px!important;border-radius:9px!important}
+.sk-tabs{display:flex;gap:8px;padding:0 12px 12px;border-bottom:1px solid #ece6e1}.sk-tabs .sk{width:62px;height:26px;border-radius:999px}
+.sk-row{display:flex;gap:12px;padding:16px 16px;border-bottom:1px solid #f1ece8}.sk-row>div{flex:1;display:flex;flex-direction:column;gap:9px;padding-top:5px}
+.sk-avatar{width:40px!important;height:40px!important;border-radius:50%!important;flex:0 0 auto}
+.sk-chat{flex:1;display:flex;flex-direction:column;min-width:0}
+.sk-chat-head{height:80px;display:flex;align-items:center;gap:12px;padding:0 20px;background:#fff;border-bottom:1px solid #ece6e1}.sk-chat-head .w30{width:180px;height:12px}
+.sk-thread{flex:1;display:flex;flex-direction:column;gap:14px;padding:26px 8%}
+.sk-thread .sk{height:42px;border-radius:14px}.sk-thread .tall{height:64px}.sk-thread .out{align-self:flex-end;background:linear-gradient(90deg,#ffd9cb 0%,#ffe8df 40%,#ffd9cb 80%);background-size:300% 100%}
+.sk-thread .w35{width:35%}.sk-thread .w40{width:40%}.sk-thread .w45{width:45%}.sk-thread .w50{width:50%}.sk-thread .w60{width:60%}
+.sk-composer{margin:0 8% 22px;height:52px!important;border-radius:14px!important}
+.sk-tabbar{display:none}
+@media (max-width:900px){
+ .sk-rail,.sk-chat{display:none}
+ .sk-list{width:100%;flex:1;border-right:0}
+ .sk-list-head{height:auto;padding:58px 18px 12px;border-bottom:0}.sk-list-head .w55{width:40%;height:22px}
+ .sk-search{height:40px!important;border-radius:20px!important}
+ .sk-tabs{border-bottom:0}
+ .sk-row{border-bottom:0;padding:12px 16px}.sk-avatar{width:50px!important;height:50px!important}
+ .sk-tabbar{display:flex;justify-content:space-around;align-items:center;position:absolute;left:16px;right:16px;bottom:18px;height:64px;border-radius:32px;background:#fff;box-shadow:0 6px 24px rgba(16,42,67,.1)}
+ .sk-tabbar i{display:block;width:26px;height:26px;border-radius:8px;background:#ebe7e3}
+}
+.sk-list>*{flex-shrink:0}
+.inbox-skeleton .sk{background:linear-gradient(90deg,#e8e3de 0%,#f3efeb 40%,#e8e3de 80%);background-size:300% 100%}
+.sk-rail i,.sk-tabbar i{background:#e8e3de!important}
+.inbox-skeleton .sk-thread .out{background:linear-gradient(90deg,#ffd9cb 0%,#ffe8df 40%,#ffd9cb 80%);background-size:300% 100%}

@@ -481,6 +481,20 @@ html[data-theme="dark"] .app-shell .profile-menu-v2 .logout-button:hover{backgro
 html[data-theme="dark"] .auth-loading-shell{background:#141a21}
 html[data-theme="dark"] .auth-loading-bar{background:#3f2318}
 html[data-theme="dark"] .auth-loading-bar i{background:#ff5a1f}
+html[data-theme="dark"] .inbox-skeleton{background:#192129}
+html[data-theme="dark"] .inbox-skeleton .sk{background:linear-gradient(90deg,#1e2732 0%,#192129 40%,#1e2732 80%)}
+html[data-theme="dark"] .sk-rail{background:#141a21;border-right:1px solid #1f2732}
+html[data-theme="dark"] .sk-rail i{background:#1e2732}
+html[data-theme="dark"] .sk-list{background:#141a21;border-right:1px solid #1f2732}
+html[data-theme="dark"] .sk-list-head{border-bottom:1px solid #1f2732}
+html[data-theme="dark"] .sk-tabs{border-bottom:1px solid #1f2732}
+html[data-theme="dark"] .sk-row{border-bottom:1px solid #1c242e}
+html[data-theme="dark"] .sk-chat-head{background:#141a21;border-bottom:1px solid #1f2732}
+html[data-theme="dark"] .sk-thread .out{background:linear-gradient(90deg,#3f2218 0%,#3f2318 40%,#3f2218 80%)}
+@media (max-width:900px){html[data-theme="dark"] .sk-list{border-right:0}html[data-theme="dark"] .sk-list-head{border-bottom:0}html[data-theme="dark"] .sk-tabs{border-bottom:0}html[data-theme="dark"] .sk-row{border-bottom:0}html[data-theme="dark"] .sk-tabbar{background:#141a21}html[data-theme="dark"] .sk-tabbar i{background:#1e2732}}
+html[data-theme="dark"] .inbox-skeleton .sk{background:linear-gradient(90deg,#202934 0%,#1b232c 40%,#202934 80%)}
+html[data-theme="dark"] .sk-rail i,html[data-theme="dark"] .sk-tabbar i{background:#202934!important}
+html[data-theme="dark"] .inbox-skeleton .sk-thread .out{background:linear-gradient(90deg,#3f2218 0%,#3f2318 40%,#3f2218 80%)}
 html[data-theme="dark"] .conversation-modal{border:1px solid #1e2630}
 html[data-theme="dark"] .conversation-modal .modal-header{background:#141a21}
 html[data-theme="dark"] .conversation-modal .conversation-form input,html[data-theme="dark"] .conversation-modal .conversation-form textarea{border-color:#202a35}
