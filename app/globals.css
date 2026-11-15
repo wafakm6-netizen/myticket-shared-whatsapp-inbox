@@ -2466,3 +2466,10 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
  .app-shell .inbox-pane .filter-tabs button{padding-left:5px!important;padding-right:5px!important;font-size:11px!important}
  .app-shell .inbox-pane .filter-tabs button span{padding:1px 4px!important;margin-left:2px!important}
 }
+/* Collapsed sidebar: keep a small logo in the header band (so Inbox isn't jammed at the top) and a dot for unread chats. */
+@media (min-width:901px){
+ .app-shell.desktop-rail-collapsed>.rail .brand-mark{display:flex!important;height:80px!important;margin:0 auto 12px!important;align-items:center!important;justify-content:center!important}
+ .app-shell.desktop-rail-collapsed>.rail .brand-mark img{width:32px!important;height:32px!important;max-width:32px!important;border-radius:9px!important}
+ .app-shell.desktop-rail-collapsed>.rail .rail-item b{display:block!important;position:absolute!important;top:5px!important;right:7px!important;width:10px!important;min-width:10px!important;height:10px!important;padding:0!important;font-size:0!important;border-radius:50%!important}
+}
+.app-shell .rail .brand-mark img{box-shadow:none!important;filter:none!important}
