@@ -2392,3 +2392,25 @@ html,body{font-family:Arial,Helvetica,sans-serif}
 .app-shell .composer-note-bar button{display:grid;place-items:center;width:24px;height:24px;border:0;border-radius:50%;background:rgba(107,82,0,.12);color:#6b5200;cursor:pointer;flex:0 0 auto}
 @media (max-width:900px){.app-shell .composer-note-bar{margin:0 12px 6px}}
 .app-shell .chat-pane .composer-wrap.composer-note-mode .composer .composer-plus-wrap,.app-shell .chat-pane .composer-wrap.composer-note-mode .composer .composer-sticker-wrap{display:none!important}
+
+/* Login brand: speech-bubble mark, wordmark and subtitle stacked with even spacing. */
+.login-card .login-brand-lockup{width:auto!important;display:flex!important;flex-direction:column;align-items:center;gap:0;margin:0 auto 18px!important}
+.login-card .login-brand-mark{display:block;width:58px;height:auto;margin:0 0 12px}
+.login-card .login-brand-wordmark{display:block;width:150px;height:auto;margin:0}
+.login-card .login-brand-subtitle{margin-top:10px!important;font-size:9px!important;letter-spacing:3px!important;line-height:1!important;color:#5b6b7f}
+@media (max-width:620px){.login-card .login-brand-mark{width:52px}.login-card .login-brand-wordmark{width:140px}}
+
+/* Minimal login header: speech-bubble mark, one heading and a short line. */
+.login-card .login-head{text-align:center;margin:0 0 26px}
+.login-card .login-head-mark{display:block;width:56px;height:auto;margin:0 auto 18px}
+.login-card .login-head-title{margin:0 0 6px;font-size:24px;font-weight:600;line-height:1.2;letter-spacing:-.01em;color:#1c2940}
+.login-card .login-head-subtitle{margin:0;font-size:14px;color:#7a8696}
+@media (max-width:620px){.login-card .login-head-title{font-size:22px}.login-card .login-head{margin-bottom:22px}}
+.login-card .login-head-mark{width:72px}
+.login-card .login-head-subtitle{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:3px;line-height:1.4}
+@media (max-width:620px){.login-card .login-head-mark{width:66px}.login-card .login-head-subtitle{font-size:9.5px;letter-spacing:2.6px}}
+
+/* Sidebar: the orange app icon on top, and a readable unread badge on Inbox. */
+.app-shell .rail .brand-mark{width:auto!important;height:auto!important;flex:0 0 auto!important;margin:0 auto 26px!important;border:0!important;background:transparent!important;overflow:visible!important;display:flex!important;justify-content:center}
+.app-shell .rail .brand-mark img{width:42px!important;height:42px!important;max-width:42px!important;border-radius:11px!important;object-fit:cover!important;box-shadow:0 2px 6px rgba(255,90,31,.25)}
+.app-shell .rail .rail-item b{color:#fff!important;width:auto!important;min-width:18px!important;height:18px!important;padding:0 5px!important;box-sizing:border-box!important;border-radius:9px!important;background:#ff5a1f!important;border:2px solid #fff!important;font-size:10px!important;font-weight:700!important;line-height:14px!important;text-align:center!important}
