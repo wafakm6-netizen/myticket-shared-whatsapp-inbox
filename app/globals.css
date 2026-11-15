@@ -2414,3 +2414,16 @@ html,body{font-family:Arial,Helvetica,sans-serif}
 .app-shell .rail .brand-mark{width:auto!important;height:auto!important;flex:0 0 auto!important;margin:0 auto 26px!important;border:0!important;background:transparent!important;overflow:visible!important;display:flex!important;justify-content:center}
 .app-shell .rail .brand-mark img{width:42px!important;height:42px!important;max-width:42px!important;border-radius:11px!important;object-fit:cover!important;box-shadow:0 2px 6px rgba(255,90,31,.25)}
 .app-shell .rail .rail-item b{color:#fff!important;width:auto!important;min-width:18px!important;height:18px!important;padding:0 5px!important;box-sizing:border-box!important;border-radius:9px!important;background:#ff5a1f!important;border:2px solid #fff!important;font-size:10px!important;font-weight:700!important;line-height:14px!important;text-align:center!important}
+/* Keep all four filter tabs (All, Unassigned, Open, @) visible in the narrow list pane. */
+@media (min-width:901px){
+ .app-shell .inbox-pane .filter-tabs{gap:6px!important;padding-left:12px!important;padding-right:12px!important}
+ .app-shell .inbox-pane .filter-tabs button{padding-left:10px!important;padding-right:10px!important;white-space:nowrap}
+ .app-shell .inbox-pane .filter-tabs .filter-tab-mentions{font-weight:700;font-size:14px!important;min-width:36px}
+}
+.app-shell .inbox-pane .filter-tabs .filter-tab-mentions span{margin-left:4px}
+@media (min-width:901px) and (max-width:1366px){
+ .app-shell .inbox-pane .filter-tabs{gap:4px!important;padding-left:8px!important;padding-right:8px!important}
+ .app-shell .inbox-pane .filter-tabs button{padding-left:7px!important;padding-right:7px!important;font-size:11.5px!important}
+ .app-shell .inbox-pane .filter-tabs button span{font-size:10px!important}
+ .app-shell .inbox-pane .filter-tabs .filter-tab-mentions{font-size:13px!important;min-width:32px}
+}
