@@ -2406,3 +2406,6 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
 .login-card .login-head-title{margin:0 0 6px;font-size:24px;font-weight:600;line-height:1.2;letter-spacing:-.01em;color:#1c2940}
 .login-card .login-head-subtitle{margin:0;font-size:14px;color:#7a8696}
 @media (max-width:620px){.login-card .login-head-title{font-size:22px}.login-card .login-head{margin-bottom:22px}}
+.login-card .login-head-mark{width:72px}
+.login-card .login-head-subtitle{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:3px;line-height:1.4}
+@media (max-width:620px){.login-card .login-head-mark{width:66px}.login-card .login-head-subtitle{font-size:9.5px;letter-spacing:2.6px}}
