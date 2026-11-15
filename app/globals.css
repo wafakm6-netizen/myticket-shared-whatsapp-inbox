@@ -2399,3 +2399,10 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
 .login-card .login-brand-wordmark{display:block;width:150px;height:auto;margin:0}
 .login-card .login-brand-subtitle{margin-top:10px!important;font-size:9px!important;letter-spacing:3px!important;line-height:1!important;color:#5b6b7f}
 @media (max-width:620px){.login-card .login-brand-mark{width:52px}.login-card .login-brand-wordmark{width:140px}}
+
+/* Minimal login header: speech-bubble mark, one heading and a short line. */
+.login-card .login-head{text-align:center;margin:0 0 26px}
+.login-card .login-head-mark{display:block;width:56px;height:auto;margin:0 auto 18px}
+.login-card .login-head-title{margin:0 0 6px;font-size:24px;font-weight:600;line-height:1.2;letter-spacing:-.01em;color:#1c2940}
+.login-card .login-head-subtitle{margin:0;font-size:14px;color:#7a8696}
+@media (max-width:620px){.login-card .login-head-title{font-size:22px}.login-card .login-head{margin-bottom:22px}}
