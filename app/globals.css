@@ -2432,3 +2432,22 @@ html,body{font-family:Arial,Helvetica,sans-serif}
  .app-shell>.rail{padding-top:0!important}
  .app-shell .rail .brand-mark{height:80px!important;margin:0 auto 12px!important;align-items:center!important}
 }
+
+/* Profile menu: name and email, an Available/Away switch, account, and Log out. Opens beside the avatar, bottoms aligned. */
+.app-shell .rail .profile-menu.profile-menu-v2{left:calc(100% + 12px)!important;right:auto!important;top:auto!important;bottom:0!important;width:244px!important;padding:8px!important;border-radius:14px!important;border:1px solid #e6ebf1!important;box-shadow:0 14px 36px rgba(16,42,67,.16)!important;display:flex!important;flex-direction:column!important;gap:0!important;background:#fff!important}
+.app-shell .profile-menu-v2 .profile-menu-head{display:flex;flex-direction:column;gap:2px;padding:8px 10px 10px;min-width:0}
+.app-shell .profile-menu-v2 .profile-menu-head strong{font-size:14px!important;font-weight:600;color:#1c2940;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.app-shell .profile-menu-v2 .profile-menu-head span{font-size:12px;color:#7a8696;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.app-shell .profile-menu-v2 .profile-menu-sep{height:1px;background:#eef1f5;margin:4px 4px}
+.app-shell .profile-menu-v2 .profile-menu-row{display:flex!important;align-items:center;gap:10px;width:100%;padding:9px 10px!important;border:0;border-radius:9px!important;background:transparent;color:#2b3a52!important;font-size:13.5px!important;text-align:left;cursor:pointer}
+.app-shell .profile-menu-v2 .profile-menu-row:hover{background:#f4f6f9!important;color:#1c2940!important}
+.app-shell .profile-menu-v2 .profile-menu-row svg{color:#6b7a8c;flex:0 0 auto}
+.app-shell .profile-menu-v2 .profile-menu-label{flex:1;min-width:0}
+.app-shell .profile-menu-v2 .profile-status-dot{width:9px;height:9px;margin:0 4px;border-radius:50%;background:#9aa5b2;flex:0 0 auto}
+.app-shell .profile-menu-v2 .profile-status-dot.available{background:#22a861}
+.app-shell .profile-menu-v2 .profile-switch{position:relative;width:34px;height:20px;border-radius:10px;background:#cdd4dc;flex:0 0 auto;transition:background .15s}
+.app-shell .profile-menu-v2 .profile-switch i{position:absolute;left:2px;top:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);transition:left .15s}
+.app-shell .profile-menu-v2 .profile-switch.on{background:#22a861}
+.app-shell .profile-menu-v2 .profile-switch.on i{left:16px}
+.app-shell .profile-menu-v2 .logout-button,.app-shell .profile-menu-v2 .logout-button svg{color:#d23a2e!important}
+.app-shell .profile-menu-v2 .logout-button:hover{background:#fdeeee!important}
