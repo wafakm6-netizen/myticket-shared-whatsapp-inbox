@@ -478,6 +478,9 @@ html[data-theme="dark"] .app-shell .profile-menu-v2 .profile-switch.on{backgroun
 html[data-theme="dark"] .app-shell .profile-menu-v2 .logout-button,html[data-theme="dark"] .app-shell .profile-menu-v2 .logout-button svg{color:#d23a2e!important}
 html[data-theme="dark"] .app-shell .profile-menu-v2 .logout-button:hover{background:#3f1818!important}
 @media (min-width:901px){html[data-theme="dark"] .app-shell .inbox-pane .filter-tabs button{color:#b5beca!important;background:transparent!important;border:0!important}html[data-theme="dark"] .app-shell .inbox-pane .filter-tabs button span{background:transparent!important;color:inherit!important}html[data-theme="dark"] .app-shell .inbox-pane .filter-tabs button.selected{background:#ff5a1f!important;color:#fff!important}html[data-theme="dark"] .app-shell .inbox-pane .filter-tabs .filter-tab-mentions span{background:#ff5a1f!important;color:#fff!important}html[data-theme="dark"] .app-shell .inbox-pane .filter-tabs .filter-tab-mentions.selected span{background:#141a21!important;color:#ff5a1f!important}}
+html[data-theme="dark"] .auth-loading-shell{background:#141a21}
+html[data-theme="dark"] .auth-loading-bar{background:#3f2318}
+html[data-theme="dark"] .auth-loading-bar i{background:#ff5a1f}
 html[data-theme="dark"] .conversation-modal{border:1px solid #1e2630}
 html[data-theme="dark"] .conversation-modal .modal-header{background:#141a21}
 html[data-theme="dark"] .conversation-modal .conversation-form input,html[data-theme="dark"] .conversation-modal .conversation-form textarea{border-color:#202a35}
