@@ -66,3 +66,14 @@ html[data-theme="dark"] ::-webkit-scrollbar{width:10px;height:10px;background:tr
 html[data-theme="dark"] ::-webkit-scrollbar-thumb{background:#334050;border-radius:8px;border:2px solid transparent;background-clip:padding-box}
 html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover{background:#435366;background-clip:padding-box}
 html[data-theme="dark"] ::-webkit-scrollbar-track,html[data-theme="dark"] ::-webkit-scrollbar-corner{background:transparent}
+
+/* Browser autofill paints inputs light blue; keep autofilled fields dark like the rest */
+html[data-theme="dark"] .login-input-wrap{background:#1a222c!important;border-color:#2d3743!important}
+html[data-theme="dark"] .login-input-wrap input{background:transparent!important}
+html[data-theme="dark"] input:-webkit-autofill,html[data-theme="dark"] input:-webkit-autofill:hover,html[data-theme="dark"] input:-webkit-autofill:focus,html[data-theme="dark"] input:-webkit-autofill:active{-webkit-text-fill-color:#e8edf3!important;caret-color:#e8edf3;-webkit-box-shadow:0 0 0 1000px #1a222c inset!important;box-shadow:0 0 0 1000px #1a222c inset!important;transition:background-color 9999s ease-out 0s}
+html[data-theme="dark"] input:autofill{background:#1a222c!important;color:#e8edf3!important}
+
+/* Pop-up windows (New conversation, Team, Saved replies…): clear edge and soft shadow, darker backdrop */
+html[data-theme="dark"] .modal-backdrop,html[data-theme="dark"] .tag-manager-backdrop{background:rgba(3,6,10,.62)!important}
+html[data-theme="dark"] .modal-backdrop>section,html[data-theme="dark"] .modal-backdrop>div,html[data-theme="dark"] .conversation-modal,html[data-theme="dark"] .tag-manager-modal{border:1px solid #2f3a48!important;box-shadow:0 0 0 1px rgba(255,255,255,.03),0 24px 64px rgba(0,0,0,.6)!important}
+html[data-theme="dark"] .login-input-wrap .login-field-icon{background:transparent!important}
