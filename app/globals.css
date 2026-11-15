@@ -2473,3 +2473,18 @@ html,body{font-family:var(--font-plex-latin),var(--font-plex-arabic),sans-serif}
  .app-shell.desktop-rail-collapsed>.rail .rail-item b{display:block!important;position:absolute!important;top:5px!important;right:7px!important;width:10px!important;min-width:10px!important;height:10px!important;padding:0!important;font-size:0!important;border-radius:50%!important}
 }
 .app-shell .rail .brand-mark img{box-shadow:none!important;filter:none!important}
+
+/* Notes empty state: same side padding as the rest of the card. */
+.app-shell .details-pane .notes-empty{margin:2px 0 0;padding:0 16px 14px}
+
+/* Chat list tabs: clean labels, counts as light text (hidden when zero) instead of nested pills. */
+@media (min-width:901px){
+ .app-shell .inbox-pane .filter-tabs button{display:inline-flex!important;align-items:center;gap:5px;height:28px;border-radius:999px!important;font-size:12px!important;font-weight:500!important;line-height:1!important;letter-spacing:0!important;color:#5b6b7f!important;background:transparent!important;border:0!important}
+ .app-shell .inbox-pane .filter-tabs button span{background:transparent!important;padding:0!important;margin:0!important;border-radius:0!important;font-size:11.5px!important;font-weight:500!important;color:inherit!important;opacity:.6;min-width:0!important}
+ .app-shell .inbox-pane .filter-tabs button.selected{background:#ff5a1f!important;color:#fff!important;font-weight:600!important}
+ .app-shell .inbox-pane .filter-tabs button.selected span{opacity:.85}
+ .app-shell .inbox-pane .filter-tabs .filter-tab-mentions span{opacity:1;background:#ff5a1f!important;color:#fff!important;border-radius:8px!important;padding:1px 5px!important;font-size:10px!important}
+ .app-shell .inbox-pane .filter-tabs .filter-tab-mentions.selected span{background:#fff!important;color:#ff5a1f!important}
+}
+@media (min-width:901px) and (max-width:1366px){.app-shell .inbox-pane .filter-tabs button{font-size:11.5px!important;padding-left:8px!important;padding-right:8px!important}}
+@media (min-width:901px) and (max-width:1100px){.app-shell .inbox-pane .filter-tabs button{font-size:11px!important;padding-left:6px!important;padding-right:6px!important;gap:4px}.app-shell .inbox-pane .filter-tabs{gap:1px!important}}
