@@ -2537,3 +2537,7 @@ html,body{font-family:Arial,Helvetica,sans-serif}
 .inbox-skeleton .sk{background:linear-gradient(90deg,#e8e3de 0%,#f3efeb 40%,#e8e3de 80%);background-size:300% 100%}
 .sk-rail i,.sk-tabbar i{background:#e8e3de!important}
 .inbox-skeleton .sk-thread .out{background:linear-gradient(90deg,#ffd9cb 0%,#ffe8df 40%,#ffd9cb 80%);background-size:300% 100%}
+/* Which loader shows is decided before first paint (layout.tsx sets html[data-session] when an auth token exists). */
+.inbox-skeleton{display:none!important}
+html[data-session="1"] .inbox-skeleton{display:flex!important}
+html[data-session="1"] .auth-loading-shell{display:none!important}
