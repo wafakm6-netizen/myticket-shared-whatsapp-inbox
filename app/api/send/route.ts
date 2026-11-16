@@ -6,6 +6,32 @@ function normalizeWhatsAppNumber(value: string) {
   return value.trim().replace(/[^0-9]/g, '')
 }
 
+// Download a WhatsApp media item and upload it again, giving a new media ID this business number can send.
+async function copyWhatsAppMedia(sourceId: string, token: string, phoneNumberId: string, name: string) {
+  const graph = process.env.META_GRAPH_VERSION ?? 'v23.0'
+  try {
+    const metaResponse = await fetch(`https://graph.facebook.com/${graph}/${encodeURIComponent(sourceId)}`, { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' })
+    const meta = await metaResponse.json().catch(() => null)
+    if (!metaResponse.ok || typeof meta?.url !== 'string') return null
+    const fileResponse = await fetch(meta.url, { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' })
+    if (!fileResponse.ok) return null
+    const mimeType = String(meta.mime_type || fileResponse.headers.get('content-type') || 'application/octet-stream').split(';')[0].trim()
+    const extension = mimeType.split('/')[1]?.replace('mpeg', 'mp3').replace('quicktime', 'mov') || 'bin'
+    const fileName = name && /\.[a-z0-9]{2,5}$/i.test(name) ? name : `forwarded.${extension}`
+    const upload = new FormData()
+    upload.append('messaging_product', 'whatsapp')
+    upload.append('type', mimeType)
+    upload.append('file', new File([await fileResponse.arrayBuffer()], fileName, { type: mimeType }), fileName)
+    const uploadResponse = await fetch(`https://graph.facebook.com/${graph}/${phoneNumberId}/media`, { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: upload })
+    const uploaded = await uploadResponse.json().catch(() => null)
+    if (!uploadResponse.ok || typeof uploaded?.id !== 'string') { console.error('[send] forward media upload rejected', uploaded?.error?.message); return null }
+    return { id: uploaded.id as string, mimeType }
+  } catch (error) {
+    console.error('[send] forward media copy failed', error)
+    return null
+  }
+}
+
 function maskPhone(value: string) {
   return value.length <= 4 ? '****' : `${'*'.repeat(Math.max(4, value.length - 4))}${value.slice(-4)}`
 }
@@ -14,11 +40,12 @@ export async function POST(request: NextRequest) {
   const auth = await requireAgent()
   if (auth.error) return auth.error
 
-  const { to, text, conversationId, attachmentUrl, attachmentName, attachmentType, mediaId, template, replyToMessageId, reaction } = await request.json().catch(() => ({}))
+  // eslint-disable-next-line prefer-const
+  let { to, text, conversationId, attachmentUrl, attachmentName, attachmentType, mediaId, template, replyToMessageId, reaction, forwardAttachmentUrl } = await request.json().catch(() => ({}))
   const messageText = typeof text === 'string' ? text.trim() : ''
   const reactionEmoji = typeof reaction?.emoji === 'string' ? reaction.emoji.trim() : ''
   if (reaction && (typeof reaction.emoji !== 'string' || reactionEmoji.length > 16 || typeof reaction.messageId !== 'string')) return NextResponse.json({ error: 'Invalid reaction.' }, { status: 400 })
-  if (typeof to !== 'string' || !to.trim() || (!reaction && !template && !mediaId && !attachmentUrl && (typeof text !== 'string' || !text.trim()))) {
+  if (typeof to !== 'string' || !to.trim() || (!reaction && !template && !mediaId && !attachmentUrl && !forwardAttachmentUrl && (typeof text !== 'string' || !text.trim()))) {
     return NextResponse.json({ error: 'Both recipient and message are required.' }, { status: 400 })
   }
 
@@ -96,13 +123,28 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message })
     }
 
+    // Forwarding an attachment: media stored with WhatsApp (shown through /api/media) is downloaded and uploaded again,
+    // because a received media ID cannot be sent on; a public link is passed on as it is.
+    if (typeof forwardAttachmentUrl === 'string' && forwardAttachmentUrl && !template) {
+      const sourceId = /^\/api\/media\?mediaId=([^&]+)$/.exec(forwardAttachmentUrl)?.[1]
+      if (sourceId) {
+        const copied = await copyWhatsAppMedia(decodeURIComponent(sourceId), token, phoneNumberId, typeof attachmentName === 'string' ? attachmentName : '')
+        if (!copied) return NextResponse.json({ error: 'This attachment could not be copied for forwarding.' }, { status: 502 })
+        mediaId = copied.id
+        attachmentType = copied.mimeType
+        attachmentUrl = undefined
+      } else if (/^https:\/\//.test(forwardAttachmentUrl)) {
+        attachmentUrl = forwardAttachmentUrl
+      } else return NextResponse.json({ error: 'This attachment cannot be forwarded.' }, { status: 400 })
+    }
+
     if (template && (mediaId || attachmentUrl)) return NextResponse.json({ error: 'Template messages cannot include a separate attachment.' }, { status: 400 })
     if (template && (typeof template.name !== 'string' || !/^[a-z0-9_]{1,512}$/.test(template.name) || typeof template.languageCode !== 'string' || !/^[a-z]{2,3}(?:_[A-Z]{2})?$/.test(template.languageCode) || !Array.isArray(template.parameters) || template.parameters.some((p: unknown) => typeof p !== 'string' || !p.trim()))) return NextResponse.json({ error: 'Invalid template selection or missing variables.' }, { status: 400 })
     if (template?.header && (!['image', 'document'].includes(template.header.type) || typeof template.header.id !== 'string' || !/^\d{8,30}$/.test(template.header.id))) return NextResponse.json({ error: 'Invalid template media attachment.' }, { status: 400 })
-    const type = template ? 'template' : mediaId ? (attachmentType === 'sticker' ? 'sticker' : attachmentType?.startsWith('image/') ? 'image' : attachmentType?.startsWith('audio/') || !attachmentType ? 'audio' : 'document') : attachmentUrl ? (attachmentType?.startsWith('image/') ? 'image' : 'document') : 'text'
+    const type = template ? 'template' : mediaId ? (attachmentType === 'sticker' || attachmentType === 'image/webp' ? 'sticker' : attachmentType?.startsWith('image/') ? 'image' : attachmentType?.startsWith('video/') ? 'video' : attachmentType?.startsWith('audio/') || !attachmentType ? 'audio' : 'document') : attachmentUrl ? (attachmentType?.startsWith('image/') ? 'image' : 'document') : 'text'
     const messageBody = type === 'template' ? { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type: 'template', template: { name: template.name, language: { code: template.languageCode }, ...((template.header || template.parameters.length) ? { components: [...(template.header ? [{ type: 'header', parameters: [{ type: template.header.type, [template.header.type]: { id: template.header.id, ...(template.header.type === 'document' ? { filename: template.header.filename } : {}) } }] }] : []), ...(template.parameters.length ? [{ type: 'body', parameters: template.parameters.map((value: string) => ({ type: 'text', text: value.trim() })) }] : [])] } : {}) } } : type === 'sticker' ? { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type: 'sticker', sticker: { id: mediaId } } : type === 'audio' ? { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type: 'audio', audio: { id: mediaId } } : type === 'text'
       ? { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type, text: { body: text.trim() } }
-      : { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type, [type]: { ...(mediaId ? { id: mediaId } : { link: attachmentUrl }), ...(type === 'document' && attachmentName ? { filename: attachmentName } : {}), ...(messageText ? { caption: messageText } : {}) } }
+      : { messaging_product: 'whatsapp', recipient_type: 'individual', to: recipient, type, [type]: { ...(mediaId ? { id: mediaId } : { link: attachmentUrl }), ...(type === 'document' && attachmentName ? { filename: attachmentName } : {}), ...(messageText && ['image', 'video', 'document'].includes(type) ? { caption: messageText } : {}) } }
 
     let replyToExternalId: string | null = null
     if (replyToMessageId) {
