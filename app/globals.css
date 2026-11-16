@@ -2767,3 +2767,25 @@ html[data-theme="dark"] .app-shell .inbox-pane .pane-header .pane-brand-heading 
 button[aria-label="Notifications"]{position:relative!important;overflow:visible!important}
 button[aria-label="Notifications"] .notification-count{position:absolute!important;top:-3px!important;right:-4px!important;left:auto!important;bottom:auto!important;transform:none!important;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:#ff5a1f;color:#fff;font-size:10px;font-weight:800;line-height:18px;text-align:center;box-sizing:border-box;border:2px solid #fff;pointer-events:none;z-index:2}
 html[data-theme="dark"] button[aria-label="Notifications"] .notification-count{border-color:#161d25}
+/* Phones (≤600px): WhatsApp-style single-row message bar — + · field (sticker inside) · camera · mic/send —
+   on its own soft background, with the 24-hour notice as a slim strip above it and no placeholder text. */
+@media(max-width:600px){
+ .app-shell.mobile-chat-open>.chat-pane .composer-wrap{display:flex!important;flex-direction:column;background:#f6f7f9!important;border-top:1px solid #e6eaf0!important;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))!important}
+ .app-shell.mobile-chat-open>.chat-pane .composer{row-gap:0!important;column-gap:4px!important;grid-template-columns:auto minmax(0,1fr) auto auto!important}
+ .app-shell .chat-pane .composer>*{grid-row:1}
+ .app-shell .chat-pane .composer>:not(.composer-tools):not(.composer-editor-wrap){margin-bottom:6px}
+ .app-shell .chat-pane .composer>.composer-editor-wrap{grid-column:2!important;grid-row:2!important;position:relative;min-width:0}
+ .app-shell .chat-pane .composer .composer-plus-wrap{grid-column:1!important;grid-row:2!important}
+ .app-shell .chat-pane .composer .composer-sticker-wrap{grid-column:2!important;grid-row:2!important;justify-self:end;align-self:end;margin:0 3px 3px 0!important;z-index:2}
+ .app-shell .chat-pane .composer .composer-camera{grid-column:3!important;grid-row:2!important}
+ .app-shell .chat-pane .composer .composer-mic,.app-shell .chat-pane .composer .send-btn{grid-column:4!important;grid-row:2!important}
+ .app-shell .chat-pane .composer .composer-emoji-wrap,.app-shell .chat-pane .composer .quick-reply-wrap{grid-column:1!important;grid-row:2!important}
+ .app-shell .chat-pane .composer .voice-inline{grid-column:1/-1!important;grid-row:2!important}
+ .app-shell .chat-pane .composer .emoji-composer-editor{min-height:40px!important;padding:9px 42px 9px 14px!important;border-radius:20px!important;background:#fff!important;border:1px solid #e3e8ef!important;font-size:16px!important;line-height:1.35!important}
+ .app-shell .chat-pane .composer .composer-plus,.app-shell .chat-pane .composer .composer-camera,.app-shell .chat-pane .composer .composer-sticker-wrap>button{width:40px!important;height:40px!important}
+ .app-shell .chat-pane .composer .composer-sticker-wrap>button{width:34px!important;height:34px!important}
+ .app-shell .chat-pane .composer .send-btn{width:40px!important;height:40px!important;min-width:40px!important;padding:0!important;border-radius:50%!important}
+ .app-shell .chat-pane .composer .send-btn svg{width:18px!important;height:18px!important}
+ .app-shell .chat-pane .emoji-composer-editor[data-placeholder="Type a message..."]:empty::before{content:""!important}
+ .app-shell .chat-pane .reply-window-notice{order:-1;margin:0 0 6px!important;padding:6px 10px!important;border-radius:10px!important;background:#fff4e5!important;color:#8a4b00!important;font-size:11.5px!important;line-height:1.35!important;text-align:center}
+}

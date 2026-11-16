@@ -149,3 +149,8 @@ html[data-theme="dark"] .detail-picker-menu button.is-current{background:#2e1d14
 html[data-theme="dark"] .detail-picker-button{color:#b5bfcd}html[data-theme="dark"] .detail-picker-button:hover{color:#eef2f7}
 html[data-theme="dark"] .picker-avatar{background:#4a2618;color:#ffb595}html[data-theme="dark"] .picker-avatar-empty{background:#26313d;color:#8a98a8}
 html[data-theme="dark"] .picker-presence{border-color:#1b232c}
+@media(max-width:600px){
+ html[data-theme="dark"] .app-shell.mobile-chat-open>.chat-pane .composer-wrap{background:#141a21!important;border-top-color:#1f2832!important}
+ html[data-theme="dark"] .app-shell .chat-pane .composer .emoji-composer-editor{background:#1e2732!important;border-color:#2a3542!important}
+ html[data-theme="dark"] .app-shell .chat-pane .reply-window-notice{background:#33240f!important;color:#f3c27a!important}
+}
