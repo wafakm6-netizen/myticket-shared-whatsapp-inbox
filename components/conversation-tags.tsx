@@ -50,7 +50,7 @@ export function ConversationTags({ conversationId, agentId }: { conversationId: 
       <button type="button" className="ctags-add" aria-expanded={open} onClick={() => setOpen(!open)}><Plus size={14} strokeWidth={2.4} />Add tag</button>
     </div>
     {open && <div className="ctags-menu" role="listbox" aria-label="Add a tag">
-      <label className="ctags-search"><Search size={14} /><input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search tags…" /></label>
+      <label className="ctags-search"><Search size={14} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search tags…" /></label>
       <div className="ctags-options">{available.length === 0 ? <p className="ctags-empty">{tags.length === assigned.length ? 'All tags are already added.' : 'No tags found.'}</p> : available.map((tag) => <button type="button" role="option" aria-selected="false" key={tag.id} disabled={busy === tag.id} onClick={() => void change(tag, true)}><i className={`ctag-dot ctag-${tag.color || 'gray'}`} aria-hidden="true" /><span dir="auto">{tag.name}</span></button>)}</div>
     </div>}
     {error && <p className="ctags-error">{error}</p>}
