@@ -2710,3 +2710,8 @@ html[data-theme="dark"] .app-shell .inbox-pane .pane-header .pane-brand-heading 
  .login-card .login-head-mark{width:64px;margin-bottom:20px}
  .login-card .login-head{margin-bottom:38px}
 }
+/* Search results: highlighted matches and a snippet of the matching message. */
+.search-hit{background:#ffe1d3;color:inherit;border-radius:3px;padding:0 1px}
+.conversation-search-snippet{color:#52657e}
+.conversation-search-from{color:#8a97a8;margin-right:4px;flex:0 0 auto}
+.search-empty-hint{margin:6px 0 0;font-size:12.5px;color:#8a97a8}
