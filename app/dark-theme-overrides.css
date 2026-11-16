@@ -121,3 +121,19 @@ html[data-theme="dark"] .invite-email{background:#2a1a12;border-color:#4a2a1a}
 html[data-theme="dark"] .invite-email span{color:#ffb595}
 html[data-theme="dark"] .invite-error{background:#3a1717;color:#ffb4ab}
 html[data-theme="dark"] .invite-submit:disabled{background:#26313d;color:#7b8796}
+/* Theme toggle: just the crescent (light) or sun (dark). */
+.theme-toggle{width:34px;height:34px;border:0;border-radius:50%;display:grid;place-items:center;background:transparent;color:#344866;cursor:pointer;flex:0 0 auto;transition:background .15s,transform .2s}
+.theme-toggle:hover{background:#eef1f5}
+.theme-toggle:active{transform:rotate(-20deg) scale(.92)}
+.app-shell .profile-menu-v2 .profile-theme-row{padding-top:2px!important;padding-bottom:2px!important}
+.mobile-theme-row .theme-toggle{margin-left:auto;width:38px;height:38px;background:#f2f4f7}
+html[data-theme="dark"] .theme-toggle{color:#f5c76a}
+html[data-theme="dark"] .theme-toggle:hover,html[data-theme="dark"] .mobile-theme-row .theme-toggle{background:#1e2732}
+.app-shell .profile-menu-v2 .profile-theme-row .theme-toggle,.mobile-profile .mobile-theme-row .theme-toggle{width:34px!important;height:34px!important;min-height:0!important;padding:0!important;border-radius:50%!important;display:grid!important;place-items:center!important;flex:0 0 auto!important;background:transparent!important;border:0!important;box-shadow:none!important;margin:0!important}
+.mobile-profile .mobile-theme-row .theme-toggle{width:38px!important;height:38px!important;margin-left:auto!important;background:#f2f4f7!important}
+.app-shell .profile-menu-v2 .profile-theme-row .theme-toggle svg,.mobile-profile .mobile-theme-row .theme-toggle svg{width:19px!important;height:19px!important;flex:0 0 auto;display:block;color:inherit}
+.app-shell .profile-menu-v2 .profile-theme-row .theme-toggle:hover{background:#eef1f5!important}
+html[data-theme="dark"] .app-shell .profile-menu-v2 .profile-theme-row .theme-toggle{color:#f5c76a!important}
+html[data-theme="dark"] .app-shell .profile-menu-v2 .profile-theme-row .theme-toggle:hover,html[data-theme="dark"] .mobile-profile .mobile-theme-row .theme-toggle{background:#1e2732!important;color:#f5c76a!important}
+html[data-theme="dark"] .app-shell .profile-menu-v2 .profile-theme-row,html[data-theme="dark"] .app-shell .profile-menu-v2 .profile-theme-row:hover{background:transparent!important}
+.mobile-profile .mobile-theme-row .theme-toggle{color:#344866!important}
