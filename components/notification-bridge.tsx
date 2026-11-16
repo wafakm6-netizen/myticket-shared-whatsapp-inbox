@@ -1,5 +1,6 @@
 'use client'
 
+import { createPortal } from 'react-dom'
 import { useEffect, useRef, useState } from 'react'
 import { createBrowserSupabaseClient } from '@/lib/supabase/client'
 
@@ -120,10 +121,20 @@ export function NotificationBridge() {
     setOpen(false)
   }
 
+  // The count sits inside the bell button itself, so it stays on the bell's corner whatever the layout (sidebar collapsed or not).
+  const [bellHost, setBellHost] = useState<HTMLElement | null>(null)
+  useEffect(() => {
+    const find = () => { const button = document.querySelector<HTMLElement>('button[aria-label="Notifications"]'); setBellHost((current) => current === button ? current : button) }
+    find()
+    const observer = new MutationObserver(find)
+    observer.observe(document.body, { childList: true, subtree: true })
+    return () => observer.disconnect()
+  }, [])
+
   if (!authenticated) return null
 
   return <>
-    {notices.length > 0 && <span className="notification-count" aria-label={`${notices.length} new notification${notices.length === 1 ? '' : 's'}`}>{notices.length > 99 ? '99+' : notices.length}</span>}
+    {notices.length > 0 && bellHost && createPortal(<span className="notification-count" aria-label={`${notices.length} new notification${notices.length === 1 ? '' : 's'}`}>{notices.length > 99 ? '99+' : notices.length}</span>, bellHost)}
     {open && <div className="notification-panel" role="dialog" aria-label="Notifications">
       <div className="notification-panel-head"><div><strong>Notifications</strong><span>{notices.length ? `${notices.length} new` : 'You’re all caught up'}</span></div><button type="button" onClick={() => setOpen(false)} aria-label="Close notifications">×</button></div>
       {'Notification' in globalThis && Notification.permission !== 'granted' && <button type="button" className="notification-enable" onClick={() => void enableBrowser()}>Enable browser notifications</button>}
