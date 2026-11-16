@@ -2644,3 +2644,24 @@ html[data-theme="dark"] .app-shell .inbox-pane .pane-header .pane-brand-heading 
 .forward-row-copy strong{text-align:left;unicode-bidi:plaintext}
 .forward-toast{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 76px)}
 .forward-sheet>:not(.forward-sheet-list){flex-shrink:0!important}
+/* Select mode: a bar over the chat header with the count, Copy and Forward; tap messages to tick them. */
+.chat-pane{position:relative}
+.message-select-bar{position:absolute;inset:0;z-index:5;display:flex;align-items:center;gap:6px;padding:0 10px 0 8px;background:#fff;animation:message-actions-in .14s ease-out}
+.message-select-bar strong{flex:1;font-size:17px;font-weight:700;color:#16243a}
+.message-select-bar button{width:42px;height:42px;border:0;border-radius:50%;background:transparent;color:#344866;display:grid;place-items:center;cursor:pointer}
+.message-select-bar button:hover{background:#f2f4f7}
+.message-select-bar button:disabled{opacity:.35;cursor:default}
+.message-select-bar .message-select-forward{background:#ff5a1f;color:#fff}
+.message-select-bar .message-select-forward:hover{background:#f04d12}
+.message-select-bar .message-select-forward:disabled{background:#d6dbe2;color:#7b8796;opacity:1}
+.chat-pane.select-mode .message-row{cursor:pointer;position:relative;padding-left:36px!important;transition:background .12s}
+.chat-pane.select-mode .message-row.is-selected{background:rgba(255,90,31,.10)}
+.message-select-check{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;border:2px solid #b8c2cf;background:#fff;display:grid;place-items:center;color:#fff;box-sizing:border-box;z-index:2}
+.message-row.is-selected .message-select-check{background:#ff5a1f;border-color:#ff5a1f}
+.chat-pane.select-mode .message-row *{pointer-events:none}
+.chat-pane.select-mode .composer{opacity:.4;pointer-events:none}
+.forward-preview-lines{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.forward-preview-lines strong{font-size:12.5px;font-weight:700;color:#e6531a}
+.forward-preview-lines p{-webkit-line-clamp:2!important}
+.forward-preview-lines small{font-size:12px;color:#8a97a8}
+.chat-pane .chat-header{position:relative}
