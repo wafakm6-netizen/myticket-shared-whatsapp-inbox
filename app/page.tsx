@@ -1052,7 +1052,7 @@ export default function Page() {
   const [themePref, setThemePref] = useState<'light' | 'dark' | 'system'>(() => { try { const saved = localStorage.getItem('inbox-theme'); return saved === 'light' || saved === 'dark' ? saved : 'system' } catch { return 'system' } })
   useEffect(() => {
     const media = window.matchMedia('(prefers-color-scheme: dark)')
-    const apply = () => { document.documentElement.dataset.theme = themePref === 'dark' || (themePref === 'system' && media.matches) ? 'dark' : 'light' }
+    const apply = () => { const dark = themePref === 'dark' || (themePref === 'system' && media.matches); const applyTheme = (window as unknown as { __applyTheme?: (dark: boolean) => void }).__applyTheme; if (applyTheme) applyTheme(dark); else document.documentElement.dataset.theme = dark ? 'dark' : 'light' }
     apply()
     try { localStorage.setItem('inbox-theme', themePref) } catch {}
     media.addEventListener('change', apply)
