@@ -25,12 +25,11 @@ export function TagNavBridge(){
     const rows=payload.conversations??[]
     cards.forEach((card,index)=>{
       const row=rows[index];if(!row)return
-      const contact=Array.isArray(row.whatsapp_contacts)?row.whatsapp_contacts[0]:row.whatsapp_contacts
       const typeBadge=card.querySelector('.type-badge') as HTMLElement|null;if(!typeBadge)return
       const assignments=row.whatsapp_conversation_tags??[]
       const tags:TagItem[]=assignments.map((a:any)=>{const t=Array.isArray(a.whatsapp_tags)?a.whatsapp_tags[0]:a.whatsapp_tags;return t}).filter(Boolean)
       if(tags.length){const wrap=document.createElement('span');wrap.className='conversation-inline-tags';tags.forEach(t=>{const pill=document.createElement('span');pill.className=`conversation-inline-tag tag-pill-${t.color||'gray'}`;pill.textContent=t.name;wrap.appendChild(pill)});typeBadge.insertAdjacentElement('afterend',wrap)}
-      const add=document.createElement('span');add.className='conversation-tag-add';add.textContent='+';add.title='Add or remove tags';add.setAttribute('role','button');add.setAttribute('tabindex','0');add.dataset.conversationId=row.id;add.dataset.conversationName=contact?.display_name||'Conversation';(tags.length?typeBadge.parentElement?.querySelector('.conversation-inline-tags'):typeBadge)?.insertAdjacentElement('afterend',add)
+      // Tags are added from the chat's Contact details panel, so the list rows stay uncluttered.
     })
    }catch{}
   }
