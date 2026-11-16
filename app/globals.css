@@ -2685,8 +2685,8 @@ html[data-theme="dark"] .app-shell .inbox-pane .pane-header .pane-brand-heading 
 .invite-hint-error{color:#b42318}
 .invite-submit{height:50px;border:0;border-radius:14px;background:#ff5a1f;color:#fff;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 6px 16px #ff5a1f40}
 .invite-submit:disabled{background:#d6dbe2;color:#7b8796;box-shadow:none;cursor:default}
-/* Phones: larger chat list rows (avatar, name, preview, time, badges) for easier reading and tapping. */
-@media(max-width:900px){
+/* Phones only (not iPad or desktop): larger chat list rows (avatar, name, preview, time, badges). */
+@media(max-width:600px){
  .app-shell .inbox-pane .conversation{padding:13px 16px!important;gap:14px!important}
  .app-shell .inbox-pane .conversation .avatar{width:62px!important;height:62px!important;flex:0 0 62px!important}
  .app-shell .inbox-pane .conversation::after{left:92px!important}
