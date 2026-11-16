@@ -2703,3 +2703,10 @@ html[data-theme="dark"] .app-shell .inbox-pane .pane-header .pane-brand-heading 
 /* Optical alignment: the mark's speech-bubble tail adds height at the bottom, so nudge it down
    until the rounded square (not the whole picture) lines up with the header title. */
 @media(min-width:901px){.app-shell .rail .brand-mark img{transform:translateY(2.5px)}}
+/* Desktop login header: same balance as the phone version, which reads well. Slightly smaller mark with more air
+   above it, a little more room before the title, and clear space between the subtitle and the form. */
+@media (min-width:621px){
+ .login-card{padding-top:42px!important}
+ .login-card .login-head-mark{width:64px;margin-bottom:20px}
+ .login-card .login-head{margin-bottom:38px}
+}
