@@ -139,3 +139,13 @@ html[data-theme="dark"] .app-shell .profile-menu-v2 .profile-theme-row,html[data
 .mobile-profile .mobile-theme-row .theme-toggle{color:#344866!important}
 html[data-theme="dark"] .search-hit{background:#5a2f1d;color:#ffd9c7}
 html[data-theme="dark"] .conversation-search-snippet{color:#b5bfcd}
+html[data-theme="dark"] .ctag-gray{background:#26313d;color:#c6ced9}html[data-theme="dark"] .ctag-red{background:#3a1717;color:#ff9b9b}html[data-theme="dark"] .ctag-orange{background:#3a2216;color:#ffab7a}html[data-theme="dark"] .ctag-yellow{background:#352c12;color:#f3d06b}html[data-theme="dark"] .ctag-green{background:#14301f;color:#7fdca0}html[data-theme="dark"] .ctag-blue{background:#15243f;color:#93b4ff}html[data-theme="dark"] .ctag-purple{background:#261a40;color:#c4a8ff}html[data-theme="dark"] .ctag-pink{background:#3a1629;color:#f9a8d4}
+html[data-theme="dark"] .ctags-add{border-color:#3a4656;color:#c6ced9}
+html[data-theme="dark"] .ctags-menu,html[data-theme="dark"] .detail-picker-menu{background:#1b232c;border-color:#2a3542;box-shadow:0 16px 36px rgba(0,0,0,.45)}
+html[data-theme="dark"] .ctags-search{border-bottom-color:#2a3542}
+html[data-theme="dark"] .ctags-search input,html[data-theme="dark"] .ctags-options button,html[data-theme="dark"] .detail-picker-menu button{color:#eef2f7}
+html[data-theme="dark"] .ctags-options button:hover,html[data-theme="dark"] .detail-picker-menu button:hover{background:#232d38}
+html[data-theme="dark"] .detail-picker-menu button.is-current{background:#2e1d14}
+html[data-theme="dark"] .detail-picker-button{color:#b5bfcd}html[data-theme="dark"] .detail-picker-button:hover{color:#eef2f7}
+html[data-theme="dark"] .picker-avatar{background:#4a2618;color:#ffb595}html[data-theme="dark"] .picker-avatar-empty{background:#26313d;color:#8a98a8}
+html[data-theme="dark"] .picker-presence{border-color:#1b232c}
