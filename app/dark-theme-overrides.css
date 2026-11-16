@@ -83,3 +83,11 @@ html[data-theme="dark"] .inbox-skeleton .sk{background:linear-gradient(90deg,#1e
 html[data-theme="dark"] .inbox-skeleton .sk-thread .out{background:linear-gradient(90deg,#4a2618 0%,#5a2f1d 40%,#4a2618 80%);background-size:300% 100%}
 html[data-theme="dark"] .inbox-skeleton .sk-rail i,html[data-theme="dark"] .inbox-skeleton .sk-tabbar i{background:#1e2732}
 html[data-theme="dark"] .app-shell .conversation.conversation-has-unread .conversation-top strong{color:#f3f6fa!important}
+html[data-theme="dark"] .conversation-agent-badge{border-color:#161d25;background:#4a2618;color:#ffb595}
+html[data-theme="dark"] .conversation-inline-tag{border:0!important}
+@media(max-width:900px){
+ html[data-theme="dark"] .app-shell .inbox-pane .filter-tabs button{background:#1e2732!important;color:#c6ced9!important}
+ html[data-theme="dark"] .app-shell .inbox-pane .filter-tabs button.selected{background:#e8edf3!important;color:#16243a!important}
+ html[data-theme="dark"] .app-shell .inbox-pane .filter-tabs button.selected span{color:#e04d14!important}
+ html[data-theme="dark"] .app-shell .inbox-pane:not(.profile-open)>.mobile-tabbar{background:rgba(20,26,33,.8)!important}
+}
