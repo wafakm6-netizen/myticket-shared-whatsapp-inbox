@@ -111,3 +111,13 @@ html[data-theme="dark"] .message-select-bar .message-select-forward{color:#fff}
 html[data-theme="dark"] .message-select-check{background:#161d25;border-color:#3a4656}
 html[data-theme="dark"] .chat-pane.select-mode .message-row.is-selected{background:rgba(255,90,31,.14)}
 html[data-theme="dark"] .chat-pane.select-mode .message-row.is-selected{background:rgba(255,90,31,.09)!important}
+html[data-theme="dark"] .invite-shell{background:#0f141a}
+html[data-theme="dark"] .invite-card{background:#161d25;color:#eef2f7;box-shadow:0 12px 40px rgba(0,0,0,.4)}
+html[data-theme="dark"] .invite-card h1,html[data-theme="dark"] .invite-email strong,html[data-theme="dark"] .invite-field input{color:#eef2f7}
+html[data-theme="dark"] .invite-sub,html[data-theme="dark"] .invite-hint{color:#9ca7b5}
+html[data-theme="dark"] .invite-card label{color:#c6ced9}
+html[data-theme="dark"] .invite-field{background:#1b232c;border-color:#2a3542}
+html[data-theme="dark"] .invite-email{background:#2a1a12;border-color:#4a2a1a}
+html[data-theme="dark"] .invite-email span{color:#ffb595}
+html[data-theme="dark"] .invite-error{background:#3a1717;color:#ffb4ab}
+html[data-theme="dark"] .invite-submit:disabled{background:#26313d;color:#7b8796}
