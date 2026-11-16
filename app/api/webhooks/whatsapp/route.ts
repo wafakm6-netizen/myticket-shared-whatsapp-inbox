@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from 'crypto'
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse, after } from 'next/server'
+import { getMedia } from '@/lib/media-cache'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { notifyFirstInbound } from '@/lib/notifications/deliver'
 
@@ -92,6 +93,8 @@ export async function POST(request: NextRequest) {
         if (messageError) throw messageError
         await supabase.from('whatsapp_conversations').update({ unread_count: (conversation.unread_count ?? 0) + 1, last_message_at: new Date().toISOString() }).eq('id', conversation.id)
         stored++
+        // Keep a permanent copy of the media (WhatsApp deletes it after ~30 days); runs after the webhook has answered.
+        if (typeof media?.id === 'string') { const mediaId = media.id; after(async () => { await getMedia(mediaId) }) }
         try { await notifyFirstInbound(supabase,conversation.id,item.id,contact.display_name,conversation.assigned_agent_id,incomingBody ?? (item.type === 'image' ? '📷 Photo' : item.type === 'video' ? '🎥 Video' : item.type === 'audio' ? '🎤 Voice message' : item.type === 'sticker' ? 'Sticker' : 'Attachment')) } catch (notificationError) { console.error('[whatsapp webhook] notification failed',notificationError) }
       }
       for (const status of value.statuses ?? []) {

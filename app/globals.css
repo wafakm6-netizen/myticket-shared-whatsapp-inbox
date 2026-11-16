@@ -2794,3 +2794,10 @@ html[data-theme="dark"] button[aria-label="Notifications"] .notification-count{b
 /* Sticker button: new smiley-with-peel icon on phones only; iPad and desktop keep the classic icon. */
 .sticker-icon-phone{display:none}
 @media(max-width:600px){.sticker-icon-phone{display:block}.sticker-icon-classic{display:none}}
+/* A sticker WhatsApp no longer has: a quiet placeholder instead of a broken image. */
+.message-sticker-button.is-broken{position:relative;min-width:120px;min-height:120px;border-radius:16px;background:#eef1f5}
+.message-sticker-button.is-broken img{opacity:0}
+.message-sticker-button.is-broken::after{content:"Sticker unavailable";position:absolute;inset:0;display:grid;place-items:center;padding:8px;text-align:center;font-size:12px;font-weight:600;color:#8a97a8}
+.saved-sticker-item.is-broken{position:relative;background:#eef1f5!important;cursor:default;opacity:.8}
+.saved-sticker-item.is-broken img{opacity:0}
+.saved-sticker-item.is-broken::after{content:"Unavailable";position:absolute;inset:0;display:grid;place-items:center;font-size:10.5px;font-weight:600;color:#8a97a8}

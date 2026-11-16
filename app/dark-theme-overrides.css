@@ -154,3 +154,4 @@ html[data-theme="dark"] .picker-presence{border-color:#1b232c}
  html[data-theme="dark"] .app-shell .chat-pane .composer .emoji-composer-editor{background:#1e2732!important;border-color:#2a3542!important}
  html[data-theme="dark"] .app-shell .chat-pane .reply-window-notice{background:#33240f!important;color:#f3c27a!important}
 }
+html[data-theme="dark"] .message-sticker-button.is-broken,html[data-theme="dark"] .saved-sticker-item.is-broken{background:#1e2732!important}
