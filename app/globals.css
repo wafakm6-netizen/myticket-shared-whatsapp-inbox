@@ -2791,3 +2791,6 @@ html[data-theme="dark"] button[aria-label="Notifications"] .notification-count{b
 }
 /* Phones: more room between the message bar and the bottom edge. */
 @media(max-width:600px){.app-shell.mobile-chat-open>.chat-pane .composer-wrap{padding-bottom:max(38px, calc(env(safe-area-inset-bottom,0px) + 24px))!important}}
+/* Sticker button: new smiley-with-peel icon on phones only; iPad and desktop keep the classic icon. */
+.sticker-icon-phone{display:none}
+@media(max-width:600px){.sticker-icon-phone{display:block}.sticker-icon-classic{display:none}}
