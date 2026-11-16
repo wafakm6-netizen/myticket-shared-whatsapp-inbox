@@ -501,6 +501,13 @@ html[data-theme="dark"] .app-shell .conversation-count{background:#ff5a1f;color:
 html[data-theme="dark"] .app-shell .conversation.conversation-has-unread .conversation-top strong{color:#d0d6df!important}
 html[data-theme="dark"] .app-shell .conversation.conversation-has-unread .conversation-top time{color:#ff5a1f!important}
 html[data-theme="dark"] .app-shell .conversation.conversation-has-unread .conversation-preview-text{color:#c6ced9}
+html[data-theme="dark"] .contact-avatar{background-color:var(--av-bg)!important}
+html[data-theme="dark"][data-theme="dark"] .contact-avatar{background-color:var(--av-bg-dark)!important}
+html[data-theme="dark"] .conversation-agent-badge{border:2px solid #141a21;background:#3f2418;color:#e04d14}
+html[data-theme="dark"] .conversation-selected .conversation-agent-badge{border-color:#141a21}
+html[data-theme="dark"] .conversation-inline-tag{border:0!important}
+html[data-theme="dark"] .conversation-inline-tag::before{background:currentColor}
+@media(max-width:900px){html[data-theme="dark"] .app-shell .inbox-pane .filter-tabs button{border:0!important;background:#192028!important;color:#b5bfcd!important}html[data-theme="dark"] .app-shell .inbox-pane .filter-tabs button.selected{background:#16243a!important;color:#fff!important}html[data-theme="dark"] .app-shell .inbox-pane .filter-tabs button.selected span{color:#ffb595!important}html[data-theme="dark"] .app-shell .inbox-pane:not(.profile-open)>.mobile-tabbar{background:rgba(20,26,33,0.82)!important}}
 html[data-theme="dark"] .conversation-modal{border:1px solid #1e2630}
 html[data-theme="dark"] .conversation-modal .modal-header{background:#141a21}
 html[data-theme="dark"] .conversation-modal .conversation-form input,html[data-theme="dark"] .conversation-modal .conversation-form textarea{border-color:#202a35}

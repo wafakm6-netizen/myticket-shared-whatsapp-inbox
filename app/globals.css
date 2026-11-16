@@ -2576,3 +2576,21 @@ html[data-session="1"] .auth-loading-shell{display:none!important}
 .app-shell .inbox-pane .conversation{min-height:0!important}
 .app-shell .details-pane .conversation-tags-section .tag-manager{padding:0 16px 14px!important;margin:0!important;max-width:100%;box-sizing:border-box}
 .app-shell .details-pane .conversation-tags-section .tag-search{width:100%!important;box-sizing:border-box}
+/* Polished list: pastel avatars (deeper ones in dark mode), the assigned agent as a small initials badge on the avatar,
+   custom tags as tinted labels with a colour dot, a solid selected filter on phones, and a see-through floating tab bar. */
+.contact-avatar{background-color:var(--av-bg)!important}
+html[data-theme="dark"] .contact-avatar{background-color:var(--av-bg-dark)!important;--av-fg:var(--av-fg-dark)!important}
+.conversation-avatar-wrap{position:relative;flex:0 0 auto;display:block;line-height:0}
+.conversation-agent-badge{position:absolute;right:-3px;bottom:-3px;min-width:20px;height:20px;padding:0 3px;border-radius:999px;border:2px solid #fff;background:#ffe9df;color:#e04d14;font-size:8.5px;font-style:normal;font-weight:700;line-height:16px;text-align:center;box-sizing:border-box;letter-spacing:0}
+.conversation-selected .conversation-agent-badge{border-color:#fff}
+.conversation-inline-tag{border:0!important;display:inline-flex!important;align-items:center;gap:5px;padding:1px 7px!important;border-radius:6px!important;font-weight:600!important}
+.conversation-inline-tag::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;flex:0 0 auto}
+@media(max-width:900px){
+ .app-shell .inbox-pane .filter-tabs button{border:0!important;background:#f2f4f7!important;color:#52657e!important;height:32px!important}
+ .app-shell .inbox-pane .filter-tabs button.selected{background:#16243a!important;color:#fff!important}
+ .app-shell .inbox-pane .filter-tabs button.selected span{color:#ffb595!important;opacity:1!important}
+ .app-shell .inbox-pane:not(.profile-open)>.conversation-list{padding-bottom:96px!important}
+ .app-shell .inbox-pane:not(.profile-open)>.mobile-tabbar{margin-top:-84px!important;background:rgba(255,255,255,.82)!important;-webkit-backdrop-filter:saturate(180%) blur(18px);backdrop-filter:saturate(180%) blur(18px)}
+}
+.conversation-avatar-wrap{align-self:flex-start;height:auto!important}
+@media(max-width:900px){.app-shell .inbox-pane .conversation-avatar-wrap{align-self:center}}
