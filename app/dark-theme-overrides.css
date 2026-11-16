@@ -91,3 +91,15 @@ html[data-theme="dark"] .conversation-inline-tag{border:0!important}
  html[data-theme="dark"] .app-shell .inbox-pane .filter-tabs button.selected span{color:#e04d14!important}
  html[data-theme="dark"] .app-shell .inbox-pane:not(.profile-open)>.mobile-tabbar{background:rgba(20,26,33,.8)!important}
 }
+html[data-theme="dark"] .forward-sheet{background:#141a21!important}
+html[data-theme="dark"] .forward-sheet-head strong,html[data-theme="dark"] .forward-row-copy strong,html[data-theme="dark"] .forward-search input{color:#eef2f7}
+html[data-theme="dark"] .forward-preview,html[data-theme="dark"] .forward-sheet-list,html[data-theme="dark"] .forward-sheet-list button{background:#1b232c!important}
+html[data-theme="dark"] .forward-sheet-list button+button{border-top-color:#253040!important}
+html[data-theme="dark"] .forward-preview p{color:#d0d6df}
+html[data-theme="dark"] .forward-search{background:#1e2732}
+html[data-theme="dark"] .forward-chosen button{color:#c6ced9}
+html[data-theme="dark"] .forward-chosen i{border-color:#141a21}
+html[data-theme="dark"] .forward-check{border-color:#3a4656}
+html[data-theme="dark"] .forward-send:disabled{background:#26313d;color:#7b8796}
+html[data-theme="dark"] .forward-grabber{background:#3a4656}
+html[data-theme="dark"] .forward-toast{background:#eef2f7;color:#16243a}
