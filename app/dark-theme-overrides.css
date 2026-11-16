@@ -82,3 +82,4 @@ html[data-theme="dark"] .login-input-wrap .login-field-icon{background:transpare
 html[data-theme="dark"] .inbox-skeleton .sk{background:linear-gradient(90deg,#1e2732 0%,#26313d 40%,#1e2732 80%);background-size:300% 100%}
 html[data-theme="dark"] .inbox-skeleton .sk-thread .out{background:linear-gradient(90deg,#4a2618 0%,#5a2f1d 40%,#4a2618 80%);background-size:300% 100%}
 html[data-theme="dark"] .inbox-skeleton .sk-rail i,html[data-theme="dark"] .inbox-skeleton .sk-tabbar i{background:#1e2732}
+html[data-theme="dark"] .app-shell .conversation.conversation-has-unread .conversation-top strong{color:#f3f6fa!important}
