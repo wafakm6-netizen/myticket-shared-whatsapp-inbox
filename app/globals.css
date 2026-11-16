@@ -2665,3 +2665,23 @@ html[data-theme="dark"] .app-shell .inbox-pane .pane-header .pane-brand-heading 
 .forward-preview-lines p{-webkit-line-clamp:2!important}
 .forward-preview-lines small{font-size:12px;color:#8a97a8}
 .chat-pane .chat-header{position:relative}
+/* Invitation page */
+.invite-shell{min-height:100dvh;display:grid;place-items:center;padding:24px 16px;background:#f6f3f0;font-family:var(--font-plex-latin),var(--font-plex-arabic),system-ui,sans-serif}
+.invite-card{width:100%;max-width:420px;display:grid;gap:14px;padding:30px 26px;border-radius:22px;background:#fff;box-shadow:0 12px 40px rgba(23,39,61,.10);color:#16243a}
+.invite-mark{width:52px;height:52px;justify-self:center}
+.invite-card h1{margin:0;text-align:center;font-size:24px;font-weight:700;letter-spacing:-.01em;color:#16243a}
+.invite-sub{margin:-6px 0 4px;text-align:center;font-size:14.5px;line-height:1.45;color:#6b7a8d}
+.invite-note{margin:0;text-align:center;font-size:14px;color:#8a97a8}
+.invite-email{display:grid;gap:2px;padding:12px 14px;border-radius:14px;background:#fff4ee;border:1px solid #ffd8c6}
+.invite-email span{font-size:12px;font-weight:600;color:#b4532a}
+.invite-email strong{font-size:15px;color:#16243a;overflow-wrap:anywhere}
+.invite-error{margin:0;padding:12px 14px;border-radius:12px;background:#fdecec;color:#b42318;font-size:14px;line-height:1.45}
+.invite-card label{display:grid;gap:6px;font-size:13px;font-weight:600;color:#344866}
+.invite-field{display:flex;align-items:center;border:1px solid #d7dee7;border-radius:12px;background:#fff;overflow:hidden}
+.invite-field:focus-within{border-color:#ff5a1f;box-shadow:0 0 0 3px #ff5a1f22}
+.invite-field input{flex:1;min-width:0;height:46px;padding:0 14px;border:0;outline:none;background:transparent;font-size:16px;color:#16243a}
+.invite-field button{border:0;background:transparent;padding:0 14px;height:46px;color:#e6531a;font-size:13px;font-weight:700;cursor:pointer}
+.invite-hint{margin-top:-6px;font-size:12.5px;color:#8a97a8}
+.invite-hint-error{color:#b42318}
+.invite-submit{height:50px;border:0;border-radius:14px;background:#ff5a1f;color:#fff;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 6px 16px #ff5a1f40}
+.invite-submit:disabled{background:#d6dbe2;color:#7b8796;box-shadow:none;cursor:default}
