@@ -2685,3 +2685,18 @@ html[data-theme="dark"] .app-shell .inbox-pane .pane-header .pane-brand-heading 
 .invite-hint-error{color:#b42318}
 .invite-submit{height:50px;border:0;border-radius:14px;background:#ff5a1f;color:#fff;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 6px 16px #ff5a1f40}
 .invite-submit:disabled{background:#d6dbe2;color:#7b8796;box-shadow:none;cursor:default}
+/* Phones: larger chat list rows (avatar, name, preview, time, badges) for easier reading and tapping. */
+@media(max-width:900px){
+ .app-shell .inbox-pane .conversation{padding:13px 16px!important;gap:14px!important}
+ .app-shell .inbox-pane .conversation .avatar{width:62px!important;height:62px!important;flex:0 0 62px!important}
+ .app-shell .inbox-pane .conversation::after{left:92px!important}
+ .app-shell .inbox-pane .conversation-top strong{font-size:19px!important}
+ .app-shell .inbox-pane .conversation-top time{font-size:13.5px!important}
+ .app-shell .inbox-pane .conversation-copy p{font-size:16.5px!important;margin-top:3px!important}
+ .app-shell .inbox-pane .conversation-preview-ticks svg{width:18px!important;height:13px!important}
+ .app-shell .inbox-pane .conversation-count{min-width:23px;height:23px;line-height:23px;font-size:12.5px}
+ .app-shell .inbox-pane .conversation-agent-badge{min-width:24px;height:24px;line-height:20px;font-size:10px}
+ .app-shell .inbox-pane .conversation-bottom .type-badge{font-size:12px!important;line-height:20px!important}
+ .app-shell .inbox-pane .conversation-inline-tags{max-width:100%;overflow:visible!important}
+ .app-shell .inbox-pane .conversation-inline-tag{font-size:12px!important;line-height:20px!important;max-width:none!important;width:auto!important;white-space:nowrap;overflow:visible!important}
+}
