@@ -2700,3 +2700,6 @@ html[data-theme="dark"] .app-shell .inbox-pane .pane-header .pane-brand-heading 
  .app-shell .inbox-pane .conversation-inline-tags{max-width:100%;overflow:visible!important}
  .app-shell .inbox-pane .conversation-inline-tag{font-size:12px!important;line-height:20px!important;max-width:none!important;width:auto!important;white-space:nowrap;overflow:visible!important}
 }
+/* Optical alignment: the mark's speech-bubble tail adds height at the bottom, so nudge it down
+   until the rounded square (not the whole picture) lines up with the header title. */
+@media(min-width:901px){.app-shell .rail .brand-mark img{transform:translateY(2.5px)}}
