@@ -561,6 +561,10 @@ html[data-theme="dark"] .invite-hint{color:#9ca7b5}
 html[data-theme="dark"] .invite-hint-error{color:#b42318}
 html[data-theme="dark"] .invite-submit{border:0;background:#ff5a1f;color:#fff}
 html[data-theme="dark"] .invite-submit:disabled{background:#232d39;color:#9ea7b2}
+html[data-theme="dark"] .search-hit{background:#3f2418;color:inherit}
+html[data-theme="dark"] .conversation-search-snippet{color:#b5bfcd}
+html[data-theme="dark"] .conversation-search-from{color:#9ca7b5}
+html[data-theme="dark"] .search-empty-hint{color:#9ca7b5}
 html[data-theme="dark"] .conversation-modal{border:1px solid #1e2630}
 html[data-theme="dark"] .conversation-modal .modal-header{background:#141a21}
 html[data-theme="dark"] .conversation-modal .conversation-form input,html[data-theme="dark"] .conversation-modal .conversation-form textarea{border-color:#202a35}

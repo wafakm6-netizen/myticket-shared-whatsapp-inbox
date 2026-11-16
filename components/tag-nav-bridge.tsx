@@ -23,8 +23,10 @@ export function TagNavBridge(){
     clearInjected()
     const cards=Array.from(document.querySelectorAll('button.conversation')) as HTMLElement[]
     const rows=payload.conversations??[]
-    cards.forEach((card,index)=>{
-      const row=rows[index];if(!row)return
+    // Match each row by its conversation id (not its position), so filtered or searched lists show the right tags.
+    const byId=new Map(rows.map((row:any)=>[String(row.id),row]))
+    cards.forEach((card)=>{
+      const row:any=byId.get(card.dataset.conversationId||'');if(!row)return
       const typeBadge=card.querySelector('.type-badge') as HTMLElement|null;if(!typeBadge)return
       const assignments=row.whatsapp_conversation_tags??[]
       const tags:TagItem[]=assignments.map((a:any)=>{const t=Array.isArray(a.whatsapp_tags)?a.whatsapp_tags[0]:a.whatsapp_tags;return t}).filter(Boolean)
