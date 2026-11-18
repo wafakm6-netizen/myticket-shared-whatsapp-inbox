@@ -56,7 +56,24 @@ jobs:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
         run: |
           mkdir -p ~/.appstoreconnect/private_keys
-          printf '%s\n' "$ASC_KEY_P8" > ~/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8
+          # Rebuild a valid PEM from whatever was pasted (lost line breaks,
+          # missing BEGIN/END lines, or base64 of the whole file).
+          python3 - <<'PY'
+          import os, re, base64, textwrap
+          raw = os.environ['ASC_KEY_P8'].strip()
+          body = re.sub(r'-----[A-Z ]+-----', '', raw)
+          body = re.sub(r'\s+', '', body)
+          try:
+              dec = base64.b64decode(body, validate=True)
+              if dec.startswith(b'-----BEGIN'):
+                  body = re.sub(r'\s+', '', re.sub(r'-----[A-Z ]+-----', '', dec.decode()))
+          except Exception:
+              pass
+          pem = '-----BEGIN PRIVATE KEY-----\n' + '\n'.join(textwrap.wrap(body, 64)) + '\n-----END PRIVATE KEY-----\n'
+          path = os.path.expanduser('~/.appstoreconnect/private_keys/AuthKey_' + os.environ['ASC_KEY_ID'] + '.p8')
+          open(path, 'w').write(pem)
+          print('key length (chars):', len(body))
+          PY
 
       - name: Archive
         env:
