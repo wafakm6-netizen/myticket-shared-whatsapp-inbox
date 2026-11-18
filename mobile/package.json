@@ -1,0 +1,19 @@
+{
+  "name": "myticket-inbox-ios",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Capacitor iOS shell for the Myticket Shared Inbox web app",
+  "dependencies": {
+    "@capacitor/app": "^7.0.0",
+    "@capacitor/core": "^7.0.0",
+    "@capacitor/ios": "^7.0.0",
+    "@capacitor/push-notifications": "^7.0.0",
+    "@capacitor/splash-screen": "^7.0.0",
+    "@capacitor/status-bar": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^7.0.0",
+    "typescript": "5.7.3"
+  }
+}
