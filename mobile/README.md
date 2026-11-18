@@ -15,7 +15,7 @@ nothing iOS-specific is committed except this folder.
    - `APPLE_TEAM_ID`
    - `ASC_KEY_ID`
    - `ASC_ISSUER_ID`
-   - `ASC_KEY_P8` (`base64 -i AuthKey_XXXX.p8`)
+   - `ASC_KEY_P8` (the full text of the `.p8` file, pasted as-is)
 
 ## Build and upload
 

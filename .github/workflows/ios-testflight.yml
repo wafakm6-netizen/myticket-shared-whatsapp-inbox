@@ -14,7 +14,7 @@ on:
 #   APPLE_TEAM_ID  - 10-character Apple Developer Team ID
 #   ASC_KEY_ID     - App Store Connect API key ID
 #   ASC_ISSUER_ID  - App Store Connect API issuer ID
-#   ASC_KEY_P8     - contents of AuthKey_XXXX.p8, base64 encoded
+#   ASC_KEY_P8     - full text of AuthKey_XXXX.p8 (paste as-is, including BEGIN/END lines)
 # Required repository variable (optional): IOS_BUNDLE_ID (default om.myticket.inbox)
 
 jobs:
@@ -56,7 +56,7 @@ jobs:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
         run: |
           mkdir -p ~/.appstoreconnect/private_keys
-          echo "$ASC_KEY_P8" | base64 --decode > ~/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8
+          printf '%s\n' "$ASC_KEY_P8" > ~/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8
 
       - name: Archive
         env:
