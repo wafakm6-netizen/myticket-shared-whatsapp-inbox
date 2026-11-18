@@ -810,6 +810,8 @@ export default function Page() {
   useEffect(() => {
     if (!sessionUser) { setShowPushPrompt(false); return }
     if (typeof Notification === 'undefined' || Notification.permission !== 'default') return
+    // Inside the iPhone/Android app (its user agent carries MyticketInboxApp) browser push isn't available; the app handles notifications itself.
+    if (/MyticketInboxApp/.test(navigator.userAgent)) return
     if (sessionStorage.getItem('myticket-push-prompt-dismissed') === '1') return
     const timer = window.setTimeout(() => setShowPushPrompt(true), 1200)
     return () => window.clearTimeout(timer)
