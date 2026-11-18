@@ -77,8 +77,11 @@ jobs:
 
       - name: Archive (unsigned; signing happens at export)
         run: |
+          ls ios/App
+          if [ -d ios/App/App.xcworkspace ]; then TARGET="-workspace ios/App/App.xcworkspace"; else TARGET="-project ios/App/App.xcodeproj"; fi
+          echo "Building with: $TARGET"
           xcodebuild archive \
-            -project ios/App/App.xcodeproj \
+            $TARGET \
             -scheme App \
             -configuration Release \
             -destination 'generic/platform=iOS' \
