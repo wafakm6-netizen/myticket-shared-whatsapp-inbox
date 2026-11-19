@@ -1,3 +1,4 @@
+import { APNS_PREFIX, sendApnsPush } from '@/lib/notifications/apns'
 import { createCipheriv, createECDH, createHash, createHmac, createPrivateKey, sign, randomBytes } from 'node:crypto'
 
 const b64 = (input: Buffer | string) => Buffer.from(input).toString('base64url')
@@ -13,6 +14,8 @@ function hkdf(salt: Buffer, ikm: Buffer, info: Buffer, length: number) {
 }
 export type PushSubscriptionRecord = { endpoint: string; p256dh: string; auth: string }
 export async function sendBrowserPush(subscription: PushSubscriptionRecord, payload: object) {
+  // iOS app device tokens share this table; send those through APNs instead of Web Push.
+  if (subscription.endpoint.startsWith(APNS_PREFIX)) return sendApnsPush(subscription.endpoint, payload as any)
   const publicKey = process.env.WEB_PUSH_VAPID_PUBLIC_KEY
   const privateKey = process.env.WEB_PUSH_VAPID_PRIVATE_KEY
   const subject = process.env.WEB_PUSH_SUBJECT

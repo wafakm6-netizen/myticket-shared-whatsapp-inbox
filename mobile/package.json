@@ -1,23 +1,21 @@
 {
-  "name": "myticket-inbox-app",
-  "private": true,
+  "name": "myticket-inbox-ios",
   "version": "1.0.0",
-  "description": "iPhone and Android app for the Myticket WhatsApp shared inbox (Capacitor shell around whatsapp.myticketom.com).",
-  "scripts": {
-    "sync": "cap sync",
-    "assets": "capacitor-assets generate --ios --android --iconBackgroundColor '#ff5a1f' --iconBackgroundColorDark '#ff5a1f' --splashBackgroundColor '#ffffff' --splashBackgroundColorDark '#161d25'",
-    "ios": "cap open ios",
-    "android": "cap open android"
-  },
+  "private": true,
+  "description": "Capacitor iOS shell for the Myticket Shared Inbox web app",
   "dependencies": {
-    "@capacitor/android": "8.6.2",
-    "@capacitor/core": "8.6.2",
-    "@capacitor/ios": "8.6.2",
-    "@capacitor/splash-screen": "8.0.2",
-    "@capacitor/status-bar": "8.0.4"
+    "@capacitor/app": "^7.0.0",
+    "@capacitor/core": "^7.0.0",
+    "@capacitor/haptics": "^7.0.0",
+    "@capacitor/ios": "^7.0.0",
+    "@capacitor/keyboard": "^7.0.0",
+    "@capacitor/push-notifications": "^7.0.0",
+    "@capacitor/splash-screen": "^7.0.0",
+    "@capacitor/status-bar": "^7.0.0"
   },
   "devDependencies": {
-    "@capacitor/assets": "4.0.0",
-    "@capacitor/cli": "8.6.2"
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^7.0.0",
+    "typescript": "5.7.3"
   }
 }

@@ -1,21 +1,27 @@
 import type { CapacitorConfig } from '@capacitor/cli'
 
-// The app is a native shell around the live inbox, so every website update reaches the app without a store release.
+// The shell loads the deployed web app, so web releases reach the iOS app
+// without a new TestFlight build. Override with APP_URL when building.
+const appUrl = process.env.APP_URL || 'https://whatsapp.myticketom.com'
+
 const config: CapacitorConfig = {
-  appId: 'com.myticketom.inbox',
+  appId: process.env.IOS_BUNDLE_ID || 'com.myticketom.inbox',
   appName: 'Myticket Inbox',
   webDir: 'www',
-  // Lets the website recognise the app (e.g. to skip the browser notification prompt).
-  appendUserAgent: 'MyticketInboxApp',
   server: {
-    url: 'https://whatsapp.myticketom.com',
+    url: appUrl,
     cleartext: false,
-    errorPath: 'index.html',
+    allowNavigation: [new URL(appUrl).hostname, '*.supabase.co'],
   },
-  ios: { contentInset: 'never', scrollEnabled: true, limitsNavigationsToAppBoundDomains: false },
-  android: { allowMixedContent: false },
+  ios: {
+    contentInset: 'always',
+    backgroundColor: '#ffffff',
+    allowsLinkPreview: false,
+  },
   plugins: {
-    SplashScreen: { launchShowDuration: 1200, launchAutoHide: true, backgroundColor: '#ffffff', showSpinner: false },
+    SplashScreen: { launchAutoHide: true, launchShowDuration: 1800, launchFadeOutDuration: 250, backgroundColor: '#ffffff', showSpinner: false },
+    PushNotifications: { presentationOptions: ['badge', 'sound', 'alert'] },
+    Keyboard: { resize: 'native', resizeOnFullScreen: true },
   },
 }
 
