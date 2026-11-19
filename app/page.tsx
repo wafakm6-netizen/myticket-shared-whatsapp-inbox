@@ -485,13 +485,16 @@ export default function Page() {
         (document.activeElement.isContentEditable || ['INPUT','TEXTAREA'].includes(document.activeElement.tagName))
       if (Math.abs(viewport.width - fullWidth) > 1) { fullWidth = viewport.width; fullHeight = viewport.height }
       if (!editing || viewport.height > fullHeight) fullHeight = Math.max(viewport.height, editing ? fullHeight : 0)
-      const keyboardVisible = editing && Math.max(fullHeight, window.innerHeight) - viewport.height > 120
+      // In the iOS app the keyboard height comes from the keyboard itself as it starts to open (NativeBridge),
+      // so the composer moves with it instead of waiting for the viewport to shrink.
+      const nativeKeyboard = Number(shell.dataset.nativeKb || 0)
+      const keyboardVisible = nativeKeyboard > 0 ? editing : editing && Math.max(fullHeight, window.innerHeight) - viewport.height > 120
       const thread = document.querySelector<HTMLElement>('.app-shell .thread')
       if (keyboardVisible && !shell.classList.contains('keyboard-open') && thread) requestAnimationFrame(() => { thread.scrollTop = thread.scrollHeight })
       shell.classList.toggle('keyboard-open', keyboardVisible)
       shell.style.setProperty('--inbox-full-height', Math.round(fullHeight) + 'px')
       if (keyboardVisible) {
-        const keyboardHeight = Math.round(fullHeight - viewport.height)
+        const keyboardHeight = nativeKeyboard || Math.round(fullHeight - viewport.height)
         if (keyboardHeight > 200 && keyboardHeight < 520) {
           shell.style.setProperty('--kb-height', keyboardHeight + 'px')
           try { localStorage.setItem('inbox-keyboard-height', String(keyboardHeight)) } catch {}
@@ -501,7 +504,7 @@ export default function Page() {
       // iOS also scrolls the document towards the focused composer, which pushes the chat header off screen.
       if (keyboardVisible && window.scrollY) window.scrollTo(0, 0)
       if (keyboardVisible) {
-        shell.style.setProperty('--inbox-visual-height', Math.round(viewport.height) + 'px')
+        shell.style.setProperty('--inbox-visual-height', Math.round(nativeKeyboard ? fullHeight - nativeKeyboard : viewport.height) + 'px')
         // iPadOS pans the visual viewport, so the fixed shell follows offsetTop there. On iPhone, offsetTop
         // spikes while the keyboard animates and following it pushed the chat header down and back up.
         const phone = window.matchMedia('(max-width: 900px)').matches
@@ -515,12 +518,14 @@ export default function Page() {
     viewport.addEventListener('scroll', update)
     window.addEventListener('focusin', update)
     window.addEventListener('focusout', update)
+    window.addEventListener('native-keyboard', update)
     update()
     return () => {
       viewport.removeEventListener('resize', update)
       viewport.removeEventListener('scroll', update)
       window.removeEventListener('focusin', update)
       window.removeEventListener('focusout', update)
+      window.removeEventListener('native-keyboard', update)
       shell.style.removeProperty('--inbox-visual-height')
       shell.style.removeProperty('--inbox-visual-top')
       shell.style.removeProperty('--inbox-full-height')

@@ -89,7 +89,7 @@ html[data-theme="dark"] .conversation-inline-tag{border:0!important}
  html[data-theme="dark"] .app-shell .inbox-pane .filter-tabs button{background:#1e2732!important;color:#c6ced9!important}
  html[data-theme="dark"] .app-shell .inbox-pane .filter-tabs button.selected{background:#e8edf3!important;color:#16243a!important}
  html[data-theme="dark"] .app-shell .inbox-pane .filter-tabs button.selected span{color:#e04d14!important}
- html[data-theme="dark"] .app-shell .inbox-pane:not(.profile-open)>.mobile-tabbar{background:rgba(20,26,33,.8)!important}
+ html[data-theme="dark"] .app-shell .inbox-pane:not(.profile-open)>.mobile-tabbar{background:#1a222b!important}
 }
 html[data-theme="dark"] .forward-sheet{background:#141a21!important}
 html[data-theme="dark"] .forward-sheet-head strong,html[data-theme="dark"] .forward-row-copy strong,html[data-theme="dark"] .forward-search input{color:#eef2f7}
