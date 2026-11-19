@@ -2801,3 +2801,58 @@ html[data-theme="dark"] button[aria-label="Notifications"] .notification-count{b
 .saved-sticker-item.is-broken{position:relative;background:#eef1f5!important;cursor:default;opacity:.8}
 .saved-sticker-item.is-broken img{opacity:0}
 .saved-sticker-item.is-broken::after{content:"Unavailable";position:absolute;inset:0;display:grid;place-items:center;font-size:10.5px;font-weight:600;color:#8a97a8}
+/* Template picker (option C): searchable list + live WhatsApp preview with the blanks filled in place.
+   Side by side when there is room; on narrow panels the list shows first, then the preview with a back button. */
+.meta-template-picker.tpl-picker-wrap{display:block!important;container-type:inline-size;margin-top:4px}
+.tpl-picker{display:block}
+.tpl-picker .tpl-list-pane,.tpl-picker .tpl-preview-pane{min-width:0}
+.tpl-search{display:flex;align-items:center;gap:8px;height:38px;padding:0 12px;border-radius:10px;background:#f1f3f6;color:#8a97a8}
+.tpl-search input{flex:1;min-width:0;border:0!important;background:transparent!important;outline:none;font-size:14px;color:#16243a;box-shadow:none!important;min-height:0!important;padding:0!important}
+.tpl-chips{display:flex;gap:6px;margin:8px 0}
+.tpl-chips button{height:28px;padding:0 11px;border:0;border-radius:999px;background:#f2f4f7;color:#52657e;font-size:12.5px;font-weight:600;cursor:pointer}
+.tpl-chips button.is-on{background:#16243a;color:#fff}
+.tpl-list{display:flex;flex-direction:column;max-height:360px;overflow-y:auto;border-radius:12px;background:#fff;border:1px solid #e9edf2}
+.tpl-item{display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border:0;border-top:1px solid #f0f2f5;background:#fff;text-align:start;cursor:pointer;color:#16243a}
+.tpl-item:first-child{border-top:0}
+.tpl-item:hover{background:#f7f8fa}
+.tpl-item.is-on{background:#fff4ee;box-shadow:inset 3px 0 0 #ff5a1f}
+.tpl-icon{width:32px;height:32px;flex:0 0 32px;border-radius:9px;display:grid;place-items:center;background:#f2f4f7;font-size:16px}
+.tpl-item-copy{display:flex;flex-direction:column;min-width:0}
+.tpl-item-copy strong{font-size:13.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tpl-item-copy small{font-size:11.5px;color:#8a97a8}
+.tpl-preview-pane{display:flex;flex-direction:column;gap:10px}
+.tpl-empty{display:grid;place-items:center;text-align:center;gap:6px;padding:28px 12px;color:#8a97a8;font-size:13px}
+.tpl-empty span{font-size:28px}
+.tpl-preview-head{display:flex;align-items:center;gap:8px}
+.tpl-preview-head strong{flex:1;min-width:0;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tpl-back{display:none;width:30px;height:30px;border:0;border-radius:50%;background:#f2f4f7;color:#344866;font-size:20px;line-height:1;cursor:pointer}
+.tpl-langs{display:inline-flex;padding:2px;border-radius:9px;background:#eef1f5}
+.tpl-langs button{border:0;background:transparent;border-radius:7px;padding:3px 9px;font-size:12px;font-weight:700;color:#5b6b7f;cursor:pointer}
+.tpl-langs button.is-on{background:#fff;color:#16243a;box-shadow:0 1px 2px rgba(16,42,67,.15)}
+.tpl-phone{padding:12px;border-radius:14px;background:#efeae2}
+.tpl-bubble{background:#fff;border-radius:12px 12px 12px 3px;padding:9px 11px;box-shadow:0 1px 1px rgba(0,0,0,.08);color:#16243a}
+.tpl-bubble p{margin:0;font-size:14px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.tpl-bubble-title{display:block;margin-bottom:4px;font-size:14px}
+.tpl-bubble-footer{display:block;margin-top:6px;font-size:12px;color:#8a97a8}
+.tpl-bubble-media{display:flex;align-items:center;gap:6px;margin:-3px -5px 8px;padding:18px 10px;border-radius:9px;background:#eef1f5;color:#6b7a8d;font-size:12.5px;font-weight:600;justify-content:center}
+.tpl-bubble-media.is-ready{background:#e6f5ec;color:#15803d}
+.tpl-var{background:#fff0e6;color:#b4532a;border-radius:4px;padding:0 3px;font-weight:600}
+.tpl-var.is-filled{background:#ffe1d3;color:#16243a}
+.tpl-bubble-buttons{display:flex;flex-direction:column;gap:4px;margin-top:5px}
+.tpl-bubble-buttons span{background:#fff;border-radius:9px;padding:7px;text-align:center;color:#0a84ff;font-size:13px;font-weight:600;box-shadow:0 1px 1px rgba(0,0,0,.06)}
+.tpl-field{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:700;color:#6b7a8d}
+.tpl-field input{height:38px;padding:0 11px;border:1px solid #d7dee7;border-radius:10px;background:#fff;font-size:14px;color:#16243a;font-weight:400}
+.tpl-field input:focus{outline:none;border-color:#ff5a1f;box-shadow:0 0 0 3px #ff5a1f22}
+.tpl-note{font-size:11.5px;color:#8a97a8}
+@container (min-width:560px){
+ .tpl-picker{display:grid;grid-template-columns:minmax(220px,40%) 1fr;gap:16px;align-items:start}
+}
+@container (max-width:559px){
+ .tpl-picker.has-selection .tpl-list-pane{display:none}
+ .tpl-picker:not(.has-selection) .tpl-preview-pane{display:none}
+ .tpl-picker .tpl-back{display:grid;place-items:center}
+}
+/* Desktop chat: a wider panel so list and preview sit side by side. */
+@media(min-width:901px){
+ .app-shell .chat-pane .composer .chat-template-panel{left:12px!important;right:auto!important;width:min(760px,calc(100% - 24px))!important;max-height:min(72vh,640px)!important}
+}
