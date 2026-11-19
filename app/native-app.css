@@ -1,0 +1,6 @@
+/* Applies only inside the iOS app (html[data-native] is set by NativeBridge); Safari and desktop are unchanged. */
+html[data-native]{-webkit-text-size-adjust:100%}
+html[data-native] body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
+html[data-native] input,html[data-native] textarea,html[data-native] [contenteditable="true"],html[data-native] [contenteditable=""]{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+html[data-native] img{-webkit-user-drag:none;-webkit-touch-callout:none}
+html[data-native] button,html[data-native] a{-webkit-tap-highlight-color:transparent}

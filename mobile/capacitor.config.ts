@@ -16,10 +16,12 @@ const config: CapacitorConfig = {
   ios: {
     contentInset: 'always',
     backgroundColor: '#ffffff',
+    allowsLinkPreview: false,
   },
   plugins: {
     SplashScreen: { launchAutoHide: true, backgroundColor: '#ffffff' },
     PushNotifications: { presentationOptions: ['badge', 'sound', 'alert'] },
+    Keyboard: { resize: 'native', resizeOnFullScreen: true },
   },
 }
 
