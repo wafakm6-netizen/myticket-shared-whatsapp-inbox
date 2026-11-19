@@ -45,7 +45,27 @@ or by conversation, or as a WhatsApp template (required when the customer has no
 { "conversation_id": "…", "template": { "name": "booking_confirmed", "languageCode": "ar", "parameters": ["محمد", "مهرجان صلالة", "8:00 م"] } }
 ```
 
-Optional: `reply_to_message_id`. Returns the inbox's send result.
+`template.parameters` is required for templates (use `[]` when the template has none). Add `template.buttonUrlSuffix` for a template with a URL button (the dynamic part of the link).
+Optional: `reply_to_message_id`.
+
+Response: `{ "success": true, "metaMessageId": "wamid…", "message": {…} }`. Save `metaMessageId` (the wamid) to match `message.status` events later.
+
+#### Booking confirmation from myticket.om (see "WhatsApp Booking Messages: Tech Team Guide")
+
+```json
+POST /api/v1/messages
+{
+  "to": "96893943130",
+  "template": {
+    "name": "booking_confirmed_ar",
+    "languageCode": "ar",
+    "parameters": ["Mohammed Almaashani", "Horse Riding", "10/11/2026", "7:00 PM", "Sifah", "1 × Seat", "MT-2026118-L4N9D"],
+    "buttonUrlSuffix": "MT-2026118-L4N9D"
+  }
+}
+```
+
+The reminder is the same with `booking_reminder_ar` / `booking_reminder_en`. Sent this way, the confirmation also appears in the customer's chat in the inbox, so an agent sees it when the customer replies. The booking backend needs no Meta token: only its Inbox API key.
 
 ### List templates — `GET /templates` (`messages:send`)
 
@@ -79,7 +99,7 @@ Tags by name (case-insensitive) or id; unknown names in `add_tags` are rejected.
 The inbox POSTs events to the URLs in `INBOX_WEBHOOKS` (Vercel):
 
 ```json
-[{ "url": "https://ai.myticketom.com/inbox-events", "secret": "<long random secret>", "events": ["message.received"] }]
+[{ "url": "https://ai.myticketom.com/inbox-events", "secret": "<long random secret>", "events": ["message.received", "message.status"] }]
 ```
 
 `message.received` — a customer sent a message:
@@ -88,6 +108,15 @@ The inbox POSTs events to the URLs in `INBOX_WEBHOOKS` (Vercel):
 { "id": "…", "type": "message.received", "created_at": "…",
   "data": { "conversation_id": "…", "message_id": "wamid…", "type": "text", "from": "96891234567", "contact_name": "…", "body": "…", "assigned_agent_id": null } }
 ```
+
+`message.status` — WhatsApp reported a delivery status for a message sent through the inbox:
+
+```json
+{ "id": "…", "type": "message.status", "created_at": "…",
+  "data": { "message_id": "wamid…", "status": "delivered", "timestamp": "1795091234", "recipient": "96891234567", "error_code": null } }
+```
+
+`status` is sent, delivered, read or failed (`error_code` set on failed, e.g. 131026 = not on WhatsApp → email fallback). Statuses can arrive out of order: never move a status backwards.
 
 Headers: `X-Inbox-Event`, `X-Inbox-Delivery` (unique id; ignore repeats), `X-Inbox-Signature: sha256=<HMAC-SHA256 of the raw body with your secret>`. Always verify the signature.
 Delivery is best-effort with a 5-second timeout and never affects the inbox; to catch anything missed, read `GET /conversations`.

@@ -4,7 +4,7 @@ import { createHmac, randomUUID } from 'node:crypto'
 // [{"url":"https://example.com/inbox-events","secret":"<shared secret>","events":["message.received"]}]
 // Each POST carries X-Inbox-Event, X-Inbox-Delivery and X-Inbox-Signature: sha256=<HMAC of the raw body>.
 // Delivery never blocks or fails the inbox: errors are logged and the request times out after 5 seconds.
-export type InboxEvent = 'message.received'
+export type InboxEvent = 'message.received' | 'message.status'
 type Subscriber = { url: string; secret: string; events: string[] }
 
 function subscribers(): Subscriber[] {
