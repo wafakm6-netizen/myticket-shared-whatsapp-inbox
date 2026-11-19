@@ -55,3 +55,9 @@ html[data-native]{--safe-top:env(safe-area-inset-top,0px)}
   html[data-native][data-kb-moving]:not(.composer-sheet-open):not(.composer-sheet-hold) .app-shell{transition:height .26s cubic-bezier(.25,.8,.25,1),max-height .26s cubic-bezier(.25,.8,.25,1)}
   html[data-native][data-kb-moving]:not(.composer-sheet-open):not(.composer-sheet-hold) .app-shell.mobile-chat-open>.chat-pane .composer-wrap{transition:padding-bottom .26s cubic-bezier(.25,.8,.25,1)}
 }
+
+/* Full-screen pages opened from the tab bar or profile (Workspace settings, My account, Team…) start below the
+   status bar too, so their content never scrolls under the clock. */
+@media (max-width:900px){
+  html[data-native] .app-shell .modal-backdrop{top:var(--safe-top)!important}
+}

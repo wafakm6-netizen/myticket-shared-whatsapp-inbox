@@ -122,7 +122,31 @@ export function NativeBridge() {
         if (status.receive === 'granted') await push.register()
       } catch {} finally { registering = false }
     }
-    listen(push, 'registration', (token: { value: string }) => token?.value && saveToken(token.value))
+    let registrationError = ''
+    listen(push, 'registration', (token: { value: string }) => { registrationError = ''; if (token?.value) saveToken(token.value) })
+    listen(push, 'registrationError', (error: any) => { registrationError = String(error?.error || error?.message || 'unknown error') })
+    // Used by "Send a test notification" in Account settings to show which step fails.
+    ;(window as any).__myticketNativePush = {
+      status: async () => {
+        let permission = 'unknown', token = ''
+        try { permission = (await push?.checkPermissions())?.receive || 'unknown' } catch {}
+        try { token = localStorage.getItem('native-push-token') || '' } catch {}
+        return { permission, token, saved: Boolean(token) && savedFor === token, registrationError }
+      },
+      register: async () => {
+        try {
+          let status = await push.checkPermissions()
+          if (status.receive === 'prompt' || status.receive === 'prompt-with-rationale') status = await push.requestPermissions()
+          if (status.receive === 'granted') await push.register()
+        } catch (error) { registrationError = String((error as any)?.message || error) }
+      },
+      save: async (token: string) => {
+        const response = await fetch('/api/notifications/apns', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ token }) })
+        if (response.ok) savedFor = token
+        return response.ok ? '' : ((await response.json().catch(() => ({})))?.error || 'HTTP ' + response.status)
+      },
+    }
+    cleanups.push(() => { delete (window as any).__myticketNativePush })
     // Until this device's token is saved for the signed-in agent, keep trying (covers signing in after launch).
     const retry = window.setInterval(() => {
       let token = ''
