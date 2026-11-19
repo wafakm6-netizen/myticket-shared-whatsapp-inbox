@@ -60,13 +60,21 @@ export function NativeBridge() {
 
     // Move the composer up as the keyboard starts to open (not after it finishes), and back down as it starts to close.
     // The inbox's keyboard handling in page.tsx reads data-native-kb.
+    let followFrame = 0
     const setKeyboard = (height: number) => {
       if (height > 0) html.dataset.nativeKb = String(Math.round(height)); else delete html.dataset.nativeKb
       window.dispatchEvent(new Event('native-keyboard'))
+      // While the chat slides with the keyboard, keep the newest message in view (if it was in view).
+      const thread = document.querySelector('.app-shell.mobile-chat-open .thread') as HTMLElement | null
+      if (!thread || thread.scrollHeight - thread.scrollTop - thread.clientHeight > 120) return
+      cancelAnimationFrame(followFrame)
+      const until = performance.now() + 360
+      const follow = () => { thread.scrollTop = thread.scrollHeight; if (performance.now() < until) followFrame = requestAnimationFrame(follow) }
+      follow()
     }
     listen(plugins.Keyboard, 'keyboardWillShow', (info: { keyboardHeight?: number }) => setKeyboard(info?.keyboardHeight || 0))
     listen(plugins.Keyboard, 'keyboardWillHide', () => setKeyboard(0))
-    cleanups.push(() => { delete html.dataset.nativeKb })
+    cleanups.push(() => { cancelAnimationFrame(followFrame); delete html.dataset.nativeKb })
 
     // Keep the newest message in view while the keyboard opens, like WhatsApp.
     listen(plugins.Keyboard, 'keyboardDidShow', () => {
