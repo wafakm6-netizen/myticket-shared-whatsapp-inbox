@@ -122,6 +122,8 @@ export async function POST(request: NextRequest) {
           const patch = mapped === 'failed' ? { status: mapped, failure_reason: failureReason || 'WhatsApp delivery failed; check the Meta delivery status.' } : { status: mapped }
           const { error: statusError } = await supabase.from('whatsapp_messages').update(patch).eq('external_id', status.id)
           if (statusError) throw statusError
+          // Pass delivery statuses on to API clients (e.g. the booking backend matching its saved wamid).
+          { const event = { message_id: status.id, status: mapped, timestamp: status.timestamp ?? null, recipient: status.recipient_id ?? null, error_code: mapped === 'failed' && Array.isArray(status.errors) ? status.errors[0]?.code ?? null : null }; after(() => emitEvent('message.status', event)) }
         }
       }
     }
