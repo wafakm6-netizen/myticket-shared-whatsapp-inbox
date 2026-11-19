@@ -155,3 +155,19 @@ html[data-theme="dark"] .picker-presence{border-color:#1b232c}
  html[data-theme="dark"] .app-shell .chat-pane .reply-window-notice{background:#33240f!important;color:#f3c27a!important}
 }
 html[data-theme="dark"] .message-sticker-button.is-broken,html[data-theme="dark"] .saved-sticker-item.is-broken{background:#1e2732!important}
+html[data-theme="dark"] .tpl-search,html[data-theme="dark"] .tpl-chips button,html[data-theme="dark"] .tpl-icon,html[data-theme="dark"] .tpl-back,html[data-theme="dark"] .tpl-langs{background:#1e2732;color:#c6ced9}
+html[data-theme="dark"] .tpl-search input,html[data-theme="dark"] .tpl-item,html[data-theme="dark"] .tpl-field input{color:#eef2f7}
+html[data-theme="dark"] .tpl-chips button.is-on{background:#e8edf3;color:#16243a}
+html[data-theme="dark"] .tpl-list{background:#141a21;border-color:#1f2832}
+html[data-theme="dark"] .tpl-item{background:#141a21;border-top-color:#1f2832}
+html[data-theme="dark"] .tpl-item:hover{background:#1b232c}
+html[data-theme="dark"] .tpl-item.is-on{background:#2e1d14}
+html[data-theme="dark"] .tpl-langs button.is-on{background:#2a3542;color:#eef2f7}
+html[data-theme="dark"] .tpl-phone{background:#0b141a}
+html[data-theme="dark"] .tpl-bubble{background:#1f2c34;color:#e9edef}
+html[data-theme="dark"] .tpl-bubble-buttons span{background:#1f2c34;color:#53bdeb}
+html[data-theme="dark"] .tpl-bubble-media{background:#2a3942;color:#aebac1}
+html[data-theme="dark"] .tpl-var{background:#4a2a18;color:#ffb595}
+html[data-theme="dark"] .tpl-var.is-filled{background:#5a2f1d;color:#ffe4d6}
+html[data-theme="dark"] .tpl-field input{background:#1b232c;border-color:#2a3542}
+html[data-theme="dark"] .tpl-preview-head strong{color:#eef2f7}
