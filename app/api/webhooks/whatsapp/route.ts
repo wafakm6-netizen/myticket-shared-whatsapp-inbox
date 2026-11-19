@@ -3,6 +3,7 @@ import { NextRequest, NextResponse, after } from 'next/server'
 import { getMedia } from '@/lib/media-cache'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { notifyFirstInbound } from '@/lib/notifications/deliver'
+import { emitEvent } from '@/lib/api/events'
 
 function verifyMetaSignature(rawBody: string, signature: string | null) {
   const appSecret = process.env.META_APP_SECRET
@@ -95,6 +96,8 @@ export async function POST(request: NextRequest) {
         stored++
         // Keep a permanent copy of the media (WhatsApp deletes it after ~30 days); runs after the webhook has answered.
         if (typeof media?.id === 'string') { const mediaId = media.id; after(async () => { await getMedia(mediaId) }) }
+        // Tell API clients (myticket.om, the AI assistant) about the new message, after the webhook has answered.
+        { const event = { conversation_id: conversation.id, message_id: item.id, type: item.type, from: phone, contact_name: profileName || contact.display_name, body: incomingBody, assigned_agent_id: conversation.assigned_agent_id ?? null }; after(() => emitEvent('message.received', event)) }
         try { await notifyFirstInbound(supabase,conversation.id,item.id,contact.display_name,conversation.assigned_agent_id,incomingBody ?? (item.type === 'image' ? '📷 Photo' : item.type === 'video' ? '🎥 Video' : item.type === 'audio' ? '🎤 Voice message' : item.type === 'sticker' ? 'Sticker' : 'Attachment')) } catch (notificationError) { console.error('[whatsapp webhook] notification failed',notificationError) }
       }
       for (const status of value.statuses ?? []) {
@@ -119,6 +122,8 @@ export async function POST(request: NextRequest) {
           const patch = mapped === 'failed' ? { status: mapped, failure_reason: failureReason || 'WhatsApp delivery failed; check the Meta delivery status.' } : { status: mapped }
           const { error: statusError } = await supabase.from('whatsapp_messages').update(patch).eq('external_id', status.id)
           if (statusError) throw statusError
+          // Pass delivery statuses on to API clients (e.g. the booking backend matching its saved wamid).
+          { const event = { message_id: status.id, status: mapped, timestamp: status.timestamp ?? null, recipient: status.recipient_id ?? null, error_code: mapped === 'failed' && Array.isArray(status.errors) ? status.errors[0]?.code ?? null : null }; after(() => emitEvent('message.status', event)) }
         }
       }
     }

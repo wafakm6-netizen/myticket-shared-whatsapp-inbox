@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers'
 import { createServerClient } from '@supabase/ssr'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { serviceAgentContext } from '@/lib/api/context'
 
 export type AuthAgent = { id: string; role: 'admin' | 'agent'; is_active: boolean; display_name: string; email: string | null }
 
@@ -28,6 +29,9 @@ async function createAuthClient() {
 }
 
 export async function getActiveAgent(): Promise<AuthAgent | null> {
+  // Inside a /api/v1 request authenticated with an API key: act as that client's agent (see lib/api/service-auth.ts).
+  const service = serviceAgentContext.getStore()
+  if (service) return service
   const auth = await createAuthClient()
   const { data: { user }, error } = await auth.auth.getUser()
   if (error || !user) return null
