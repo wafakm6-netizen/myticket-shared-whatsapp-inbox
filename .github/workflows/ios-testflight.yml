@@ -54,6 +54,29 @@ jobs:
           sed -i '' "s/platform :ios, '[0-9.]*'/platform :ios, '15.0'/" ios/App/Podfile
           sed -i '' 's/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]*;/IPHONEOS_DEPLOYMENT_TARGET = 15.0;/g' ios/App/App.xcodeproj/project.pbxproj
           (cd ios/App && pod install)
+          # Push notifications: hand the APNs device token to Capacitor (not in the default template).
+          python3 - <<'PY'
+          p = 'ios/App/App/AppDelegate.swift'
+          s = open(p).read()
+          if 'capacitorDidRegisterForRemoteNotifications' not in s:
+              hook = '''
+              func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+                  NotificationCenter.default.post(name: .capacitorDidRegisterForRemoteNotifications, object: deviceToken)
+              }
+
+              func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+                  NotificationCenter.default.post(name: .capacitorDidFailToRegisterForRemoteNotifications, object: error)
+              }
+          '''
+              i = s.rstrip().rfind('}')
+              s = s[:i] + hook + s[i:]
+              open(p, 'w').write(s)
+          PY
+          cat > "$RUNNER_TEMP/App.entitlements" <<'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict><key>aps-environment</key><string>production</string></dict></plist>
+          EOF
 
       - name: Set version and build number
         run: |
@@ -108,6 +131,12 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY=""
 
+      - name: Add push entitlement to the archived app
+        run: |
+          APP="$RUNNER_TEMP/App.xcarchive/Products/Applications/App.app"
+          codesign --force --sign - --entitlements "$RUNNER_TEMP/App.entitlements" "$APP"
+          codesign -d --entitlements :- "$APP"
+
       - name: Export IPA
         env:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
@@ -132,6 +161,12 @@ jobs:
             -authenticationKeyPath ~/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8 \
             -authenticationKeyID "$ASC_KEY_ID" \
             -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+
+      - name: Check push entitlement survived signing
+        run: |
+          cd "$RUNNER_TEMP" && rm -rf ipacheck && mkdir ipacheck && cd ipacheck && unzip -q ../export/App.ipa
+          codesign -d --entitlements :- Payload/App.app 2>/dev/null | tee ent.plist
+          grep -q aps-environment ent.plist && echo "PUSH ENTITLEMENT OK" || { echo "::error::aps-environment missing from the signed app"; exit 1; }
 
       - name: Upload to TestFlight
         env:

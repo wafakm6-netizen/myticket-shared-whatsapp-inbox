@@ -4,3 +4,18 @@ html[data-native] body{-webkit-user-select:none;user-select:none;-webkit-touch-c
 html[data-native] input,html[data-native] textarea,html[data-native] [contenteditable="true"],html[data-native] [contenteditable=""]{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
 html[data-native] img{-webkit-user-drag:none;-webkit-touch-callout:none}
 html[data-native] button,html[data-native] a{-webkit-tap-highlight-color:transparent}
+
+/* Chat slides in from the side like WhatsApp; the list eases back when you return. */
+@keyframes native-push-in{from{transform:translate3d(100%,0,0)}to{transform:none}}
+@keyframes native-push-in-rtl{from{transform:translate3d(-100%,0,0)}to{transform:none}}
+@keyframes native-pop-back{from{transform:translate3d(-25%,0,0);opacity:.6}to{transform:none;opacity:1}}
+@media (max-width:900px){
+  html[data-native][data-navigated] .app-shell.mobile-chat-open>.chat-pane{animation:native-push-in .32s cubic-bezier(.2,.8,.2,1)}
+  html[data-native][data-navigated][dir="rtl"] .app-shell.mobile-chat-open>.chat-pane{animation-name:native-push-in-rtl}
+  html[data-native][data-navigated] .app-shell:not(.mobile-chat-open)>.inbox-pane{animation:native-pop-back .28s cubic-bezier(.2,.8,.2,1)}
+}
+@media (prefers-reduced-motion:reduce){html[data-native] .app-shell>*{animation:none!important}}
+
+/* Offline bar */
+.native-offline-banner{display:none}
+html[data-native][data-offline="1"] .native-offline-banner{display:block;position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:9999;padding:6px 12px;text-align:center;font-size:13px;font-weight:600;color:#fff;background:#ff5a1f;box-shadow:0 2px 8px rgba(0,0,0,.12)}
