@@ -61,6 +61,12 @@ jobs:
           /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString 1.0.0" "$PLIST"
           /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ github.run_number }}" "$PLIST"
           /usr/libexec/PlistBuddy -c "Add :ITSAppUsesNonExemptEncryption bool false" "$PLIST" || true
+          # iOS kills the app if it touches the camera, mic or photos without these explanations.
+          add() { /usr/libexec/PlistBuddy -c "Delete :$1" "$PLIST" 2>/dev/null || true; /usr/libexec/PlistBuddy -c "Add :$1 string $2" "$PLIST"; }
+          add NSCameraUsageDescription "Myticket Inbox uses the camera so you can send photos and videos to customers."
+          add NSMicrophoneUsageDescription "Myticket Inbox uses the microphone to record voice messages."
+          add NSPhotoLibraryUsageDescription "Myticket Inbox lets you choose photos and videos to send to customers."
+          add NSPhotoLibraryAddUsageDescription "Myticket Inbox saves photos and videos you choose to keep."
 
       - name: Install App Store Connect API key
         env:
