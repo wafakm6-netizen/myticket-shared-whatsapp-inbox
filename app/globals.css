@@ -2856,3 +2856,24 @@ html[data-theme="dark"] button[aria-label="Notifications"] .notification-count{b
 @media(min-width:901px){
  .app-shell .chat-pane .composer .chat-template-panel{left:12px!important;right:auto!important;width:min(760px,calc(100% - 24px))!important;max-height:min(72vh,640px)!important}
 }
+/* Phones: voice notes sit inside the message field, like WhatsApp. Recording: delete · red dot and time ·
+   waveform · pause · stop-to-listen, with the round button on the right sending it. Preview: delete · player. */
+@media(max-width:600px){
+ .app-shell .chat-pane .composer .voice-inline{grid-column:1/4!important;min-height:40px!important;padding:0 4px!important;gap:2px!important;border-radius:20px;background:#fff;border:1px solid #e3e8ef;box-sizing:border-box;align-self:end}
+ .app-shell .chat-pane .composer .voice-inline:has(.voice-recording-bar){padding:0 4px!important}
+ .app-shell .chat-pane .composer .voice-recording-bar{background:transparent!important;border:0!important;min-height:38px;padding:0!important;gap:6px!important}
+ .app-shell .chat-pane .composer .voice-recording-discard{order:1;width:34px!important;height:34px!important;color:#66788e!important}
+ .app-shell .chat-pane .composer .voice-recording-dot{order:2;animation:voice-rec-blink 1.2s ease-in-out infinite;background:#ef4444!important}
+ .app-shell .chat-pane .composer .voice-recording-time{order:3;font-size:14px;min-width:34px}
+ .app-shell .chat-pane .composer .voice-recording-wave{order:4;justify-content:center}
+ .app-shell .chat-pane .composer .voice-recording-pause{order:5;width:34px!important;height:34px!important}
+ .app-shell .chat-pane .composer .voice-recording-finish{order:6;width:30px!important;height:30px!important;background:transparent!important;color:#66788e!important}
+ .app-shell .chat-pane .composer .voice-inline:not(:has(.voice-recording-bar))>button{order:-1;width:34px;height:34px;display:grid!important;place-items:center;border:0;background:transparent;color:#66788e;flex:0 0 auto}
+ html[data-theme="dark"] .app-shell .chat-pane .composer .voice-inline{background:#1a222b;border-color:#253040}
+ html[data-theme="dark"] .app-shell .chat-pane .composer .myticket-voice-player .voice-wave span{background:rgba(232,237,243,.3)}
+ html[data-theme="dark"] .app-shell .chat-pane .composer .myticket-voice-player .voice-wave span.played{background:#e8edf3}
+ html[data-theme="dark"] .app-shell .chat-pane .composer .voice-recording-discard,
+ html[data-theme="dark"] .app-shell .chat-pane .composer .voice-recording-finish,
+ html[data-theme="dark"] .app-shell .chat-pane .composer .voice-inline:not(:has(.voice-recording-bar))>button{color:#9ba7b5!important}
+}
+@keyframes voice-rec-blink{50%{opacity:.25}}
