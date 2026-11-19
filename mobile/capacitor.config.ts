@@ -19,7 +19,7 @@ const config: CapacitorConfig = {
     allowsLinkPreview: false,
   },
   plugins: {
-    SplashScreen: { launchAutoHide: true, backgroundColor: '#ffffff' },
+    SplashScreen: { launchAutoHide: true, launchShowDuration: 1800, launchFadeOutDuration: 250, backgroundColor: '#ffffff', showSpinner: false },
     PushNotifications: { presentationOptions: ['badge', 'sound', 'alert'] },
     Keyboard: { resize: 'native', resizeOnFullScreen: true },
   },
