@@ -50,6 +50,10 @@ jobs:
           npx cap add ios
           npx capacitor-assets generate --ios
           npx cap sync ios
+          # App Store requires iOS 15+ from April 2027.
+          sed -i '' "s/platform :ios, '[0-9.]*'/platform :ios, '15.0'/" ios/App/Podfile
+          sed -i '' 's/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]*;/IPHONEOS_DEPLOYMENT_TARGET = 15.0;/g' ios/App/App.xcodeproj/project.pbxproj
+          (cd ios/App && pod install)
 
       - name: Set version and build number
         run: |
