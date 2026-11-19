@@ -100,19 +100,37 @@ export function NativeBridge() {
 
     // Native push (APNs). The device token is saved for the signed-in agent; tapping a notification opens its chat.
     const push = plugins.PushNotifications
+    // Signed in right now (html[data-session] is only set when the page loads, so it misses a sign-in on the login
+    // screen, e.g. after reinstalling the app).
+    const signedIn = () => {
+      try { return Object.keys(localStorage).some((key) => /^sb-.*-auth-token/.test(key)) || /(^|;\s*)sb-[^=]*-auth-token/.test(document.cookie) } catch { return html.dataset.session === '1' }
+    }
+    let savedFor = ''
     const saveToken = (token: string) => {
       try { localStorage.setItem('native-push-token', token) } catch {}
-      fetch('/api/notifications/apns', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ token }) }).catch(() => {})
+      fetch('/api/notifications/apns', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ token }) })
+        .then((response) => { if (response.ok) savedFor = token })
+        .catch(() => {})
     }
+    let registering = false
     const registerPush = async () => {
-      if (!push || html.dataset.session !== '1') return
+      if (!push || registering || !signedIn()) return
+      registering = true
       try {
         let status = await push.checkPermissions()
         if (status.receive === 'prompt' || status.receive === 'prompt-with-rationale') status = await push.requestPermissions()
         if (status.receive === 'granted') await push.register()
-      } catch {}
+      } catch {} finally { registering = false }
     }
     listen(push, 'registration', (token: { value: string }) => token?.value && saveToken(token.value))
+    // Until this device's token is saved for the signed-in agent, keep trying (covers signing in after launch).
+    const retry = window.setInterval(() => {
+      let token = ''
+      try { token = localStorage.getItem('native-push-token') || '' } catch {}
+      if (savedFor && savedFor === token) return
+      if (token && signedIn()) saveToken(token); else registerPush()
+    }, 5000)
+    cleanups.push(() => window.clearInterval(retry))
     listen(push, 'pushNotificationActionPerformed', (action: any) => {
       const url = action?.notification?.data?.url
       if (typeof url === 'string') { try { const target = new URL(url, location.origin); if (target.origin === location.origin) location.assign(target.pathname + target.search) } catch {} }
