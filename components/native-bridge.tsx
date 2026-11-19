@@ -26,9 +26,14 @@ export function NativeBridge() {
       }) as Navigator['vibrate']
     }
 
-    // No pinch zoom in the app, like WhatsApp.
+    // No pinch zoom in the app, like WhatsApp, and draw under the status bar and home indicator (the CSS pads them).
     const viewport = document.querySelector('meta[name="viewport"]')
-    if (viewport && !/user-scalable=no/.test(viewport.getAttribute('content') || '')) viewport.setAttribute('content', (viewport.getAttribute('content') || '') + ', user-scalable=no')
+    if (viewport) {
+      let content = viewport.getAttribute('content') || ''
+      if (!/user-scalable=no/.test(content)) content += ', user-scalable=no'
+      if (!/viewport-fit=cover/.test(content)) content += ', viewport-fit=cover'
+      viewport.setAttribute('content', content)
+    }
 
     // Hide the "< > Done" bar iOS puts above the keyboard.
     plugins.Keyboard?.setAccessoryBarVisible?.({ isVisible: false }).catch?.(() => {})
@@ -52,6 +57,16 @@ export function NativeBridge() {
       const handle = plugin?.addListener?.(event, handler)
       cleanups.push(() => { Promise.resolve(handle).then((h: any) => h?.remove?.()).catch(() => {}) })
     }
+
+    // Move the composer up as the keyboard starts to open (not after it finishes), and back down as it starts to close.
+    // The inbox's keyboard handling in page.tsx reads data-native-kb.
+    const setKeyboard = (height: number) => {
+      if (height > 0) html.dataset.nativeKb = String(Math.round(height)); else delete html.dataset.nativeKb
+      window.dispatchEvent(new Event('native-keyboard'))
+    }
+    listen(plugins.Keyboard, 'keyboardWillShow', (info: { keyboardHeight?: number }) => setKeyboard(info?.keyboardHeight || 0))
+    listen(plugins.Keyboard, 'keyboardWillHide', () => setKeyboard(0))
+    cleanups.push(() => { delete html.dataset.nativeKb })
 
     // Keep the newest message in view while the keyboard opens, like WhatsApp.
     listen(plugins.Keyboard, 'keyboardDidShow', () => {
