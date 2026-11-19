@@ -1,0 +1,185 @@
+name: iOS TestFlight
+
+# Builds the Capacitor iOS shell (mobile/) and uploads it to TestFlight.
+# Run manually: Actions -> iOS TestFlight -> Run workflow.
+on:
+  workflow_dispatch:
+    inputs:
+      app_url:
+        description: Web app URL the shell loads
+        default: https://whatsapp.myticketom.com
+        required: true
+
+# Required repository secrets:
+#   APPLE_TEAM_ID  - 10-character Apple Developer Team ID
+#   ASC_KEY_ID     - App Store Connect API key ID
+#   ASC_ISSUER_ID  - App Store Connect API issuer ID
+#   ASC_KEY_P8     - full text of AuthKey_XXXX.p8 (paste as-is, including BEGIN/END lines)
+# Required repository variable (optional): IOS_BUNDLE_ID (default com.myticketom.inbox)
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 45
+    env:
+      APP_URL: ${{ inputs.app_url }}
+      IOS_BUNDLE_ID: ${{ vars.IOS_BUNDLE_ID || 'com.myticketom.inbox' }}
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select latest Xcode (App Store requires the iOS 26 SDK)
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Generate iOS project
+        run: |
+          npx cap add ios
+          npx capacitor-assets generate --ios
+          npx cap sync ios
+          # App Store requires iOS 15+ from April 2027.
+          sed -i '' "s/platform :ios, '[0-9.]*'/platform :ios, '15.0'/" ios/App/Podfile
+          sed -i '' 's/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]*;/IPHONEOS_DEPLOYMENT_TARGET = 15.0;/g' ios/App/App.xcodeproj/project.pbxproj
+          (cd ios/App && pod install)
+          # Push notifications: hand the APNs device token to Capacitor (not in the default template).
+          python3 - <<'PY'
+          p = 'ios/App/App/AppDelegate.swift'
+          s = open(p).read()
+          if 'capacitorDidRegisterForRemoteNotifications' not in s:
+              hook = '''
+              func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+                  NotificationCenter.default.post(name: .capacitorDidRegisterForRemoteNotifications, object: deviceToken)
+              }
+
+              func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+                  NotificationCenter.default.post(name: .capacitorDidFailToRegisterForRemoteNotifications, object: error)
+              }
+          '''
+              i = s.rstrip().rfind('}')
+              s = s[:i] + hook + s[i:]
+              open(p, 'w').write(s)
+          PY
+          cat > "$RUNNER_TEMP/App.entitlements" <<'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict><key>aps-environment</key><string>production</string></dict></plist>
+          EOF
+
+      - name: Set version and build number
+        run: |
+          PLIST=ios/App/App/Info.plist
+          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString 1.0.0" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ github.run_number }}" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Add :ITSAppUsesNonExemptEncryption bool false" "$PLIST" || true
+          # iOS kills the app if it touches the camera, mic or photos without these explanations.
+          add() { /usr/libexec/PlistBuddy -c "Delete :$1" "$PLIST" 2>/dev/null || true; /usr/libexec/PlistBuddy -c "Add :$1 string $2" "$PLIST"; }
+          add NSCameraUsageDescription "Myticket Inbox uses the camera so you can send photos and videos to customers."
+          add NSMicrophoneUsageDescription "Myticket Inbox uses the microphone to record voice messages."
+          add NSPhotoLibraryUsageDescription "Myticket Inbox lets you choose photos and videos to send to customers."
+          add NSPhotoLibraryAddUsageDescription "Myticket Inbox saves photos and videos you choose to keep."
+
+      - name: Install App Store Connect API key
+        env:
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+        run: |
+          mkdir -p ~/.appstoreconnect/private_keys
+          # Rebuild a valid PEM from whatever was pasted (lost line breaks,
+          # missing BEGIN/END lines, or base64 of the whole file).
+          python3 - <<'PY'
+          import os, re, base64, textwrap
+          raw = os.environ['ASC_KEY_P8'].strip()
+          body = re.sub(r'-----[A-Z ]+-----', '', raw)
+          body = re.sub(r'\s+', '', body)
+          try:
+              dec = base64.b64decode(body, validate=True)
+              if dec.startswith(b'-----BEGIN'):
+                  body = re.sub(r'\s+', '', re.sub(r'-----[A-Z ]+-----', '', dec.decode()))
+          except Exception:
+              pass
+          pem = '-----BEGIN PRIVATE KEY-----\n' + '\n'.join(textwrap.wrap(body, 64)) + '\n-----END PRIVATE KEY-----\n'
+          path = os.path.expanduser('~/.appstoreconnect/private_keys/AuthKey_' + os.environ['ASC_KEY_ID'] + '.p8')
+          open(path, 'w').write(pem)
+          print('key length (chars):', len(body))
+          PY
+
+      - name: Archive (unsigned; signing happens at export)
+        run: |
+          ls ios/App
+          if [ -d ios/App/App.xcworkspace ]; then TARGET="-workspace ios/App/App.xcworkspace"; else TARGET="-project ios/App/App.xcodeproj"; fi
+          echo "Building with: $TARGET"
+          xcodebuild archive \
+            $TARGET \
+            -scheme App \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/App.xcarchive" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY=""
+
+      - name: Add push entitlement to the archived app
+        run: |
+          APP="$RUNNER_TEMP/App.xcarchive/Products/Applications/App.app"
+          codesign --force --sign - --entitlements "$RUNNER_TEMP/App.entitlements" "$APP"
+          codesign -d --entitlements :- "$APP"
+
+      - name: Export IPA
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>teamID</key><string>${APPLE_TEAM_ID}</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>destination</key><string>export</string>
+          </dict></plist>
+          EOF
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/App.xcarchive" \
+            -exportPath "$RUNNER_TEMP/export" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath ~/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8 \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+
+      - name: Check push entitlement survived signing
+        run: |
+          cd "$RUNNER_TEMP" && rm -rf ipacheck && mkdir ipacheck && cd ipacheck && unzip -q ../export/App.ipa
+          codesign -d --entitlements :- Payload/App.app 2>/dev/null | tee ent.plist
+          grep -q aps-environment ent.plist && echo "PUSH ENTITLEMENT OK" || { echo "::error::aps-environment missing from the signed app"; exit 1; }
+
+      - name: Upload to TestFlight
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          xcrun altool --upload-app --type ios \
+            --file "$RUNNER_TEMP/export/App.ipa" \
+            --apiKey "$ASC_KEY_ID" \
+            --apiIssuer "$ASC_ISSUER_ID"
+
+      - name: Keep IPA as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Myticket-Inbox-ipa
+          path: ${{ runner.temp }}/export/App.ipa
