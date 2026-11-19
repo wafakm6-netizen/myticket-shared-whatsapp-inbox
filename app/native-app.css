@@ -19,3 +19,30 @@ html[data-native] button,html[data-native] a{-webkit-tap-highlight-color:transpa
 /* Offline bar */
 .native-offline-banner{display:none}
 html[data-native][data-offline="1"] .native-offline-banner{display:block;position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:9999;padding:6px 12px;text-align:center;font-size:13px;font-weight:600;color:#fff;background:#ff5a1f;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+
+/* Full-screen app: the web view now runs under the status bar and home indicator, so each screen pads the
+   status bar area in its own header colour (no white bands). The home indicator area is already padded by
+   the existing env(safe-area-inset-bottom) rules. */
+html[data-native]{--safe-top:env(safe-area-inset-top,0px)}
+@media (max-width:900px){
+  html[data-native] .app-shell>.inbox-pane,
+  html[data-native] .app-shell>.chat-pane{border-top:var(--safe-top) solid #fff!important}
+  html[data-native][data-theme="dark"] .app-shell>.inbox-pane,
+  html[data-native][data-theme="dark"] .app-shell>.chat-pane{border-top-color:#141a21!important}
+  html[data-native] .app-shell.mobile-details-open>.details-pane{top:var(--safe-top)!important;height:calc(100dvh - var(--safe-top))!important}
+  html[data-native] .inbox-skeleton{padding-top:var(--safe-top)}
+}
+
+/* Chat list rows at WhatsApp's own sizes inside the app (the browser keeps its larger rows). */
+@media (max-width:600px){
+  html[data-native] .app-shell .inbox-pane .conversation{padding:10px 16px!important;gap:12px!important}
+  html[data-native] .app-shell .inbox-pane .conversation .avatar{width:52px!important;height:52px!important;flex:0 0 52px!important;font-size:18px!important}
+  html[data-native] .app-shell .inbox-pane .conversation::after{left:80px!important}
+  html[data-native] .app-shell .inbox-pane .conversation-top strong{font-size:17px!important}
+  html[data-native] .app-shell .inbox-pane .conversation-top time{font-size:13px!important}
+  html[data-native] .app-shell .inbox-pane .conversation-copy p{font-size:15px!important;margin-top:2px!important}
+  html[data-native] .app-shell .inbox-pane .conversation-preview-ticks svg{width:16px!important;height:11px!important}
+  html[data-native] .app-shell .inbox-pane .conversation-count{min-width:20px;height:20px;line-height:20px;font-size:11.5px}
+  html[data-native] .app-shell .inbox-pane .conversation-bottom .type-badge,
+  html[data-native] .app-shell .inbox-pane .conversation-inline-tag{font-size:11px!important;line-height:18px!important}
+}

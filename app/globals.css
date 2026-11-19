@@ -2589,8 +2589,8 @@ html[data-theme="dark"] .contact-avatar{background-color:var(--av-bg-dark)!impor
  .app-shell .inbox-pane .filter-tabs button{border:0!important;background:#f2f4f7!important;color:#52657e!important;height:32px!important}
  .app-shell .inbox-pane .filter-tabs button.selected{background:#16243a!important;color:#fff!important}
  .app-shell .inbox-pane .filter-tabs button.selected span{color:#ffb595!important;opacity:1!important}
- .app-shell .inbox-pane:not(.profile-open)>.conversation-list{padding-bottom:96px!important}
- .app-shell .inbox-pane:not(.profile-open)>.mobile-tabbar{margin-top:-84px!important;background:rgba(255,255,255,.82)!important;-webkit-backdrop-filter:saturate(180%) blur(18px);backdrop-filter:saturate(180%) blur(18px)}
+ /* The tab bar sits below the list on a solid background: chats no longer show through or underneath it. */
+ .app-shell .inbox-pane:not(.profile-open)>.mobile-tabbar{background:#fff!important}
 }
 .conversation-avatar-wrap{align-self:flex-start;height:auto!important}
 @media(max-width:900px){.app-shell .inbox-pane .conversation-avatar-wrap{align-self:center}}
