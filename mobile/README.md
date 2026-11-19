@@ -6,7 +6,7 @@ nothing iOS-specific is committed except this folder.
 
 ## One-time setup (Apple side)
 
-1. Apple Developer account -> Identifiers -> register the App ID `om.myticket.inbox`
+1. Apple Developer account -> Identifiers -> register the App ID `com.myticketom.inbox`
    (or choose another and set repo variable `IOS_BUNDLE_ID`).
 2. App Store Connect -> My Apps -> New App -> same Bundle ID, name "Myticket Inbox".
 3. App Store Connect -> Users and Access -> Integrations -> create an API key
