@@ -5,7 +5,7 @@ import type { CapacitorConfig } from '@capacitor/cli'
 const appUrl = process.env.APP_URL || 'https://whatsapp.myticketom.com'
 
 const config: CapacitorConfig = {
-  appId: process.env.IOS_BUNDLE_ID || 'om.myticket.inbox',
+  appId: process.env.IOS_BUNDLE_ID || 'com.myticketom.inbox',
   appName: 'Myticket Inbox',
   webDir: 'www',
   server: {

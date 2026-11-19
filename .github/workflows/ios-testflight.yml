@@ -15,7 +15,7 @@ on:
 #   ASC_KEY_ID     - App Store Connect API key ID
 #   ASC_ISSUER_ID  - App Store Connect API issuer ID
 #   ASC_KEY_P8     - full text of AuthKey_XXXX.p8 (paste as-is, including BEGIN/END lines)
-# Required repository variable (optional): IOS_BUNDLE_ID (default om.myticket.inbox)
+# Required repository variable (optional): IOS_BUNDLE_ID (default com.myticketom.inbox)
 
 jobs:
   build:
@@ -23,7 +23,7 @@ jobs:
     timeout-minutes: 45
     env:
       APP_URL: ${{ inputs.app_url }}
-      IOS_BUNDLE_ID: ${{ vars.IOS_BUNDLE_ID || 'om.myticket.inbox' }}
+      IOS_BUNDLE_ID: ${{ vars.IOS_BUNDLE_ID || 'com.myticketom.inbox' }}
     defaults:
       run:
         working-directory: mobile
