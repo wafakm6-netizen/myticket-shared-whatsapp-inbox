@@ -12,7 +12,7 @@ html[data-native] button,html[data-native] a{-webkit-tap-highlight-color:transpa
 @media (max-width:900px){
   html[data-native][data-navigated] .app-shell.mobile-chat-open>.chat-pane{animation:native-push-in .32s cubic-bezier(.2,.8,.2,1)}
   html[data-native][data-navigated][dir="rtl"] .app-shell.mobile-chat-open>.chat-pane{animation-name:native-push-in-rtl}
-  html[data-native][data-navigated] .app-shell:not(.mobile-chat-open)>.inbox-pane{animation:native-pop-back .28s cubic-bezier(.2,.8,.2,1)}
+  html[data-native][data-navigated] .app-shell:not(.mobile-chat-open):not(.swiped-back)>.inbox-pane{animation:native-pop-back .28s cubic-bezier(.2,.8,.2,1)}
 }
 @media (prefers-reduced-motion:reduce){html[data-native] .app-shell>*{animation:none!important}}
 
@@ -49,8 +49,9 @@ html[data-native]{--safe-top:env(safe-area-inset-top,0px)}
 
 /* Keyboard: the chat and message bar slide with the keyboard instead of jumping before it arrives or after it
    leaves. NativeBridge sets the keyboard height as the keyboard starts moving; these transitions follow its
-   animation. Sticker/+ sheets switch instantly (no transition), so the composer stays put there. */
+   animation. Only while the keyboard moves (data-kb-moving), so opening a chat never animates the message bar;
+   sticker/+ sheets switch instantly, so the composer stays put there. */
 @media (max-width:900px){
-  html[data-native]:not(.composer-sheet-open):not(.composer-sheet-hold) .app-shell{transition:height .26s cubic-bezier(.25,.8,.25,1),max-height .26s cubic-bezier(.25,.8,.25,1)}
-  html[data-native]:not(.composer-sheet-open):not(.composer-sheet-hold) .app-shell.mobile-chat-open>.chat-pane .composer-wrap{transition:padding-bottom .26s cubic-bezier(.25,.8,.25,1)}
+  html[data-native][data-kb-moving]:not(.composer-sheet-open):not(.composer-sheet-hold) .app-shell{transition:height .26s cubic-bezier(.25,.8,.25,1),max-height .26s cubic-bezier(.25,.8,.25,1)}
+  html[data-native][data-kb-moving]:not(.composer-sheet-open):not(.composer-sheet-hold) .app-shell.mobile-chat-open>.chat-pane .composer-wrap{transition:padding-bottom .26s cubic-bezier(.25,.8,.25,1)}
 }
