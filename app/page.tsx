@@ -50,9 +50,14 @@ function EmojiComposer({ value, onChange, onSend, onFile, editorRef, placeholder
   const render = (root: HTMLElement, text: string) => {
     root.replaceChildren()
     const segments = Array.from(new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(text), x => x.segment)
+    // Keep runs of plain text in one text node: Safari draws Arabic letters split across text nodes with gaps
+    // between them ("المشـكلة"), even though the sent text is correct.
+    let run = ''
+    const flush = () => { if (run) { root.append(document.createTextNode(run)); run = '' } }
     for (const segment of segments) {
-      if (segment === '\n') { root.append(document.createElement('br')); continue }
+      if (segment === '\n') { flush(); root.append(document.createElement('br')); continue }
       if (/\p{Extended_Pictographic}/u.test(segment) || /[\u{1F1E6}-\u{1F1FF}]/u.test(segment)) {
+        flush()
         const img = document.createElement('img')
         img.src = emojiArtworkUrl(segment)
         img.alt = segment
@@ -61,8 +66,9 @@ function EmojiComposer({ value, onChange, onSend, onFile, editorRef, placeholder
         img.draggable = false
         attachEmojiFallback(img, segment)
         root.append(img)
-      } else root.append(document.createTextNode(segment))
+      } else run += segment
     }
+    flush()
   }
   useEffect(() => {
     const root = editorRef.current
