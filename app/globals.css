@@ -2877,3 +2877,15 @@ html[data-theme="dark"] button[aria-label="Notifications"] .notification-count{b
  html[data-theme="dark"] .app-shell .chat-pane .composer .voice-inline:not(:has(.voice-recording-bar))>button{color:#9ba7b5!important}
 }
 @keyframes voice-rec-blink{50%{opacity:.25}}
+
+/* Smart Reply: approved quick replies suggested from the customer's last message (components/smart-reply-bar.tsx). */
+.smart-reply-bar{display:flex;align-items:center;gap:8px;padding:6px 10px 8px;min-width:0}
+.smart-reply-label{flex:0 0 auto;font-size:11px;font-weight:700;color:#ff5a1f;letter-spacing:.02em}
+.smart-reply-chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;min-width:0;flex:1 1 auto}
+.smart-reply-chips::-webkit-scrollbar{display:none}
+.smart-reply-chip{flex:0 0 auto;border:1px solid #ffd2bf;background:#fff4ee;color:#b23c0f;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;line-height:1.2;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+.smart-reply-chip:active{transform:scale(.97)}
+.smart-reply-lang,.smart-reply-close{flex:0 0 auto;border:0;background:transparent;color:#7b8794;font-size:12px;font-weight:700;padding:4px 6px;cursor:pointer}
+.smart-reply-close{font-size:18px;line-height:1}
+html[data-theme="dark"] .smart-reply-chip{background:#3f2318;border-color:#6b3420;color:#ffb899}
+html[data-theme="dark"] .smart-reply-lang,html[data-theme="dark"] .smart-reply-close{color:#9aa5b1}
