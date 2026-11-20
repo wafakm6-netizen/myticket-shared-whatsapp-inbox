@@ -879,11 +879,8 @@ export default function Page() {
 
   const replyWindowOpen = !!selected?.messages.some(message => message.from === 'customer' && Date.now() - new Date(message.date).getTime() < 24 * 60 * 60 * 1000)
 
-  const load = async () => {
-    const response = await fetch('/api/inbox', { cache: 'no-store' })
-    if (!response.ok) throw new Error('Inbox unavailable')
-    const payload = await response.json()
-    const rows: Conversation[] = (payload.conversations ?? []).map((row: any, index: number) => {
+  // One API conversation row → the inbox's Conversation shape (used by the list and by single-chat refreshes).
+  const mapConversationRow = (row: any, index: number): Conversation => {
       const contact = Array.isArray(row.whatsapp_contacts) ? row.whatsapp_contacts[0] : row.whatsapp_contacts
       const messages = [...(row.whatsapp_messages ?? [])].sort((a: any, b: any) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
       const notes = [...(Array.isArray(row.whatsapp_internal_notes) ? row.whatsapp_internal_notes : [])].sort((a: any, b: any) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
@@ -894,14 +891,49 @@ export default function Page() {
       const name = rawName && rawName !== '.' ? rawName : (displayPhone(contact?.phone || '') || 'WhatsApp contact')
       const assignedAgent = Array.isArray(row.whatsapp_agents) ? row.whatsapp_agents[0] : row.whatsapp_agents
       return { id: row.id, name, initials: name.split(' ').map((part: string) => part[0]).join('').slice(0, 2).toUpperCase(), color: colors[index % colors.length], type: contact?.contact_type === 'supplier' ? 'Vendor' : contact?.contact_type === 'team' ? 'Team' : 'Customer', phone: contact?.phone || '', preview: reactionPreview(messages) ?? (lastContent?.body || lastContent?.attachment_name || ''), time: last?.created_at ? new Date(last.created_at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : '', lastMessageAt: last?.sent_at || last?.created_at || null, unread: Number(row.unread_count) || 0, status: row.status, assignedTo: row.assigned_agent_id, agentName: assignedAgent?.display_name, messages: messages.map((message: any) => ({ date: message.sent_at || message.created_at || new Date().toISOString(), id: message.id, from: message.direction === 'outbound' ? 'agent' : 'customer', text: message.body || (message.attachment_name ? '' : 'Unsupported WhatsApp message'), time: new Date(message.created_at || message.sent_at || Date.now()).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }), status: message.status, failureReason: message.failure_reason || undefined, attachmentUrl: message.attachment_url, attachmentName: message.attachment_name, externalId: message.external_id, replyToExternalId: message.reply_to_external_id, senderName: message.sender_name || undefined })), notes: notes.map((note: any) => { const noteAgent = Array.isArray(note.whatsapp_agents) ? note.whatsapp_agents[0] : note.whatsapp_agents; return { id: note.id, body: note.body, time: new Date(note.created_at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }), date: note.created_at, agentName: noteAgent?.display_name || 'Agent', agentId: note.agent_id || undefined, mentions: noteMentions(note.body || '') } }) }
-    })
-    // Keep messages that are still on their way (shown optimistically) or that failed, so they don't vanish on reload.
-    setConversations((current) => rows.map((row) => {
-      const pending = current.find((conversation) => conversation.id === row.id)?.messages.filter((message) => /^(pending|failed)-/.test(String(message.id))) ?? []
-      return pending.length ? { ...row, messages: [...row.messages, ...pending] } : row
-    }))
+  }
+  // The list only carries each chat's latest messages, so keep older ones already loaded (when a chat was opened), and
+  // keep messages still on their way (shown optimistically) or that failed, so they don't vanish on reload.
+  const mergeConversation = (incoming: Conversation, existing?: Conversation, fullHistory = false): Conversation => {
+    if (!existing) return incoming
+    const isLocal = (message: Message) => /^(pending|failed)-/.test(String(message.id))
+    const pending = existing.messages.filter(isLocal)
+    let messages = incoming.messages
+    if (!fullHistory && messages.length) {
+      const oldest = new Date(messages[0].date).getTime()
+      const known = new Set(messages.map((message) => message.id))
+      const older = existing.messages.filter((message) => !isLocal(message) && !known.has(message.id) && new Date(message.date).getTime() < oldest)
+      if (older.length) messages = [...older, ...messages]
+    }
+    return { ...incoming, color: existing.color, messages: pending.length ? [...messages, ...pending] : messages }
+  }
+
+  const load = async () => {
+    const response = await fetch('/api/inbox', { cache: 'no-store' })
+    if (!response.ok) throw new Error('Inbox unavailable')
+    const payload = await response.json()
+    const rows: Conversation[] = (payload.conversations ?? []).map(mapConversationRow)
+    setConversations((current) => rows.map((row) => mergeConversation(row, current.find((conversation) => conversation.id === row.id))))
     setAgents(payload.agents ?? [])
     setSelectedId((current) => current && rows.some((row) => row.id === current) ? current : rows[0]?.id || null)
+  }
+
+  // Refresh one chat with its full history (opening a chat, or a realtime change in it) instead of the whole inbox.
+  const loadConversation = async (id: string) => {
+    const response = await fetch('/api/inbox?conversation=' + encodeURIComponent(id), { cache: 'no-store' })
+    if (!response.ok) return
+    const { conversation } = await response.json()
+    if (!conversation) return
+    setConversations((current) => {
+      const index = current.findIndex((item) => item.id === id)
+      const merged = mergeConversation(mapConversationRow(conversation, index < 0 ? current.length : index), current[index], true)
+      if (index < 0) return [merged, ...current]
+      const next = [...current]
+      next[index] = merged
+      const at = (item: Conversation) => (item.lastMessageAt ? new Date(item.lastMessageAt).getTime() : 0)
+      if (index > 0 && at(merged) > at(next[0])) { next.splice(index, 1); next.unshift(merged) }
+      return next
+    })
   }
 
   useEffect(() => {
@@ -909,8 +941,14 @@ export default function Page() {
     const supabase = createBrowserSupabaseClient()
     if (!supabase) { setIsLoading(false); return }
     let channel: ReturnType<ReturnType<typeof createBrowserSupabaseClient>['channel']> | undefined
+    // Realtime bursts (a message plus its status updates) are batched: changed chats refresh on their own after 300 ms,
+    // and conversation-level changes (status, assignment, new chats) reload the list at most every 1.5 s.
+    const chatTimers = new Map<string, number>()
+    let listTimer = 0
+    const queueConversation = (id: string) => { window.clearTimeout(chatTimers.get(id)); chatTimers.set(id, window.setTimeout(() => { chatTimers.delete(id); void loadConversation(id).catch(() => {}) }, 300)) }
+    const queueListReload = () => { if (listTimer) return; listTimer = window.setTimeout(() => { listTimer = 0; void load().catch(() => {}) }, 1500) }
     const loadAuthenticatedInbox = async (user: { id: string; email?: string }) => {
-      const agentResponse = await fetch('/api/inbox', { cache: 'no-store' })
+      const agentResponse = await fetch('/api/inbox?agents=1', { cache: 'no-store' })
       const agentPayload = agentResponse.ok ? await agentResponse.json() : { agents: [] }
       const agent = (agentPayload.agents ?? []).find((item: Agent) => item.auth_user_id === user.id || item.email?.toLowerCase() === user.email?.toLowerCase())
       if (!active) return
@@ -918,7 +956,7 @@ export default function Page() {
       setSelfAvailability(agent?.availability === 'away' ? 'away' : 'available')
       try { await load() } finally { if (active) setInboxReady(true) }
       if (!active) return
-      try { channel = supabase.channel('whatsapp-inbox').on('postgres_changes', { event: '*', schema: 'public', table: 'whatsapp_messages' }, () => void load()).on('postgres_changes', { event: '*', schema: 'public', table: 'whatsapp_conversations' }, () => void load()).on('postgres_changes', { event: '*', schema: 'public', table: 'whatsapp_internal_notes' }, () => void load()).subscribe() } catch (error) { console.error('[v0] realtime failed', error) }
+      try { const onChatChange = (change: any) => { const id = change?.new?.conversation_id ?? change?.old?.conversation_id; if (id) queueConversation(id); else queueListReload() }; channel = supabase.channel('whatsapp-inbox').on('postgres_changes', { event: '*', schema: 'public', table: 'whatsapp_messages' }, onChatChange).on('postgres_changes', { event: '*', schema: 'public', table: 'whatsapp_conversations' }, () => queueListReload()).on('postgres_changes', { event: '*', schema: 'public', table: 'whatsapp_internal_notes' }, onChatChange).subscribe() } catch (error) { console.error('[v0] realtime failed', error) }
     }
     void supabase.auth.getUser().then(async ({ data }) => {
       if (!active) return
@@ -929,17 +967,23 @@ export default function Page() {
       if (session?.user) void loadAuthenticatedInbox(session.user).finally(() => { if (active) setIsLoading(false) })
       else { setSessionUser(null); setInboxReady(false); setConversations([]); setSelectedId(null); setIsLoading(false); if (channel) void channel.unsubscribe() }
     })
-    return () => { active = false; if (channel) void channel.unsubscribe() }
+    return () => { active = false; chatTimers.forEach((timer) => window.clearTimeout(timer)); window.clearTimeout(listTimer); if (channel) void channel.unsubscribe() }
   }, [])
 
   // Keep incoming WhatsApp messages visible even when Supabase Realtime is unavailable.
   useEffect(() => {
     if (!sessionUser) return
-    const interval = window.setInterval(() => {
-      if (document.visibilityState === 'visible') void load().catch((error) => console.error('[inbox] refresh failed', error))
-    }, 5000)
-    return () => window.clearInterval(interval)
+    // Realtime delivers changes instantly; this is only a safety net, so 30 s instead of 5 s (most of the data use).
+    const refresh = () => { if (document.visibilityState === 'visible') void load().catch((error) => console.error('[inbox] refresh failed', error)) }
+    const interval = window.setInterval(refresh, 30000)
+    document.addEventListener('visibilitychange', refresh)
+    return () => { window.clearInterval(interval); document.removeEventListener('visibilitychange', refresh) }
   }, [sessionUser?.email])
+
+  // Opening a chat loads its full history (the list only holds the latest messages of each chat).
+  useEffect(() => {
+    if (sessionUser && selectedId) void loadConversation(selectedId).catch(() => {})
+  }, [selectedId, sessionUser?.email])
 
   const myAgentId = sessionUser?.agentId
   const mentionNotesForMe = (conversation: Conversation) => myAgentId ? conversation.notes.filter((note) => note.mentions.includes(myAgentId) && note.agentId !== myAgentId) : []
