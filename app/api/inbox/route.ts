@@ -27,13 +27,16 @@ export async function GET(request: NextRequest) {
       if (error) throw error
       return NextResponse.json({ conversation })
     }
-    const [{ data: conversations, error }, { data: agents, error: agentsError }] = await Promise.all([
-      supabase.from('whatsapp_conversations').select(CONVERSATION_FIELDS)
-        .order('last_message_at', { ascending: false })
-        .order('created_at', { referencedTable: 'whatsapp_messages', ascending: false })
-        .limit(LIST_MESSAGE_LIMIT, { referencedTable: 'whatsapp_messages' }),
-      agentsQuery(),
-    ])
+    const lightList = () => supabase.from('whatsapp_conversations').select(CONVERSATION_FIELDS)
+      .order('last_message_at', { ascending: false })
+      .order('created_at', { referencedTable: 'whatsapp_messages', ascending: false })
+      .limit(LIST_MESSAGE_LIMIT, { referencedTable: 'whatsapp_messages' })
+    let [{ data: conversations, error }, { data: agents, error: agentsError }] = await Promise.all([lightList(), agentsQuery()])
+    // Never leave the team without an inbox: if the limited query is ever rejected, fall back to the full list.
+    if (error) {
+      console.error('[inbox] light list failed, using full list', error)
+      ;({ data: conversations, error } = await supabase.from('whatsapp_conversations').select(CONVERSATION_FIELDS).order('last_message_at', { ascending: false }))
+    }
     if (error) throw error; if (agentsError) throw agentsError
     return NextResponse.json({ conversations: conversations ?? [], agents: agents ?? [] })
   } catch (error) { console.error('[inbox] load failed', error); return NextResponse.json({ error: 'Inbox data is unavailable.' }, { status: 503 }) }
