@@ -15,12 +15,12 @@ We’re happy to help! How can we assist you today?
 ## QR02-AR | التذكرة لم تصل
 
 نعتذر إذا ما وصلتك التذكرة 🧡
-تقدر تدخل حسابك في myticket.om وتراجع قسم حجوزاتي. وإذا ما ظهرت، أرسل لنا رقم الحجز أو البريد الإلكتروني المستخدم وبنساعدك.
+تقدر تدخل حسابك في myticket.om وتراجع قسم تذاكري. وإذا ما ظهرت، أرسل لنا رقم الحجز أو البريد الإلكتروني المستخدم وبنساعدك.
 
 ## QR02-EN | Ticket Not Received
 
 Sorry you haven’t received your ticket 🧡
-You can log in to myticket.om and check My Bookings. If it’s not there, please share your booking number or the email you used, and we’ll help.
+You can log in to myticket.om and check My Tickets. If it’s not there, please share your booking number or the email you used, and we’ll help.
 
 ## QR03-AR | انخصم المبلغ ولم تصل التذكرة
 
@@ -41,12 +41,12 @@ We’re sorry about the duplicate charge. Please send your booking number and sc
 ## QR05-AR | تأكيد الحجز
 
 شكراً لحجزك عبر myticket.om 🧡
-تقدر تشوف تفاصيل حجزك وتذكرتك من قسم حجوزاتي. نتمنى لك تجربة جميلة!
+تقدر تشوف تفاصيل حجزك وتذكرتك من قسم تذاكري. نتمنى لك تجربة جميلة!
 
 ## QR05-EN | Booking Confirmation
 
 Thank you for booking with myticket.om 🧡
-You can find your booking details and ticket under My Bookings. Enjoy your experience!
+You can find your booking details and ticket under My Tickets. Enjoy your experience!
 
 ## QR06-AR | طريقة الحجز
 

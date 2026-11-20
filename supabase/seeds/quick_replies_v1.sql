@@ -15,17 +15,17 @@ from (values
   ($r$QR01-EN | Welcome$r$, $r$Welcome to myticket.om 🧡
 We’re happy to help! How can we assist you today?$r$),
   ($r$QR02-AR | التذكرة لم تصل$r$, $r$نعتذر إذا ما وصلتك التذكرة 🧡
-تقدر تدخل حسابك في myticket.om وتراجع قسم حجوزاتي. وإذا ما ظهرت، أرسل لنا رقم الحجز أو البريد الإلكتروني المستخدم وبنساعدك.$r$),
+تقدر تدخل حسابك في myticket.om وتراجع قسم تذاكري. وإذا ما ظهرت، أرسل لنا رقم الحجز أو البريد الإلكتروني المستخدم وبنساعدك.$r$),
   ($r$QR02-EN | Ticket Not Received$r$, $r$Sorry you haven’t received your ticket 🧡
-You can log in to myticket.om and check My Bookings. If it’s not there, please share your booking number or the email you used, and we’ll help.$r$),
+You can log in to myticket.om and check My Tickets. If it’s not there, please share your booking number or the email you used, and we’ll help.$r$),
   ($r$QR03-AR | انخصم المبلغ ولم تصل التذكرة$r$, $r$نعتذر عن الإرباك. إذا انخصم المبلغ وما ظهرت التذكرة، أرسل لنا رقم الحجز إن وجد، ووقت الدفع، وآخر 4 أرقام من البطاقة فقط. بنتحقق من العملية ونرجع لك بالتحديث.$r$),
   ($r$QR03-EN | Payment Deducted, No Ticket$r$, $r$Sorry for the inconvenience. If you were charged but didn’t receive a ticket, please share your booking number (if available), the payment time, and only the last 4 digits of your card. We’ll investigate and update you.$r$),
   ($r$QR04-AR | خصم مكرر$r$, $r$نعتذر عن الخصم المكرر. أرسل لنا رقم الحجز وصورة العمليتين مع إخفاء بيانات البطاقة الحساسة، وبنراجع الحالة مع فريق المدفوعات.$r$),
   ($r$QR04-EN | Duplicate Charge$r$, $r$We’re sorry about the duplicate charge. Please send your booking number and screenshots of both transactions, hiding any sensitive card details. Our payments team will review the case.$r$),
   ($r$QR05-AR | تأكيد الحجز$r$, $r$شكراً لحجزك عبر myticket.om 🧡
-تقدر تشوف تفاصيل حجزك وتذكرتك من قسم حجوزاتي. نتمنى لك تجربة جميلة!$r$),
+تقدر تشوف تفاصيل حجزك وتذكرتك من قسم تذاكري. نتمنى لك تجربة جميلة!$r$),
   ($r$QR05-EN | Booking Confirmation$r$, $r$Thank you for booking with myticket.om 🧡
-You can find your booking details and ticket under My Bookings. Enjoy your experience!$r$),
+You can find your booking details and ticket under My Tickets. Enjoy your experience!$r$),
   ($r$QR06-AR | طريقة الحجز$r$, $r$الحجز سهل! 🧡
 ادخل myticket.om، اختر التجربة المناسبة، حدد الموعد وعدد الأشخاص، وأكمل الدفع. بعدها تلقى تذكرتك في حسابك.$r$),
   ($r$QR06-EN | How to Book$r$, $r$Booking is easy! 🧡
