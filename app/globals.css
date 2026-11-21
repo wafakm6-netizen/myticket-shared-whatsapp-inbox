@@ -2889,3 +2889,70 @@ html[data-theme="dark"] button[aria-label="Notifications"] .notification-count{b
 .smart-reply-close{font-size:18px;line-height:1}
 html[data-theme="dark"] .smart-reply-chip{background:#3f2318;border-color:#6b3420;color:#ffb899}
 html[data-theme="dark"] .smart-reply-lang,html[data-theme="dark"] .smart-reply-close{color:#9aa5b1}
+
+/* Saved replies list (in-chat picker and Replies page): search, language switch, big rows, one scroll area. */
+.qr-list-root{display:flex;flex-direction:column;min-height:0;flex:1 1 auto}
+.qr-list-tools{flex:0 0 auto;display:grid;gap:8px;padding:0 0 10px}
+.qr-list-search{display:flex;align-items:center;gap:8px;height:42px;padding:0 14px;border-radius:999px;background:#fff;color:#7a8799;box-shadow:0 1px 2px rgba(23,39,61,.05)}
+.qr-list-search input{flex:1;min-width:0;height:100%;border:0!important;outline:0;background:transparent!important;font-size:16px;color:#16243a;padding:0!important;box-shadow:none!important}
+.qr-list-search button{border:0;background:#e3e8ef;color:#53627a;width:22px;height:22px;border-radius:999px;font-size:15px;line-height:1;cursor:pointer}
+.qr-list-langs{display:flex;gap:6px}
+.qr-list-langs button{flex:1;height:34px;border:0;border-radius:999px;background:#e9edf2;color:#40506a;font-size:14px;font-weight:600;cursor:pointer}
+.qr-list-langs button.selected{background:#ff5a1f;color:#fff}
+.qr-list-items{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y;border-radius:14px;background:#fff}
+.qr-list-item+.qr-list-item{border-top:1px solid #edf0f4}
+.qr-list-tap{display:block;width:100%;padding:13px 16px;border:0;background:transparent;text-align:start;cursor:pointer;color:inherit;font:inherit;-webkit-tap-highlight-color:transparent;touch-action:pan-y}
+.qr-list-tap:active,.qr-list-item.open .qr-list-tap{background:#fff4ee}
+.qr-list-title{display:flex;align-items:baseline;gap:8px;justify-content:space-between}
+.qr-list-title strong{font-size:15.5px;font-weight:600;color:#16243a;line-height:1.35}
+.qr-list-title small{flex:0 0 auto;font-size:11px;color:#a0abba;font-weight:500;direction:ltr}
+.qr-list-body{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;margin-top:3px;font-size:14px;line-height:1.45;color:#6b7787;white-space:pre-line}
+.qr-list-item.open .qr-list-body{display:block;-webkit-line-clamp:unset}
+.qr-list-empty{margin:0;padding:24px 16px;text-align:center;color:#7a8799;font-size:14px}
+.qr-list-actions{display:flex;flex-wrap:wrap;gap:8px;padding:0 16px 14px;background:#fff4ee}
+.qr-list-actions button{height:38px!important;padding:0 16px!important;border-radius:999px!important;font-size:14px!important;width:auto!important;min-width:0!important}
+.qr-list-actions .team-toggle{background:#fff!important;color:#c93b35!important;border:1px solid #f3c9c6!important}
+.qr-list-actions .team-toggle.armed{background:#c93b35!important;color:#fff!important}
+/* Desktop popover */
+.app-shell .chat-pane .composer .quick-reply-menu.qr-sheet{display:flex;flex-direction:column;width:380px;max-height:min(520px,70vh);padding:12px}
+.app-shell .chat-pane .composer .quick-reply-menu.qr-sheet .qr-list-items{max-height:none}
+.qr-sheet-grip{display:none}
+.qr-sheet-head{display:flex;align-items:center;justify-content:space-between;padding:0 2px 10px}
+.qr-sheet-head strong{font-size:15px;color:#16243a}
+.qr-sheet-head button{display:grid;place-items:center;width:32px;height:32px;border:0;border-radius:999px;background:#fff;color:#53627a;cursor:pointer}
+.qr-sheet-backdrop{display:none}
+/* Replies page */
+.saved-reply-toolbar{display:flex;justify-content:flex-end;margin:0 0 12px}
+.saved-reply-toolbar:empty{display:none}
+.saved-reply-new{width:auto!important;height:40px!important;padding:0 18px!important;border-radius:999px!important;font-size:15px!important}
+.saved-reply-form textarea{width:100%;min-height:110px;padding:12px 14px;border:0;border-radius:14px;background:#f2f4f7;font:inherit;font-size:16px;line-height:1.5;resize:vertical;box-sizing:border-box}
+.modal-backdrop .team-modal .saved-reply-list:has(.qr-list-root),.app-shell .team-modal .saved-reply-list:has(.qr-list-root){background:transparent!important;overflow:visible!important;border-radius:0!important}
+.team-modal .saved-reply-list .qr-list-tools{position:sticky;top:-1px;z-index:2;padding-top:4px;background:inherit}
+.team-modal .saved-reply-list .qr-list-items{overflow:visible;max-height:none}
+
+@media(max-width:900px){
+ /* In-chat picker: a tall sheet over the chat (like WhatsApp's attachment pages), not squeezed into the keyboard space. */
+ .app-shell .chat-pane .composer .quick-reply-menu.qr-sheet{
+   position:fixed!important;left:0!important;right:0!important;bottom:0!important;
+   top:calc(env(safe-area-inset-top, 0px) + 12dvh)!important;height:auto!important;max-height:none!important;width:auto!important;
+   border-radius:20px 20px 0 0!important;background:#f2f4f7!important;box-shadow:0 -10px 40px rgba(15,23,42,.18)!important;
+   padding:6px 14px calc(10px + env(safe-area-inset-bottom, 0px))!important;z-index:250!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;
+ }
+ html.composer-sheet-open .app-shell .chat-pane .composer .quick-reply-menu.qr-sheet{top:calc(env(safe-area-inset-top, 0px) + 12dvh)!important;height:auto!important}
+ .qr-sheet-grip{display:block;width:40px;height:5px;margin:4px auto 8px;border-radius:999px;background:#cfd6df}
+ .qr-sheet-head strong{font-size:17px}
+ .qr-sheet-backdrop{display:block;position:fixed;inset:0;z-index:249;background:rgba(15,23,42,.35)}
+ .qr-list-tap{padding:14px 16px}
+ .app-shell .modal-backdrop:has(> .team-modal[aria-labelledby="saved-replies-title"]){overflow:hidden!important}
+ .app-shell .modal-backdrop>.team-modal[aria-labelledby="saved-replies-title"]{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
+ .team-modal .saved-reply-list .qr-list-tools{background:#f2f4f7}
+}
+html[data-theme="dark"] .qr-list-search,html[data-theme="dark"] .qr-list-items,html[data-theme="dark"] .qr-sheet-head button{background:#141a21;color:#9ba7b5}
+html[data-theme="dark"] .qr-list-search input,html[data-theme="dark"] .qr-list-title strong,html[data-theme="dark"] .qr-sheet-head strong{color:#e3e8ef}
+html[data-theme="dark"] .qr-list-langs button{background:#1e2630;color:#c0c9d5}
+html[data-theme="dark"] .qr-list-langs button.selected{background:#ff5a1f;color:#fff}
+html[data-theme="dark"] .qr-list-item+.qr-list-item{border-top-color:#1e2630}
+html[data-theme="dark"] .qr-list-body{color:#9ba7b5}
+html[data-theme="dark"] .qr-list-tap:active,html[data-theme="dark"] .qr-list-item.open .qr-list-tap,html[data-theme="dark"] .qr-list-actions{background:#2a1a12}
+html[data-theme="dark"] .app-shell .chat-pane .composer .quick-reply-menu.qr-sheet,html[data-theme="dark"] .team-modal .saved-reply-list .qr-list-tools{background:#192028!important}
+html[data-theme="dark"] .saved-reply-form textarea{background:#141a21;color:#e3e8ef}
