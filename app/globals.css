@@ -3136,3 +3136,13 @@ html[data-theme="dark"] .ar-editor-topic.selected{border-color:#ff5a1f;backgroun
 html[data-theme="dark"] .ar-editor-close,html[data-theme="dark"] .ar-editor-detail-head button{background:#1e2630;color:#e3e8ef}
 html[data-theme="dark"] .ar-field input,html[data-theme="dark"] .ar-field select,html[data-theme="dark"] .ar-field textarea,html[data-theme="dark"] .ar-editor-delay select{background:#141a21;border-color:#26303b;color:#e3e8ef}
 html[data-theme="dark"] .auto-reply-summary-list{color:#e3e8ef}
+
+/* Load test panel (?stress) */
+.stress-panel{position:fixed;left:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:9000;width:min(360px,calc(100vw - 24px));max-height:60vh;overflow-y:auto;padding:12px 14px;border-radius:16px;background:#16243a;color:#fff;font-size:13px;line-height:1.45;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.stress-panel strong{display:block;color:#ffb894}
+.stress-panel p{margin:4px 0 8px;color:#c0c9d5}
+.stress-buttons{display:flex;gap:8px}
+.stress-buttons button{flex:1;height:36px;border:0;border-radius:999px;background:#ff5a1f;color:#fff;font-weight:700;font-size:13px}
+.stress-buttons button[data-exit]{background:#2f3d52}
+.stress-buttons button:disabled{opacity:.5}
+.stress-results{margin:10px 0 0;padding-left:18px;display:grid;gap:4px}

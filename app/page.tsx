@@ -1,6 +1,7 @@
 'use client'
 
 import { Fragment, useEffect, useMemo, useRef, useState, type RefObject } from 'react'
+import '@/lib/stress-test'
 import { createBrowserSupabaseClient } from '@/lib/supabase/client'
 import { WhatsAppTemplatePicker, type TemplateSelection } from '@/components/whatsapp-template-picker'
 import { TagManager } from '@/components/tag-manager'
@@ -947,7 +948,7 @@ export default function Page() {
   const hydratedFromCacheRef = useRef(false)
   const cacheUserRef = useRef<string | null>(null)
   useEffect(() => {
-    if (!inboxReady || !sessionUser || !cacheUserRef.current || !conversations.length) return
+    if (!inboxReady || !sessionUser || !cacheUserRef.current || !conversations.length || (window as any).__inboxStress) return
     const timer = window.setTimeout(() => {
       try {
         const trimmed = conversations.slice(0, 60).map((conversation) => ({ ...conversation, messages: conversation.messages.filter((message) => !/^(pending|failed)-/.test(String(message.id))).slice(-20), notes: conversation.notes.slice(-10) }))
@@ -997,7 +998,21 @@ export default function Page() {
     // and conversation-level changes (status, assignment, new chats) reload the list at most every 1.5 s.
     const chatTimers = new Map<string, number>()
     let listTimer = 0
-    const queueConversation = (id: string) => { window.clearTimeout(chatTimers.get(id)); chatTimers.set(id, window.setTimeout(() => { chatTimers.delete(id); void loadConversation(id).catch(() => {}) }, 300)) }
+    // A new customer message is shown straight from the realtime event, before the chat is fetched again,
+    // so it appears together with (not after) the push notification. The fetch that follows fills in the rest.
+    const appendRealtimeMessage = (row: any) => setConversations((current) => {
+      const index = current.findIndex((item) => item.id === row.conversation_id)
+      if (index < 0 || row.direction === 'outbound' || current[index].messages.some((message) => message.id === row.id)) return current
+      const conversation = current[index]
+      const reaction = row.attachment_name === 'reaction' || row.attachment_name === 'reaction attachment'
+      const message: Message = { date: row.sent_at || row.created_at || new Date().toISOString(), id: row.id, from: 'customer', text: row.body || (row.attachment_name ? '' : 'Unsupported WhatsApp message'), time: new Date(row.created_at || row.sent_at || Date.now()).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }), status: row.status, failureReason: row.failure_reason || undefined, attachmentUrl: row.attachment_url, attachmentName: row.attachment_name, externalId: row.external_id, replyToExternalId: row.reply_to_external_id, senderName: row.sender_name || undefined }
+      const updated = { ...conversation, messages: [...conversation.messages, message], ...(reaction ? {} : { preview: row.body || row.attachment_name || conversation.preview, lastMessageAt: row.created_at || new Date().toISOString(), unread: conversation.unread + 1 }) }
+      const next = [...current]
+      if (reaction) { next[index] = updated; return next }
+      next.splice(index, 1)
+      return [updated, ...next]
+    })
+    const queueConversation = (id: string) => { window.clearTimeout(chatTimers.get(id)); chatTimers.set(id, window.setTimeout(() => { chatTimers.delete(id); void loadConversation(id).catch(() => {}) }, 150)) }
     const queueListReload = () => { if (listTimer) return; listTimer = window.setTimeout(() => { listTimer = 0; void load().catch(() => {}) }, 1500) }
     const loadAuthenticatedInbox = async (user: { id: string; email?: string }) => {
       // Instant open: show the chats saved on this device right away, then replace them with fresh data.
@@ -1023,7 +1038,7 @@ export default function Page() {
       setSelfAvailability(agent?.availability === 'away' ? 'away' : 'available')
       try { await load() } finally { if (active) setInboxReady(true) }
       if (!active) return
-      try { const onChatChange = (change: any) => { const id = change?.new?.conversation_id ?? change?.old?.conversation_id; if (id) queueConversation(id); else queueListReload() }; channel = supabase.channel('whatsapp-inbox').on('postgres_changes', { event: '*', schema: 'public', table: 'whatsapp_messages' }, onChatChange).on('postgres_changes', { event: '*', schema: 'public', table: 'whatsapp_conversations' }, () => queueListReload()).on('postgres_changes', { event: '*', schema: 'public', table: 'whatsapp_internal_notes' }, onChatChange).subscribe() } catch (error) { console.error('[v0] realtime failed', error) }
+      try { const onChatChange = (change: any) => { const id = change?.new?.conversation_id ?? change?.old?.conversation_id; if (change?.eventType === 'INSERT' && change?.table === 'whatsapp_messages' && change.new) appendRealtimeMessage(change.new); if (id) queueConversation(id); else queueListReload() }; channel = supabase.channel('whatsapp-inbox').on('postgres_changes', { event: '*', schema: 'public', table: 'whatsapp_messages' }, onChatChange).on('postgres_changes', { event: '*', schema: 'public', table: 'whatsapp_conversations' }, () => queueListReload()).on('postgres_changes', { event: '*', schema: 'public', table: 'whatsapp_internal_notes' }, onChatChange).subscribe() } catch (error) { console.error('[v0] realtime failed', error) }
     }
     void supabase.auth.getUser().then(async ({ data }) => {
       if (!active) return
