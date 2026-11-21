@@ -1,10 +1,10 @@
 // Smart Reply, rule-based (no AI): reads the customer's latest message, finds the topic from approved Arabic/English
-// keywords, and points to the matching approved quick reply (QR01–QR15). It never writes text of its own, so it cannot
+// keywords, and points to the matching approved quick reply (QR01–QR16). It never writes text of its own, so it cannot
 // promise a refund, a payment or availability: the agent always reviews the reply and presses Send.
 
 export type Intent =
   | 'duplicate_charge' | 'payment_deducted' | 'refund_status' | 'cancellation' | 'change_date' | 'ticket_missing'
-  | 'qr_scan' | 'location' | 'availability' | 'booking_help' | 'technical_issue' | 'partnership' | 'welcome' | 'closing'
+  | 'qr_scan' | 'location' | 'price' | 'availability' | 'booking_help' | 'technical_issue' | 'partnership' | 'welcome' | 'closing'
 
 type Rule = { intent: Intent; code: string; label: { ar: string; en: string }; ar: RegExp[]; en: RegExp[] }
 
@@ -21,11 +21,14 @@ const RULES: Rule[] = [
   { intent: 'change_date', code: 'QR07', label: { ar: 'تغيير الموعد', en: 'Change date' },
     ar: [/تغيير (الموعد|التاريخ|الوقت|الحجز)/, /اغير/, /نغير/, /تاجيل/, /اجل/, /موعد (ثاني|اخر)/, /يوم (ثاني|اخر)/, /تعديل (الحجز|الموعد)/], en: [/change (the |my )?(date|time|booking)/, /reschedul/, /another (date|day|time)/, /move my booking/, /postpone/] },
   { intent: 'ticket_missing', code: 'QR02', label: { ar: 'التذكرة ما وصلت', en: 'Ticket not received' },
-    ar: [/ما ?وصل(ت|تني|ني)/, /لم (تصل|يصل)/, /ما ?جا(تني|ني|ت)/, /وين (التذكره|تذكرتي|التذاكر)/, /ما (لقيت|حصلت) (التذكره|تذكرتي)/, /التذكره/, /تذكرتي/], en: [/(didn.?t|did not|haven.?t|have not|not) (get|got|receive)/, /not received/, /no ticket/, /where.*ticket/, /ticket.*(email|missing)/] },
+    ar: [/ما ?وصل(ت|تني|ني)/, /لم (تصل|يصل)/, /ما ?جا(تني|ني|ت)/, /وين (التذكره|تذكرتي|التذاكر)/, /ما (لقيت|حصلت) (التذكره|تذكرتي)/, /(ارسلو|ابعثو|ارسل|ابعث)(ا)? (لي )?التذكره/, /تذكرتي/], en: [/(didn.?t|did not|haven.?t|have not|not) (get|got|receive)/, /not received/, /no ticket/, /where.*ticket/, /ticket.*(email|missing)/] },
   { intent: 'qr_scan', code: 'QR11', label: { ar: 'مسح تذكرة QR', en: 'QR scanning' },
     ar: [/\bqr\b/i, /باركود/, /الباركود/, /مسح (التذكره|الكود)/, /الكود/, /عند الدخول/, /البوابه/], en: [/\bqr\b/, /barcode/, /scan/, /at the (gate|entrance)/, /entry/] },
   { intent: 'location', code: 'QR10', label: { ar: 'الموقع', en: 'Location' },
     ar: [/موقع/, /لوكيشن/, /وين (المكان|مكانها|مكانه|الفعاليه|التجربه)/, /الطريق/, /العنوان/, /خريطه/, /كيف (اوصل|نوصل)/], en: [/location/, /where is (it|the)/, /address/, /directions/, /\bmap\b/, /how (do|can) (i|we) get/] },
+  // "كم تذكرة؟" usually means the price, and the customer rarely names the event: QR16 asks which one.
+  { intent: 'price', code: 'QR16', label: { ar: 'السعر', en: 'Price' },
+    ar: [/^كم( |$|؟|\?)/, /(^| )بكم( |$|؟|\?)/, /كم (سعر|السعر|التذكره|تذكره|الحجز|الدخول|الشخص|للشخص|الفرد|يكلف)/, /(سعر|اسعار|السعر|الاسعار|تكلفه|التكلفه|رسوم)/], en: [/how much/, /\bprice/, /\bcost/, /\bfees?\b/, /\brates?\b/] },
   { intent: 'availability', code: 'QR12', label: { ar: 'توفر المواعيد', en: 'Availability' },
     ar: [/متوفر/, /متاح/, /(في|فيه) (مكان|اماكن|مقاعد)/, /المواعيد/, /التواريخ/, /فاضي/, /باقي (تذاكر|اماكن)/], en: [/availab/, /slots?\b/, /open dates/, /spots? left/, /any (seats|places|tickets)/] },
   { intent: 'booking_help', code: 'QR06', label: { ar: 'طريقة الحجز', en: 'How to book' },
