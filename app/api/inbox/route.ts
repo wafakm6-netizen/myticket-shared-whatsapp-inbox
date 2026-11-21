@@ -46,6 +46,13 @@ export async function PATCH(request: NextRequest) {
   const auth = await requireAgent(); if (auth.error) return auth.error
   try {
     const body = await request.json(); const supabase = createServerSupabaseClient(); const patch: Record<string, string | number | null> = {}
+    // "Take it": assign only if nobody has the chat yet, so two agents can't both claim it.
+    if (body.claim === true && body.id && typeof body.agentId === 'string' && body.agentId) {
+      const result = await supabase.from('whatsapp_conversations').update({ assigned_agent_id: body.agentId }).eq('id', body.id).is('assigned_agent_id', null).select('id, assigned_agent_id')
+      if (result.error) throw result.error
+      if (!result.data?.length) return NextResponse.json({ error: 'Someone already took this chat.' }, { status: 409 })
+      return NextResponse.json({ conversation: result.data[0] })
+    }
     if (body.patch?.status && ['open','pending','closed'].includes(body.patch.status)) patch.status = body.patch.status
     if (body.patch && Object.prototype.hasOwnProperty.call(body.patch,'assigned_agent_id')) patch.assigned_agent_id = body.patch.assigned_agent_id || null
     if (body.patch && Object.prototype.hasOwnProperty.call(body.patch,'unread_count')) patch.unread_count = Math.max(0, Number(body.patch.unread_count) || 0)
