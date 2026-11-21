@@ -3029,3 +3029,8 @@ html[data-theme="dark"] .auto-reply-option-head button{background:#1e2630;color:
   .app-shell > .chat-pane{flex:1 1 0!important;width:0!important;min-width:0!important}
 }
 @keyframes details-slide-in{from{transform:translateX(24px);opacity:.4}to{transform:none;opacity:1}}
+/* Auto reply settings: keep every field inside the card on phones. */
+.workspace-settings-content section:has(.auto-reply-settings){min-width:0;overflow:hidden}
+.auto-reply-settings{grid-template-columns:minmax(0,1fr);min-width:0;max-width:100%}
+.auto-reply-settings>*,.auto-reply-pair>*,.auto-reply-field>*{min-width:0;max-width:100%}
+.auto-reply-note{overflow-wrap:anywhere}
