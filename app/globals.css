@@ -3016,3 +3016,16 @@ html[data-theme="dark"] .auto-reply-settings textarea,html[data-theme="dark"] .a
 html[data-theme="dark"] .auto-reply-option{background:#192028}
 html[data-theme="dark"] .auto-reply-option-head,html[data-theme="dark"] .auto-reply-switch,html[data-theme="dark"] .auto-reply-heading{color:#e3e8ef}
 html[data-theme="dark"] .auto-reply-option-head button{background:#1e2630;color:#c0c9d5}
+
+/* iPad and small laptops: contact details slide over the chat instead of squeezing it into a narrow column. */
+@media (min-width: 901px) and (max-width: 1399px) {
+  .app-shell > .details-pane{
+    display:block!important;position:fixed!important;top:var(--inbox-visual-top,0px)!important;right:0!important;bottom:auto!important;
+    height:var(--inbox-visual-height,100dvh)!important;max-height:var(--inbox-visual-height,100dvh)!important;
+    width:min(360px,42vw)!important;flex:none!important;z-index:160!important;overflow-y:auto!important;
+    box-shadow:-12px 0 40px rgba(15,23,42,.18)!important;border-left:0!important;
+    padding-top:env(safe-area-inset-top,0px)!important;animation:details-slide-in .2s ease-out;
+  }
+  .app-shell > .chat-pane{flex:1 1 0!important;width:0!important;min-width:0!important}
+}
+@keyframes details-slide-in{from{transform:translateX(24px);opacity:.4}to{transform:none;opacity:1}}
