@@ -3146,3 +3146,8 @@ html[data-theme="dark"] .auto-reply-summary-list{color:#e3e8ef}
 .stress-buttons button[data-exit]{background:#2f3d52}
 .stress-buttons button:disabled{opacity:.5}
 .stress-results{margin:10px 0 0;padding-left:18px;display:grid;gap:4px}
+
+/* Big inboxes: rows off screen skip layout and paint until they are near the screen. */
+.app-shell .conversation-list>.conversation{content-visibility:auto;contain-intrinsic-size:auto 102px}
+.thread-earlier{display:block;margin:6px auto 10px;padding:7px 16px;border:0;border-radius:999px;background:rgba(255,255,255,.9);color:#53627a;font-size:13px;font-weight:600;box-shadow:0 1px 3px rgba(15,23,42,.12);cursor:pointer}
+html[data-theme="dark"] .thread-earlier{background:#1e2630;color:#c0c9d5}

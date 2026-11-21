@@ -100,7 +100,7 @@ function install() {
       const row = document.querySelector<HTMLElement>(`.conversation[data-conversation-id="${BIG_ID}"]`)
       if (!row) return false
       row.click()
-      const ok = await waitFor(() => (document.querySelectorAll('.thread .message-row').length > 1000))
+      const ok = await waitFor(() => (document.querySelectorAll('.thread .message-row').length > 100))
       await settle(); return ok
     }],
     ['Scroll the open chat to the top and back', async () => {
