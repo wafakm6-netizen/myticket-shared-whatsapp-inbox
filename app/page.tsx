@@ -960,7 +960,7 @@ export default function Page() {
     if (!inboxReady || !sessionUser || !cacheUserRef.current || !conversations.length || (window as any).__inboxStress) return
     const timer = window.setTimeout(() => {
       try {
-        const trimmed = conversations.slice(0, 60).map((conversation) => ({ ...conversation, messages: conversation.messages.filter((message) => !/^(pending|failed)-/.test(String(message.id))).slice(-20), notes: conversation.notes.slice(-10) }))
+        const trimmed = conversations.slice(0, 60).map((conversation) => ({ ...conversation, messages: conversation.messages.filter((message) => !/^(pending|failed)-/.test(String(message.id))).slice(-20) }))
         localStorage.setItem(INBOX_CACHE_KEY, JSON.stringify({ userId: cacheUserRef.current, agentId: sessionUser.agentId, role: sessionUser.role, savedAt: Date.now(), conversations: trimmed }))
       } catch {}
     }, 2000)
@@ -1474,7 +1474,11 @@ export default function Page() {
     if (!myAgentId || !conversations.length) return
     const all = conversations.flatMap((conversation) => mentionNotesForMe(conversation).map((note) => ({ conversation, note })))
     if (!alertedMentionsRef.current) { alertedMentionsRef.current = new Set(all.map((item) => item.note.id)); return }
-    const fresh = all.filter((item) => !alertedMentionsRef.current!.has(item.note.id))
+    // Only a mention that is new (written in the last 10 minutes) and not yet seen in that chat; older notes that
+    // simply arrive later (opening the app, loading a chat's full history) never pop up again.
+    const seenAt = (id: string) => (mentionSeen[id] ? new Date(mentionSeen[id]).getTime() : 0)
+    const fresh = all.filter((item) => !alertedMentionsRef.current!.has(item.note.id) && Date.now() - new Date(item.note.date).getTime() < 10 * 60 * 1000 && new Date(item.note.date).getTime() > seenAt(item.conversation.id))
+    all.forEach((item) => alertedMentionsRef.current!.add(item.note.id))
     if (!fresh.length) return
     fresh.forEach((item) => alertedMentionsRef.current!.add(item.note.id))
     const newest = fresh.sort((a, b) => new Date(b.note.date).getTime() - new Date(a.note.date).getTime())[0]
