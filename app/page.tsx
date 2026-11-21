@@ -1605,11 +1605,13 @@ export default function Page() {
   const [newBelowCount, setNewBelowCount] = useState(0)
   const onThreadScroll = (event: React.UIEvent<HTMLDivElement>) => {
     const thread = event.currentTarget
-    const up = thread.scrollHeight - thread.scrollTop - thread.clientHeight > 220
+    // Ignore the jump to the newest message right after a chat opens, so the button doesn't flash.
+    const up = Date.now() - chatOpenedAtRef.current > 900 && thread.scrollHeight - thread.scrollTop - thread.clientHeight > 220
     if (up !== threadScrolledUp) setThreadScrolledUp(up)
     if (!up && newBelowCount) setNewBelowCount(0)
   }
-  useEffect(() => { setThreadScrolledUp(false); setNewBelowCount(0) }, [selectedId])
+  const chatOpenedAtRef = useRef(0)
+  useEffect(() => { chatOpenedAtRef.current = Date.now(); setThreadScrolledUp(false); setNewBelowCount(0) }, [selectedId, mobileChatOpen])
   const jumpToLatest = () => { const thread = threadRef.current; if (thread) thread.scrollTo({ top: thread.scrollHeight, behavior: 'smooth' }); setNewBelowCount(0) }
 
   const emojiCategories = [

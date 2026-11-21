@@ -3034,3 +3034,51 @@ html[data-theme="dark"] .auto-reply-option-head button{background:#1e2630;color:
 .auto-reply-settings{grid-template-columns:minmax(0,1fr);min-width:0;max-width:100%}
 .auto-reply-settings>*,.auto-reply-pair>*,.auto-reply-field>*{min-width:0;max-width:100%}
 .auto-reply-note{overflow-wrap:anywhere}
+
+/* Auto reply editor v2: topic cards, live preview, sticky save bar. */
+.auto-reply-top{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px}
+.auto-reply-delay{min-width:180px}
+.auto-reply-field span{display:flex;justify-content:space-between;gap:8px}
+.auto-reply-field em{font-style:normal;color:#a0abba;font-size:12px}
+.auto-reply-layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-items:start}
+.auto-reply-editor{display:grid;gap:12px;min-width:0}
+.auto-reply-option{padding:14px;border:1px solid #e9edf2;background:#fff}
+.auto-reply-option-head>span{color:#6b7787;font-size:13px}
+.auto-reply-option-head button.danger{width:auto;padding:0 12px;background:#c93b35;color:#fff;font-size:13px}
+.auto-reply-add{height:46px;border:2px dashed #ffc2a8;border-radius:14px;background:#fff8f4;color:#e6531a;font-size:15px;font-weight:700;cursor:pointer}
+.auto-reply-preview{display:grid;gap:10px;min-width:0}
+.auto-reply-preview-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:14px;color:#16243a}
+.auto-reply-preview-head [role=tablist]{display:flex;gap:4px;padding:3px;border-radius:999px;background:#e9edf2}
+.auto-reply-preview-head [role=tablist] button{height:28px;padding:0 12px;border:0;border-radius:999px;background:transparent;font-size:13px;font-weight:600;color:#40506a;cursor:pointer}
+.auto-reply-preview-head [role=tablist] button.selected{background:#fff;color:#16243a;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.auto-reply-phone{display:grid;gap:10px;padding:14px;border-radius:22px;background:#efe7de}
+.auto-reply-bubble{max-width:92%;padding:10px 12px 8px;border-radius:12px;background:#fff;box-shadow:0 1px 1px rgba(0,0,0,.08);font-size:14px;line-height:1.45;color:#111b21}
+.auto-reply-bubble p{margin:0 0 8px;white-space:pre-line}
+.auto-reply-bubble-button{padding-top:8px;border-top:1px solid #e9edef;text-align:center;color:#00a884;font-weight:600}
+.auto-reply-sheet{border-radius:14px;background:#fff;overflow:hidden}
+.auto-reply-sheet-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px}
+.auto-reply-sheet-row+.auto-reply-sheet-row{border-top:1px solid #f0f2f5}
+.auto-reply-sheet-row strong{display:block;font-size:14px;color:#111b21;font-weight:500}
+.auto-reply-sheet-row span{display:block;font-size:12.5px;color:#667781}
+.auto-reply-sheet-row i{flex:0 0 18px;height:18px;border:2px solid #8696a0;border-radius:999px}
+.auto-reply-actions{position:sticky;bottom:0;z-index:3;justify-content:space-between;padding:12px 0 2px;background:inherit}
+.auto-reply-state{font-size:13.5px;color:#7a8799}
+.auto-reply-actions.dirty .auto-reply-state{color:#e6531a;font-weight:600}
+.auto-reply-actions .send-btn:disabled{opacity:.5}
+/* Wider window on iPad and desktop, with the preview beside the editor. */
+@media (min-width: 901px){
+  .modal-backdrop .workspace-settings-modal:has(.auto-reply-settings),
+  .app-shell .modal-backdrop>.workspace-settings-modal:has(.auto-reply-settings){width:min(100%,1000px)!important;max-width:1000px!important}
+  .auto-reply-layout{grid-template-columns:minmax(0,1fr) 300px}
+  .auto-reply-preview{position:sticky;top:0}
+}
+html[data-theme="dark"] .auto-reply-option{background:#141a21;border-color:#1e2630}
+html[data-theme="dark"] .auto-reply-add{background:#2a1a12;border-color:#5a3020;color:#ff8a5c}
+html[data-theme="dark"] .auto-reply-preview-head{color:#e3e8ef}
+html[data-theme="dark"] .auto-reply-preview-head [role=tablist]{background:#1e2630}
+html[data-theme="dark"] .auto-reply-preview-head [role=tablist] button{color:#c0c9d5}
+html[data-theme="dark"] .auto-reply-preview-head [role=tablist] button.selected{background:#2a3440;color:#fff}
+html[data-theme="dark"] .auto-reply-phone{background:#0b141a}
+html[data-theme="dark"] .auto-reply-bubble,html[data-theme="dark"] .auto-reply-sheet{background:#1f2c34;color:#e9edef}
+html[data-theme="dark"] .auto-reply-sheet-row strong{color:#e9edef}
+html[data-theme="dark"] .auto-reply-sheet-row+.auto-reply-sheet-row{border-top-color:#2a3942}

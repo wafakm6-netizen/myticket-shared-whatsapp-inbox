@@ -29,7 +29,7 @@ Our team will reply shortly. To help us serve you faster, please choose a topic:
   $j$[
     {"id":"ticket","title_ar":"التذكرة ما وصلتني","title_en":"Ticket not received","description_ar":"ما لقيت التذكرة في الإيميل أو في تذاكري","description_en":"Not in my email or My Tickets","reply_code":"QR02","handoff":false,"tag":"Ticket not received"},
     {"id":"price","title_ar":"أسعار ومواعيد","title_en":"Prices & dates","description_ar":"سعر فعالية أو تجربة ومواعيدها","description_en":"Price and dates of an event or experience","reply_code":"QR16","handoff":false,"tag":"Price & dates"},
-    {"id":"payment","title_ar":"مشكلة في الدفع","title_en":"Payment issue","description_ar":"انخصم المبلغ وما وصلت التذكرة","description_en":"Charged but no ticket","reply_code":null,"handoff":true,"tag":"Payment issue"},
+    {"id":"booking","title_ar":"أبي أحجز","title_en":"I want to book","description_ar":"طريقة الحجز في myticket.om","description_en":"How to book on myticket.om","reply_code":"QR06","handoff":false,"tag":"Booking"},
     {"id":"refund","title_ar":"إلغاء أو استرداد","title_en":"Cancel or refund","description_ar":"إلغاء حجز أو استرجاع مبلغ","description_en":"Cancel a booking or get money back","reply_code":null,"handoff":true,"tag":"Cancel / refund"},
     {"id":"agent","title_ar":"أبي أكلم موظف","title_en":"Talk to our team","description_ar":"موضوع ثاني","description_en":"Something else","reply_code":null,"handoff":true,"tag":"Wants an agent"}
   ]$j$::jsonb)
