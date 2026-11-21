@@ -2990,3 +2990,29 @@ html[data-theme="dark"] .slash-replies button:active,html[data-theme="dark"] .sl
 html[data-theme="dark"] .claim-bar{background:#2a1a12;color:#ffb894}
 html[data-theme="dark"] .jump-latest{background:#1e2630;color:#c0c9d5}
 html[data-theme="dark"] .conversation-list>.conversation.conversation-swiping{background:#141a21}
+
+/* Workspace settings → Auto reply menu */
+.auto-reply-settings{display:grid;gap:12px}
+.auto-reply-note{margin:0;font-size:13.5px;line-height:1.5;color:#6b7787}
+.auto-reply-note code{font-size:12px;background:#f2f4f7;padding:1px 5px;border-radius:5px;overflow-wrap:anywhere}
+.auto-reply-switch{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600;color:#16243a}
+.auto-reply-switch input{width:22px;height:22px;accent-color:#ff5a1f}
+.auto-reply-field{display:grid;gap:5px;font-size:13px;color:#53627a}
+.auto-reply-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media(max-width:600px){.auto-reply-pair{grid-template-columns:1fr}}
+.auto-reply-settings textarea,.auto-reply-settings input:not([type=checkbox]),.auto-reply-settings select{width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #e3e8ef;border-radius:12px;background:#fff;font:inherit;font-size:15px;color:#16243a}
+.auto-reply-settings textarea{resize:vertical;line-height:1.45}
+.auto-reply-heading{margin:6px 0 0;font-size:14px;color:#16243a}
+.auto-reply-option{padding:10px;border-radius:14px;background:#f7f8fa;display:grid;gap:8px}
+.auto-reply-option-head{display:flex;align-items:center;gap:8px;font-size:13.5px;color:#16243a}
+.auto-reply-option-head>span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.auto-reply-option-head>strong{display:grid;place-items:center;width:24px;height:24px;border-radius:999px;background:#ff5a1f;color:#fff;font-size:12px}
+.auto-reply-option-head button{width:30px;height:30px;border:0;border-radius:999px;background:#fff;color:#53627a;cursor:pointer;font-size:15px}
+.auto-reply-option-head button:disabled{opacity:.35}
+.auto-reply-actions{display:flex;align-items:center;gap:12px}
+.auto-reply-actions .send-btn{width:auto!important;padding:0 20px!important;height:42px!important;border-radius:999px!important}
+.auto-reply-actions span{color:#16a34a;font-size:14px;font-weight:600}
+html[data-theme="dark"] .auto-reply-settings textarea,html[data-theme="dark"] .auto-reply-settings input:not([type=checkbox]),html[data-theme="dark"] .auto-reply-settings select{background:#141a21;border-color:#1e2630;color:#e3e8ef}
+html[data-theme="dark"] .auto-reply-option{background:#192028}
+html[data-theme="dark"] .auto-reply-option-head,html[data-theme="dark"] .auto-reply-switch,html[data-theme="dark"] .auto-reply-heading{color:#e3e8ef}
+html[data-theme="dark"] .auto-reply-option-head button{background:#1e2630;color:#c0c9d5}
