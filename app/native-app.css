@@ -12,7 +12,7 @@ html[data-native] button,html[data-native] a{-webkit-tap-highlight-color:transpa
 @media (max-width:900px){
   html[data-native][data-navigated] .app-shell.mobile-chat-open>.chat-pane{animation:native-push-in .32s cubic-bezier(.2,.8,.2,1)}
   html[data-native][data-navigated][dir="rtl"] .app-shell.mobile-chat-open>.chat-pane{animation-name:native-push-in-rtl}
-  html[data-native][data-navigated] .app-shell:not(.mobile-chat-open):not(.swiped-back)>.inbox-pane{animation:native-pop-back .28s cubic-bezier(.2,.8,.2,1)}
+  html[data-native][data-navigated]:not(.swiped-back) .app-shell:not(.mobile-chat-open)>.inbox-pane{animation:native-pop-back .28s cubic-bezier(.2,.8,.2,1)}
 }
 @media (prefers-reduced-motion:reduce){html[data-native] .app-shell>*{animation:none!important}}
 
