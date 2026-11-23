@@ -56,7 +56,10 @@ export async function POST(request: NextRequest) {
 
     let conversation = conversationId
     if (!conversation) {
-      const { data: contact, error: contactError } = await supabase
+      // Keep an existing contact's saved name; only a new contact gets the number as its name.
+      const { data: existing, error: lookupError } = await supabase.from('whatsapp_contacts').select('id').eq('external_id', recipient).maybeSingle()
+      if (lookupError) throw lookupError
+      const { data: contact, error: contactError } = existing ? { data: existing, error: null } : await supabase
         .from('whatsapp_contacts')
         .upsert({ external_id: recipient, display_name: to.trim(), phone: to.trim() }, { onConflict: 'external_id' })
         .select('id')
