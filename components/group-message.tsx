@@ -282,12 +282,12 @@ export function GroupMessage({ onClose, onSent }: { onClose: () => void; onSent:
           </>}
           {template && info && <>
             <div className="group-msg-tpl"><div><b>{friendly(template.name)}</b><span className="group-msg-muted">{template.category === 'MARKETING' ? 'Marketing' : 'Utility'} · {langLabel(template.language)}</span></div><button type="button" onClick={() => setTemplateKey('')}>Change</button></div>
-            {(info.count > 0 || info.needsButton) && <p className="group-msg-label">Fill the blanks from your file</p>}
+            {(info.count > 0 || info.needsButton) && <p className="group-msg-label">Fill the blanks</p>}
             {fills.map((fill, index) => <FillRow key={index} label={`{{${index + 1}}}`} fill={fill} columns={columnCount} columnName={columnName} onChange={(next) => setFills((current) => current.map((f, i) => i === index ? next : f))} />)}
             {info.needsButton && <FillRow label="Link" fill={buttonFill} columns={columnCount} columnName={columnName} onChange={setButtonFill} />}
             {preview && <>
               <p className="group-msg-label">Preview: {preview.name || formatPhone(preview.phone)}</p>
-              <div className="group-msg-wa"><div className="group-msg-bubble">{info.header && <b className="head">{info.header}</b>}<div>{fillBody(info.body, preview)}</div>{info.footer && <small>{info.footer}</small>}{info.buttons.map((b) => <span className="btn" key={b}>{b}</span>)}</div></div>
+              <div className="group-msg-wa"><div className="group-msg-bubble" dir="auto">{info.header && <b className="head">{info.header}</b>}<div>{fillBody(info.body, preview)}</div>{info.footer && <small>{info.footer}</small>}{info.buttons.map((b) => <span className="btn" key={b}>{b}</span>)}</div></div>
               <div className="group-msg-pager"><button type="button" disabled={previewIndex <= 0} onClick={() => setPreviewIndex((i) => Math.max(0, i - 1))}>‹</button><span>{Math.min(previewIndex + 1, ready.length)} of {ready.length}</span><button type="button" disabled={previewIndex >= ready.length - 1} onClick={() => setPreviewIndex((i) => Math.min(ready.length - 1, i + 1))}>›</button></div>
             </>}
             {skippedForBlanks > 0 && <p className="group-msg-warn">{skippedForBlanks} {skippedForBlanks === 1 ? 'person has' : 'people have'} an empty cell for a blank and will be skipped. Use “Same for everyone” to fill it instead.</p>}
@@ -323,12 +323,17 @@ export function GroupMessage({ onClose, onSent }: { onClose: () => void; onSent:
 }
 
 function FillRow({ label, fill, columns, columnName, onChange }: { label: string; fill: Fill; columns: number; columnName: (index: number) => string; onChange: (fill: Fill) => void }) {
+  // Each blank comes either from a column of the file or from text typed here (the same for everyone).
+  const [lastColumn, setLastColumn] = useState(fill.kind === 'column' ? fill.column : 0)
+  const [lastText, setLastText] = useState(fill.kind === 'text' ? fill.value : '')
   return <div className="group-msg-map">
     <span className="v">{label}</span>
-    <select value={fill.kind === 'column' ? String(fill.column) : 'text'} onChange={(event) => onChange(event.target.value === 'text' ? { kind: 'text', value: '' } : { kind: 'column', column: Number(event.target.value) })}>
-      {Array.from({ length: columns }, (_, index) => <option key={index} value={index}>{columnName(index)}</option>)}
-      <option value="text">Same for everyone…</option>
-    </select>
-    {fill.kind === 'text' && <input value={fill.value} placeholder="Type the text" onChange={(event) => onChange({ kind: 'text', value: event.target.value })} />}
+    <div className="group-msg-seg" role="radiogroup" aria-label={`${label} value`}>
+      <button type="button" role="radio" aria-checked={fill.kind === 'column'} className={fill.kind === 'column' ? 'on' : ''} disabled={!columns} onClick={() => onChange({ kind: 'column', column: Math.min(lastColumn, Math.max(0, columns - 1)) })}>From file</button>
+      <button type="button" role="radio" aria-checked={fill.kind === 'text'} className={fill.kind === 'text' ? 'on' : ''} onClick={() => onChange({ kind: 'text', value: lastText })}>Type text</button>
+    </div>
+    {fill.kind === 'column'
+      ? <select value={fill.column} onChange={(event) => { setLastColumn(Number(event.target.value)); onChange({ kind: 'column', column: Number(event.target.value) }) }}>{Array.from({ length: columns }, (_, index) => <option key={index} value={index}>{columnName(index)}</option>)}</select>
+      : <input dir="auto" value={fill.value} placeholder="Text for everyone" autoFocus onChange={(event) => { setLastText(event.target.value); onChange({ kind: 'text', value: event.target.value }) }} />}
   </div>
 }
