@@ -9,6 +9,7 @@ import { ConversationTags } from '@/components/conversation-tags'
 import { SmartReplyBar } from '@/components/smart-reply-bar'
 import { QuickReplyList, parseReplyTitle } from '@/components/quick-reply-list'
 import { ZoomableImage } from '@/components/zoomable-image'
+import { DocumentViewer } from '@/components/document-viewer'
 import { AutoReplySettings } from '@/components/auto-reply-settings'
 import { detectLanguage, normalize as normalizeReplyText } from '@/lib/replies/intents'
 import { Archive, Bell, Camera, Check, CheckCircle2, Clock, ChevronDown, ChevronRight, Copy, Forward, KeyRound, Keyboard, LogOut, FileText, MessageCircle, MessageSquareCheck, Inbox, Lock, Menu, Mic, Pause, Play, Square, MoreHorizontal, Paperclip, Plus, Reply, Search, Send, Settings, Smile, Tag, Trash2, Users, X } from 'lucide-react'
@@ -254,13 +255,15 @@ function DocumentCard({ url, name }: { url: string; name: string }) {
     return () => { cancelled = true; observer.disconnect() }
   }, [url, kind.ext])
   const meta = [pages ? `${pages} ${pages === 1 ? 'page' : 'pages'}` : null, size !== null ? formatFileSize(size) : null, kind.ext || null].filter(Boolean).join(' · ')
-  return <a ref={cardRef} className="document-card" href={url} target="_blank" rel="noreferrer" onClick={(event) => event.stopPropagation()}>
+  // The iOS app ignores links that open a new tab, so documents open in an in-app viewer there.
+  const [viewerOpen, setViewerOpen] = useState(false)
+  return <><a ref={cardRef} className="document-card" href={url} target="_blank" rel="noreferrer" onClick={(event) => { event.stopPropagation(); if ((window as any).Capacitor?.isNativePlatform?.()) { event.preventDefault(); setViewerOpen(true) } }}>
     {kind.ext === 'pdf' && preview !== 'none' && <span className={`document-preview ${preview}`}><canvas ref={canvasRef} aria-hidden="true" /></span>}
     <span className="document-info">
       <span className="document-icon" style={{ background: kind.color }} aria-hidden="true">{kind.label}</span>
       <span className="document-text"><span className="document-name" dir="auto">{name}</span><span className="document-meta">{meta || kind.label}</span></span>
     </span>
-  </a>
+  </a>{viewerOpen && <DocumentViewer url={url} name={name} pdf={kind.ext === 'pdf'} onClose={() => setViewerOpen(false)} />}</>
 }
 
 function VoiceNotePlayer({ src }: { src: string }) {
