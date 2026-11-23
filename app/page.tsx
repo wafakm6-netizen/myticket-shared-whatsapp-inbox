@@ -586,6 +586,10 @@ export default function Page() {
   const [agents, setAgents] = useState<Agent[]>([])
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [mobileChatOpen, setMobileChatOpen] = useState(false)
+  // The list skips its slide-back animation after a swipe or the animated back button (`swiped-back` on <html>).
+  // Clear that flag only when the next chat opens: removing it while the list is showing would match the
+  // animation rule again and replay the slide-in a moment after the chat closed.
+  useEffect(() => { if (mobileChatOpen) document.documentElement.classList.remove('swiped-back') }, [mobileChatOpen])
   const [mobileDetailsOpen, setMobileDetailsOpen] = useState(false)
   const [filter, setFilter] = useState<'all' | 'unassigned' | 'unread' | 'open' | 'pending' | 'closed' | 'mentions'>('all')
   const [query, setQuery] = useState('')
@@ -1863,7 +1867,7 @@ export default function Page() {
       pane.style.transform = `translateX(${pane.clientWidth}px)`
       if (inbox) { inbox.style.transition = transition; inbox.style.transform = '' }
     }))
-    window.setTimeout(() => { closeMobileChat(); window.setTimeout(() => document.documentElement.classList.remove('swiped-back'), 1200) }, 270)
+    window.setTimeout(closeMobileChat, 270)
   }
   // Swipe a message to the right to reply to it (phones and iPad), like WhatsApp.
   const swipeMessagesRef = useRef<Message[]>([])
@@ -2003,7 +2007,6 @@ export default function Page() {
         // The list is already in place after the swipe, so it skips the app's slide-back animation.
         // On <html>: React rewrites the shell's class list when it re-renders.
         document.documentElement.classList.add('swiped-back')
-        window.setTimeout(() => document.documentElement.classList.remove('swiped-back'), 1200)
         // Keep the chat off screen until the list replaces it; the effect cleanup resets the offset.
         window.setTimeout(() => { closeMobileChat(); window.setTimeout(() => setMobileChatOpen(false), 400) }, 200)
       } else setOffset(0, true)
