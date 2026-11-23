@@ -3,14 +3,40 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { requireAgent } from '@/lib/auth'
 
-export async function GET() {
+// Speed and cost: the list carries only each conversation's latest messages (enough for the preview, unread state
+// and the 24-hour window); a chat's full history loads when it is opened (?conversation=<id>). ?agents=1 returns the
+// team only, for the sign-in check. Previously every refresh sent every message ever received.
+const LIST_MESSAGE_LIMIT = 40
+const CONVERSATION_FIELDS = 'id, status, assigned_agent_id, last_message_at, unread_count, whatsapp_contacts(id, display_name, phone, contact_type, avatar_url), whatsapp_agents(id, display_name, email, avatar_url), whatsapp_messages(id, external_id, reply_to_external_id, direction, sender_name, body, attachment_url, attachment_name, status, failure_reason, sent_at, created_at), whatsapp_internal_notes(id, body, created_at, agent_id, whatsapp_agents(display_name)), whatsapp_conversation_tags(tag_id, whatsapp_tags(id, name, color))'
+
+export async function GET(request: NextRequest) {
   const auth = await requireAgent(); if (auth.error) return auth.error
   try {
     const supabase = createServerSupabaseClient()
-    const [{ data: conversations, error }, { data: agents, error: agentsError }] = await Promise.all([
-      supabase.from('whatsapp_conversations').select('id, status, assigned_agent_id, last_message_at, unread_count, whatsapp_contacts(id, display_name, phone, contact_type, avatar_url), whatsapp_agents(id, display_name, email, avatar_url), whatsapp_messages(id, external_id, reply_to_external_id, direction, sender_name, body, attachment_url, attachment_name, status, failure_reason, sent_at, created_at), whatsapp_internal_notes(id, body, created_at, agent_id, whatsapp_agents(display_name)), whatsapp_conversation_tags(tag_id, whatsapp_tags(id, name, color))').order('last_message_at', { ascending: false }),
-      supabase.from('whatsapp_agents').select('id, display_name, email, avatar_url, is_active, auth_user_id, role, availability').eq('is_active', true).order('display_name')
-    ])
+    const params = new URL(request.url).searchParams
+    const agentsQuery = () => supabase.from('whatsapp_agents').select('id, display_name, email, avatar_url, is_active, auth_user_id, role, availability').eq('is_active', true).order('display_name')
+    if (params.get('agents') === '1') {
+      const { data: agents, error } = await agentsQuery()
+      if (error) throw error
+      return NextResponse.json({ agents: agents ?? [] })
+    }
+    const conversationId = params.get('conversation')
+    if (conversationId) {
+      if (!/^[0-9a-f-]{36}$/i.test(conversationId)) return NextResponse.json({ error: 'Invalid conversation.' }, { status: 400 })
+      const { data: conversation, error } = await supabase.from('whatsapp_conversations').select(CONVERSATION_FIELDS).eq('id', conversationId).maybeSingle()
+      if (error) throw error
+      return NextResponse.json({ conversation })
+    }
+    const lightList = () => supabase.from('whatsapp_conversations').select(CONVERSATION_FIELDS)
+      .order('last_message_at', { ascending: false })
+      .order('created_at', { referencedTable: 'whatsapp_messages', ascending: false })
+      .limit(LIST_MESSAGE_LIMIT, { referencedTable: 'whatsapp_messages' })
+    let [{ data: conversations, error }, { data: agents, error: agentsError }] = await Promise.all([lightList(), agentsQuery()])
+    // Never leave the team without an inbox: if the limited query is ever rejected, fall back to the full list.
+    if (error) {
+      console.error('[inbox] light list failed, using full list', error)
+      ;({ data: conversations, error } = await supabase.from('whatsapp_conversations').select(CONVERSATION_FIELDS).order('last_message_at', { ascending: false }))
+    }
     if (error) throw error; if (agentsError) throw agentsError
     return NextResponse.json({ conversations: conversations ?? [], agents: agents ?? [] })
   } catch (error) { console.error('[inbox] load failed', error); return NextResponse.json({ error: 'Inbox data is unavailable.' }, { status: 503 }) }
@@ -20,6 +46,13 @@ export async function PATCH(request: NextRequest) {
   const auth = await requireAgent(); if (auth.error) return auth.error
   try {
     const body = await request.json(); const supabase = createServerSupabaseClient(); const patch: Record<string, string | number | null> = {}
+    // "Take it": assign only if nobody has the chat yet, so two agents can't both claim it.
+    if (body.claim === true && body.id && typeof body.agentId === 'string' && body.agentId) {
+      const result = await supabase.from('whatsapp_conversations').update({ assigned_agent_id: body.agentId }).eq('id', body.id).is('assigned_agent_id', null).select('id, assigned_agent_id')
+      if (result.error) throw result.error
+      if (!result.data?.length) return NextResponse.json({ error: 'Someone already took this chat.' }, { status: 409 })
+      return NextResponse.json({ conversation: result.data[0] })
+    }
     if (body.patch?.status && ['open','pending','closed'].includes(body.patch.status)) patch.status = body.patch.status
     if (body.patch && Object.prototype.hasOwnProperty.call(body.patch,'assigned_agent_id')) patch.assigned_agent_id = body.patch.assigned_agent_id || null
     if (body.patch && Object.prototype.hasOwnProperty.call(body.patch,'unread_count')) patch.unread_count = Math.max(0, Number(body.patch.unread_count) || 0)

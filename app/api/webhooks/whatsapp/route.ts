@@ -4,6 +4,7 @@ import { getMedia } from '@/lib/media-cache'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { notifyFirstInbound } from '@/lib/notifications/deliver'
 import { emitEvent } from '@/lib/api/events'
+import { handleMenuChoice, MENU_PREFIX } from '@/lib/auto-reply/engine'
 
 function verifyMetaSignature(rawBody: string, signature: string | null) {
   const appSecret = process.env.META_APP_SECRET
@@ -94,6 +95,9 @@ export async function POST(request: NextRequest) {
         if (messageError) throw messageError
         await supabase.from('whatsapp_conversations').update({ unread_count: (conversation.unread_count ?? 0) + 1, last_message_at: new Date().toISOString() }).eq('id', conversation.id)
         stored++
+        // A tap on the auto-reply menu: answer it right after the webhook has replied to Meta.
+        { const choiceId = item.interactive?.list_reply?.id
+          if (item.type === 'interactive' && typeof choiceId === 'string' && choiceId.startsWith(MENU_PREFIX)) { const conversationId = conversation.id; after(() => handleMenuChoice(supabase, conversationId, phone, choiceId, item.id).catch((error) => console.error('[auto-reply] choice failed', error))) } }
         // Keep a permanent copy of the media (WhatsApp deletes it after ~30 days); runs after the webhook has answered.
         if (typeof media?.id === 'string') { const mediaId = media.id; after(async () => { await getMedia(mediaId) }) }
         // Tell API clients (myticket.om, the AI assistant) about the new message, after the webhook has answered.
