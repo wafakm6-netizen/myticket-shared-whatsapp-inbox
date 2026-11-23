@@ -3174,12 +3174,13 @@ html[data-theme="dark"] .document-viewer-bar{background:#141a21;border-bottom-co
 html[data-theme="dark"] .document-viewer-btn:active{background:#1d252f}
 /* + button menu: Start a conversation / Group message */
 .new-conversation-menu-wrap{position:relative;display:inline-flex;flex:0 0 auto}
-.new-conversation-menu{position:absolute;top:calc(100% + 8px);right:0;z-index:300;width:268px;padding:6px;border-radius:16px;background:#fff;border:1px solid #e6eaf0;box-shadow:0 14px 36px rgba(23,39,61,.18);display:flex;flex-direction:column;gap:2px}
-.new-conversation-menu button{display:flex;align-items:center;gap:12px;width:100%;padding:10px;border:0;border-radius:12px;background:transparent;color:#16243a;text-align:left;cursor:pointer;font:inherit}
+.new-conversation-menu{position:absolute;top:calc(100% + 6px);right:0;z-index:300;width:236px;padding:5px;border-radius:14px;background:#fff;border:1px solid #e6eaf0;box-shadow:0 14px 36px rgba(23,39,61,.18);display:flex;flex-direction:column;gap:2px}
+.new-conversation-menu button{display:flex;align-items:center;gap:10px;width:100%;padding:8px;border:0;border-radius:10px;background:transparent;color:#16243a;text-align:left;cursor:pointer;font:inherit}
 .new-conversation-menu button:hover,.new-conversation-menu button:focus-visible{background:#f4f6f9;outline:none}
-.new-conversation-menu .ic{flex:0 0 36px;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#fff1ea;color:#e64a14}
-.new-conversation-menu b{display:block;font-size:14px;font-weight:600}
-.new-conversation-menu small{display:block;font-size:12px;color:#6b7a8d;margin-top:1px}
+.new-conversation-menu .ic{flex:0 0 30px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#fff1ea;color:#e64a14}
+.new-conversation-menu b{display:block;font-size:13px;font-weight:600}
+.new-conversation-menu small{display:block;font-size:11.5px;color:#6b7a8d;margin-top:0;line-height:1.3}
+.new-conversation-menu .ic svg{width:16px;height:16px}
 html[data-theme="dark"] .new-conversation-menu{background:#1a222b;border-color:#253040}
 html[data-theme="dark"] .new-conversation-menu button{color:#e8edf3}
 html[data-theme="dark"] .new-conversation-menu button:hover{background:#222c37}
@@ -3240,8 +3241,12 @@ html[data-theme="dark"] .new-conversation-menu small{color:#8a98a8}
 .group-msg-tpl button{border:0;background:transparent;color:#e64a14;font:600 13px inherit;font-family:inherit;cursor:pointer}
 .group-msg-map{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}
 .group-msg-map .v{flex:0 0 52px;height:34px;border-radius:8px;background:#fff1ea;color:#e64a14;font-weight:700;display:grid;place-items:center;font-size:12px}
-.group-msg-map select{flex:1;min-width:0;width:auto;margin:0;height:38px}
-.group-msg-map input{flex:1 1 100%;margin:0 0 0 60px;height:38px}
+.group-msg-map{margin-top:12px}
+.group-msg-map select,.group-msg-map input{flex:1 1 100%;width:auto;min-width:0;margin:0 0 0 60px;height:40px}
+.group-msg-seg{display:inline-flex;padding:3px;border-radius:10px;background:#f2f4f7;gap:2px}
+.group-msg-seg button{height:28px;padding:0 12px;border:0;border-radius:8px;background:transparent;color:#52657e;font:600 12.5px inherit;font-family:inherit;cursor:pointer}
+.group-msg-seg button.on{background:#fff;color:#16243a;box-shadow:0 1px 3px rgba(23,39,61,.14)}
+html[data-theme="dark"] .group-msg-seg{background:#1a222b}html[data-theme="dark"] .group-msg-seg button{color:#9ba7b5}html[data-theme="dark"] .group-msg-seg button.on{background:#253040;color:#e8edf3}
 .group-msg-wa{padding:10px;border-radius:14px;background:#efe7de}
 .group-msg-bubble{padding:10px 12px;border-radius:12px 12px 12px 4px;background:#fff;font-size:13.5px;line-height:1.5;white-space:pre-wrap;box-shadow:0 1px 1px rgba(0,0,0,.08)}
 .group-msg-bubble .head{display:block;margin-bottom:4px}
