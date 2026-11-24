@@ -3297,3 +3297,6 @@ html[data-theme="dark"] .group-msg-map .v{background:#3a2218;color:#ff8a5c}
  .app-shell .inbox-pane .pane-header .new-conversation-menu-wrap>.new-conversation-header-btn{width:40px!important;height:40px!important;flex:0 0 40px!important;border-radius:999px!important}
  .app-shell .inbox-pane .pane-header .new-conversation-header-btn svg{width:18px;height:18px}
 }
+/* Bell count: a clean orange circle with a thin ring in the header's own colour (no second white ring in dark mode). */
+button[aria-label="Notifications"] .notification-count{box-shadow:none!important;border:2px solid #fff!important;top:-2px!important;right:-2px!important;min-width:20px!important;height:20px!important;line-height:16px!important;padding:0 5px!important;font-size:11px!important;font-weight:700!important;font-variant-numeric:tabular-nums}
+html[data-theme="dark"] button[aria-label="Notifications"] .notification-count{border-color:#141a21!important}

@@ -61,8 +61,15 @@ export function NotificationBridge() {
           }
         }
         baseline.current = next
+        // The bell counts chats with new messages you haven't read: a chat leaves the list once it is read
+        // (here or by a teammate), and a chat that gets more messages moves to the top instead of being listed twice.
+        setNotices((current) => {
+          const fresh = new Set(incoming.map((notice) => notice.conversationId))
+          const kept = current.filter((notice) => !fresh.has(notice.conversationId) && (next.get(notice.conversationId) ?? 0) > 0)
+          const updated = [...incoming, ...kept].slice(0, 30)
+          return updated.length === current.length && updated.every((notice, index) => notice === current[index]) ? current : updated
+        })
         if (incoming.length) {
-          setNotices((current) => [...incoming, ...current].slice(0, 30))
           for (const notice of incoming) {
             if ('Notification' in window && Notification.permission === 'granted' && document.visibilityState !== 'visible') {
               const notification = new Notification(`New message from ${notice.name}`, { body: notice.preview, icon: '/brand/app-icon-192.png?v=3', tag: `conversation-${notice.conversationId}` })
@@ -99,6 +106,12 @@ export function NotificationBridge() {
       setOpen(false)
     }
     const closeEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') setOpen(false) }
+    // Opening a chat from the list reads it, so it leaves the bell straight away.
+    const onChatOpen = (event: MouseEvent) => {
+      const id = (event.target as HTMLElement | null)?.closest<HTMLElement>('button.conversation')?.dataset.conversationId
+      if (id) setNotices((current) => current.some((notice) => notice.conversationId === id) ? current.filter((notice) => notice.conversationId !== id) : current)
+    }
+    document.addEventListener('click', onChatOpen)
     document.addEventListener('click', onClick, true)
     document.addEventListener('pointerdown', closeOutside, true)
     document.addEventListener('keydown', closeEscape)
@@ -106,6 +119,7 @@ export function NotificationBridge() {
       document.removeEventListener('click', onClick, true)
       document.removeEventListener('pointerdown', closeOutside, true)
       document.removeEventListener('keydown', closeEscape)
+      document.removeEventListener('click', onChatOpen)
     }
   }, [])
 
@@ -134,9 +148,9 @@ export function NotificationBridge() {
   if (!authenticated) return null
 
   return <>
-    {notices.length > 0 && bellHost && createPortal(<span className="notification-count" aria-label={`${notices.length} new notification${notices.length === 1 ? '' : 's'}`}>{notices.length > 99 ? '99+' : notices.length}</span>, bellHost)}
+    {notices.length > 0 && bellHost && createPortal(<span className="notification-count" aria-label={`${notices.length} chat${notices.length === 1 ? '' : 's'} with new messages`} title={`${notices.length} chat${notices.length === 1 ? '' : 's'} with new messages`}>{notices.length > 99 ? '99+' : notices.length}</span>, bellHost)}
     {open && <div className="notification-panel" role="dialog" aria-label="Notifications">
-      <div className="notification-panel-head"><div><strong>Notifications</strong><span>{notices.length ? `${notices.length} new` : 'You’re all caught up'}</span></div><button type="button" onClick={() => setOpen(false)} aria-label="Close notifications">×</button></div>
+      <div className="notification-panel-head"><div><strong>Notifications</strong><span>{notices.length ? `${notices.length} chat${notices.length === 1 ? '' : 's'} with new messages` : 'You’re all caught up'}</span></div><button type="button" onClick={() => setOpen(false)} aria-label="Close notifications">×</button></div>
       {'Notification' in globalThis && Notification.permission !== 'granted' && <button type="button" className="notification-enable" onClick={() => void enableBrowser()}>Enable browser notifications</button>}
       <div className="notification-list">{notices.length === 0 ? <p className="notification-empty">No new messages.</p> : notices.map((notice) => <button type="button" className="notification-item" key={notice.id} onClick={() => openConversation(notice.conversationId)}><span className="notification-avatar">{notice.name.slice(0, 2).toUpperCase()}</span><span className="notification-copy"><strong>{notice.name}</strong><span>{notice.preview}</span><small>{notice.time}</small></span></button>)}</div>
       {notices.length > 0 && <button type="button" className="notification-clear" onClick={() => setNotices([])}>Clear notifications</button>}
