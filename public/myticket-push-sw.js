@@ -13,7 +13,9 @@ self.addEventListener('notificationclick',event=>{
   event.notification.close()
   const target=event.notification.data?.url || '/'
   event.waitUntil(clients.matchAll({type:'window',includeUncontrolled:true}).then(async windows=>{
-    for(const client of windows){if(new URL(client.url).origin===self.location.origin){await client.focus();client.navigate(target);return}}
+    // Inbox already open: focus it and open the chat in place (no reload), so the new message shows at once.
+    const conversationId=new URL(target,self.location.origin).searchParams.get('conversation')
+    for(const client of windows){if(new URL(client.url).origin===self.location.origin){await client.focus();if(conversationId)client.postMessage({type:'open-conversation',conversationId});else client.navigate(target);return}}
     return clients.openWindow(target)
   }))
 })

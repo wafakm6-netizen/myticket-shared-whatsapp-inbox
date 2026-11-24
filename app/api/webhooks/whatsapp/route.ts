@@ -4,6 +4,7 @@ import { getMedia } from '@/lib/media-cache'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { notifyFirstInbound } from '@/lib/notifications/deliver'
 import { emitEvent } from '@/lib/api/events'
+import { broadcastInboxChange } from '@/lib/realtime/broadcast'
 import { handleMenuChoice, MENU_PREFIX } from '@/lib/auto-reply/engine'
 
 function verifyMetaSignature(rawBody: string, signature: string | null) {
@@ -84,6 +85,7 @@ export async function POST(request: NextRequest) {
           const { error: reactionError } = await supabase.from('whatsapp_messages').upsert({ conversation_id: conversation.id, external_id: item.id, reply_to_external_id: item.reaction.message_id, direction: 'inbound', sender_name: profileName || contact.display_name, body: item.reaction.emoji ?? '', attachment_name: 'reaction', status: 'delivered', sent_at: new Date(Number(item.timestamp ?? 0) * 1000).toISOString() }, { onConflict: 'external_id' })
           if (reactionError) throw reactionError
           stored++
+          await broadcastInboxChange(conversation.id)
           continue
         }
         const media = item.image || item.document || item.video || item.audio || item.sticker
@@ -95,6 +97,8 @@ export async function POST(request: NextRequest) {
         if (messageError) throw messageError
         await supabase.from('whatsapp_conversations').update({ unread_count: (conversation.unread_count ?? 0) + 1, last_message_at: new Date().toISOString() }).eq('id', conversation.id)
         stored++
+        // Open inboxes fetch the chat now, before the push notification goes out.
+        await broadcastInboxChange(conversation.id)
         // A tap on the auto-reply menu: answer it right after the webhook has replied to Meta.
         { const choiceId = item.interactive?.list_reply?.id
           if (item.type === 'interactive' && typeof choiceId === 'string' && choiceId.startsWith(MENU_PREFIX)) { const conversationId = conversation.id; after(() => handleMenuChoice(supabase, conversationId, phone, choiceId, item.id).catch((error) => console.error('[auto-reply] choice failed', error))) } }
