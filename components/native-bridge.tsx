@@ -157,7 +157,14 @@ export function NativeBridge() {
     cleanups.push(() => window.clearInterval(retry))
     listen(push, 'pushNotificationActionPerformed', (action: any) => {
       const url = action?.notification?.data?.url
-      if (typeof url === 'string') { try { const target = new URL(url, location.origin); if (target.origin === location.origin) location.assign(target.pathname + target.search) } catch {} }
+      if (typeof url === 'string') { try {
+        const target = new URL(url, location.origin)
+        if (target.origin !== location.origin) return
+        // Inbox already running: open the chat in place instead of reloading the whole app.
+        const conversationId = target.searchParams.get('conversation')
+        if (conversationId && (window as any).__inboxOpenConversation) window.dispatchEvent(new CustomEvent('inbox-open-conversation', { detail: conversationId }))
+        else location.assign(target.pathname + target.search)
+      } catch {} }
     })
     registerPush()
     // Screen transitions start after launch so the first paint does not slide in.

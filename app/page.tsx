@@ -585,6 +585,10 @@ export default function Page() {
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [agents, setAgents] = useState<Agent[]>([])
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const selectedIdRef = useRef<string | null>(null)
+  selectedIdRef.current = selectedId
+  // False while the realtime connection is down: the safety poll then runs every few seconds instead of every 30 s.
+  const [realtimeLive, setRealtimeLive] = useState(true)
   const [mobileChatOpen, setMobileChatOpen] = useState(false)
   // The list skips its slide-back animation after a swipe or the animated back button (`swiped-back` on <html>).
   // Clear that flag only when the next chat opens: removing it while the list is showing would match the
@@ -1041,6 +1045,37 @@ export default function Page() {
     })
     const queueConversation = (id: string) => { window.clearTimeout(chatTimers.get(id)); chatTimers.set(id, window.setTimeout(() => { chatTimers.delete(id); void loadConversation(id).catch(() => {}) }, 150)) }
     const queueListReload = () => { if (listTimer) return; listTimer = window.setTimeout(() => { listTimer = 0; void load().catch(() => {}) }, 1500) }
+    // Two subscriptions: database changes (messages, notes, chats) and a broadcast the WhatsApp webhook sends for each
+    // new customer message. The broadcast does not depend on database change events reaching the browser.
+    let eventsChannel: typeof channel
+    let subscribing = false
+    const onChatChange = (change: any) => { const id = change?.new?.conversation_id ?? change?.old?.conversation_id; if (change?.eventType === 'INSERT' && change?.table === 'whatsapp_messages' && change.new) appendRealtimeMessage(change.new); if (id) queueConversation(id); else queueListReload() }
+    const subscribe = async () => {
+      subscribing = true
+      try {
+        // Drop the old subscriptions first: a channel is reused by name, and after the phone has slept its socket can look open but be dead.
+        if (channel) { const old = channel; channel = undefined; await supabase.removeChannel(old).catch(() => {}) }
+        if (eventsChannel) { const old = eventsChannel; eventsChannel = undefined; await supabase.removeChannel(old).catch(() => {}) }
+        if (!active) return
+        const live = supabase.channel('whatsapp-inbox')
+        channel = live.on('postgres_changes', { event: '*', schema: 'public', table: 'whatsapp_messages' }, onChatChange).on('postgres_changes', { event: '*', schema: 'public', table: 'whatsapp_conversations' }, () => queueListReload()).on('postgres_changes', { event: '*', schema: 'public', table: 'whatsapp_internal_notes' }, onChatChange).subscribe((status: string) => { if (active && channel === live) setRealtimeLive(status === 'SUBSCRIBED') })
+        // Same topic as lib/realtime/broadcast.ts (INBOX_EVENTS_TOPIC).
+        eventsChannel = supabase.channel('inbox-events').on('broadcast', { event: 'chat-changed' }, ({ payload }: { payload?: { conversationId?: string } }) => { if (payload?.conversationId) queueConversation(payload.conversationId) }).subscribe()
+      } catch (error) { console.error('[inbox] realtime failed', error); setRealtimeLive(false) }
+      finally { subscribing = false }
+    }
+    // Back in the app after the phone was locked or the app was in the background: reconnect and fetch the open chat right away.
+    let hiddenAt = 0
+    const onVisibility = () => {
+      if (document.visibilityState === 'hidden') { hiddenAt = Date.now(); return }
+      if (!cacheUserRef.current) return
+      if (selectedIdRef.current) void loadConversation(selectedIdRef.current).catch(() => {})
+      if (hiddenAt && Date.now() - hiddenAt > 3000 && !subscribing) void subscribe()
+      hiddenAt = 0
+    }
+    const onOnline = () => { if (cacheUserRef.current && !subscribing) { void subscribe(); if (selectedIdRef.current) void loadConversation(selectedIdRef.current).catch(() => {}) } }
+    document.addEventListener('visibilitychange', onVisibility)
+    window.addEventListener('online', onOnline)
     const loadAuthenticatedInbox = async (user: { id: string; email?: string }) => {
       // Instant open: show the chats saved on this device right away, then replace them with fresh data.
       if (!cacheUserRef.current) {
@@ -1065,7 +1100,7 @@ export default function Page() {
       setSelfAvailability(agent?.availability === 'away' ? 'away' : 'available')
       try { await load() } finally { if (active) setInboxReady(true) }
       if (!active) return
-      try { const onChatChange = (change: any) => { const id = change?.new?.conversation_id ?? change?.old?.conversation_id; if (change?.eventType === 'INSERT' && change?.table === 'whatsapp_messages' && change.new) appendRealtimeMessage(change.new); if (id) queueConversation(id); else queueListReload() }; channel = supabase.channel('whatsapp-inbox').on('postgres_changes', { event: '*', schema: 'public', table: 'whatsapp_messages' }, onChatChange).on('postgres_changes', { event: '*', schema: 'public', table: 'whatsapp_conversations' }, () => queueListReload()).on('postgres_changes', { event: '*', schema: 'public', table: 'whatsapp_internal_notes' }, onChatChange).subscribe() } catch (error) { console.error('[v0] realtime failed', error) }
+      if (!channel && !subscribing) await subscribe()
     }
     void supabase.auth.getUser().then(async ({ data }) => {
       if (!active) return
@@ -1074,20 +1109,22 @@ export default function Page() {
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!active) return
       if (session?.user) void loadAuthenticatedInbox(session.user).finally(() => { if (active) setIsLoading(false) })
-      else { if (_event === 'SIGNED_OUT') clearDeviceInboxData(); cacheUserRef.current = null; setSessionUser(null); setInboxReady(false); setConversations([]); setSelectedId(null); setIsLoading(false); if (channel) void channel.unsubscribe() }
+      else { if (_event === 'SIGNED_OUT') clearDeviceInboxData(); cacheUserRef.current = null; setSessionUser(null); setInboxReady(false); setConversations([]); setSelectedId(null); setIsLoading(false); if (channel) { void supabase.removeChannel(channel); channel = undefined } if (eventsChannel) { void supabase.removeChannel(eventsChannel); eventsChannel = undefined } }
     })
-    return () => { active = false; chatTimers.forEach((timer) => window.clearTimeout(timer)); window.clearTimeout(listTimer); if (channel) void channel.unsubscribe() }
+    return () => { active = false; chatTimers.forEach((timer) => window.clearTimeout(timer)); window.clearTimeout(listTimer); document.removeEventListener('visibilitychange', onVisibility); window.removeEventListener('online', onOnline); if (channel) void supabase.removeChannel(channel); if (eventsChannel) void supabase.removeChannel(eventsChannel) }
   }, [])
 
   // Keep incoming WhatsApp messages visible even when Supabase Realtime is unavailable.
   useEffect(() => {
     if (!sessionUser) return
-    // Realtime delivers changes instantly; this is only a safety net, so 30 s instead of 5 s (most of the data use).
+    // Realtime delivers changes instantly; this is only a safety net: every 30 s while realtime is connected,
+    // every 5 s (open chat) and 15 s (list) while it is down.
     const refresh = () => { if (document.visibilityState === 'visible') void load().catch((error) => console.error('[inbox] refresh failed', error)) }
-    const interval = window.setInterval(refresh, 30000)
+    const interval = window.setInterval(refresh, realtimeLive ? 30000 : 15000)
+    const chatInterval = realtimeLive ? 0 : window.setInterval(() => { if (document.visibilityState === 'visible' && selectedIdRef.current) void loadConversation(selectedIdRef.current).catch(() => {}) }, 5000)
     document.addEventListener('visibilitychange', refresh)
-    return () => { window.clearInterval(interval); document.removeEventListener('visibilitychange', refresh) }
-  }, [sessionUser?.email])
+    return () => { window.clearInterval(interval); window.clearInterval(chatInterval); document.removeEventListener('visibilitychange', refresh) }
+  }, [sessionUser?.email, realtimeLive])
 
   // Opening a chat loads its full history (the list only holds the latest messages of each chat).
   useEffect(() => {
@@ -1510,11 +1547,28 @@ export default function Page() {
     if (openedFromLinkRef.current || !conversations.length) return
     const id = new URLSearchParams(window.location.search).get('conversation')
     openedFromLinkRef.current = true
-    if (!id || !conversations.some((conversation) => conversation.id === id)) return
+    if (!id) return
+    // A chat that is not in the saved list yet (a new customer) is fetched and added by loadConversation.
     setSelectedId(id)
     setMobileChatOpen(true)
+    void loadConversation(id).catch(() => {})
     window.history.replaceState(null, '', window.location.pathname)
   }, [conversations])
+  // A notification tapped while the inbox is already open opens the chat in place (no page reload) and fetches it at once.
+  useEffect(() => {
+    const open = (id: unknown) => {
+      if (typeof id !== 'string' || !id) return
+      setSelectedId(id)
+      setMobileChatOpen(true)
+      void loadConversation(id).catch(() => {})
+    }
+    const onOpen = (event: Event) => open((event as CustomEvent<string>).detail)
+    const onWorkerMessage = (event: MessageEvent) => { if (event.data?.type === 'open-conversation') open(event.data.conversationId) }
+    window.addEventListener('inbox-open-conversation', onOpen)
+    navigator.serviceWorker?.addEventListener('message', onWorkerMessage)
+    ;(window as any).__inboxOpenConversation = true
+    return () => { window.removeEventListener('inbox-open-conversation', onOpen); navigator.serviceWorker?.removeEventListener('message', onWorkerMessage); (window as any).__inboxOpenConversation = false }
+  }, [])
   // Sidebar highlight follows the open window and returns to Inbox when it closes (Tags is opened by TagNavBridge).
   useEffect(() => {
     if (activeNav === 'team' && !teamOpen) setActiveNav('inbox')
