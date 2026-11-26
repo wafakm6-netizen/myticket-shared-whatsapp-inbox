@@ -127,6 +127,11 @@ export async function runDueMenus(supabase: SupabaseClient) {
     if (!latest || latest.direction !== 'inbound' || !latest.external_id) continue
     const waited = now - new Date(latest.created_at).getTime()
     if (waited < settings.delay_seconds * 1000) continue
+    // A person from the team is already talking to this customer (replied in the last 24 hours): stay out of it.
+    const dayAgo = new Date(now - 24 * 3600 * 1000).toISOString()
+    const { data: human } = await supabase.from('whatsapp_messages').select('id').eq('conversation_id', row.id).eq('direction', 'outbound')
+      .gte('created_at', dayAgo).or(`sender_name.is.null,sender_name.neq.${SENDER_NAME}`).neq('attachment_name', 'reaction').limit(1)
+    if (human?.length) continue
     const since = new Date(now - settings.cooldown_hours * 3600 * 1000).toISOString()
     const { data: recent } = await supabase.from('whatsapp_auto_reply_log').select('id').eq('conversation_id', row.id).eq('kind', 'menu').gte('created_at', since).limit(1)
     if (recent?.length) continue
